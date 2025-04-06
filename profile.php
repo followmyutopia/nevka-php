@@ -1,0 +1,144 @@
+<?php
+/**
+ * NeVK Project v1.0
+ * 2024-2025 Avicus Delacroix
+ */
+
+$loggedUser = "";
+include 'db.php';
+include 'header.php';
+
+if(!isset($_COOKIE["user_token"])) { header("Refresh:0; url=index.php"); exit; }
+else { $loggedUser = checkCookie($_COOKIE["user_token"]); updateOnline($_COOKIE["user_token"]); }
+if(isset($_GET['logout'])) { logout(); }
+$loggedUserData = getUserData($loggedUser);
+if (!isset($loggedUserData[1]) || !isset($loggedUserData[2])) {header("Refresh:0; url=settings.php");}
+
+$showUser = $show = $activeMenu = $userData = $status = $wallStatus = $city = $bio = $personalElement = $publicElement = $online = "";
+
+if(!isset($_GET['id'])) { $showUser = $loggedUser; $activeMenu = "#profilemenu"; }
+else if ($_GET['id'] == $loggedUser) { $showUser = validate($_GET['id']); $activeMenu = "#profilemenu"; }
+else { $showUser = validate($_GET['id']); $activeMenu = "#peoplemenu"; }
+
+$userData = getUserData($showUser);
+
+if (isset($userData[0])) { $showAvatar = "<img src=".$userData[0].">";}
+else { $showAvatar = "<p style='text-align: center'>Аватар не установлен</p>"; }
+
+if (isset($userData[1]) && isset($userData[2])) { $showName = $userData[1]." ".$userData[2]; }
+else { header("Refresh:0; url=settings.php"); }
+
+if ($showUser == $loggedUser) { $publicElement = "hidden"; }
+else { $personalElement = "hidden"; }
+
+if (isset($userData[4]) && $userData[4] != "") { $city = "<p>Город: ".$userData[4]."</p>"; }
+if (isset($userData[5]) && $userData[5] != "") { $bio = "<p>Информация: ".$userData[5]."</p>"; }
+
+$lastOnline = date_create_from_format("d.m.Y в h:i a", $userData[6]); $now = new DateTime();
+$difference = ($lastOnline->diff($now)->days * 1440) + ($lastOnline->diff($now)->h * 60) + $lastOnline->diff($now)->i;
+if ($difference <= 5) { $online = "<p class=\"userStatus\" style=\"color:greenyellow;padding-top: 12px\">Онлайн</p>"; }
+else if ($difference < 60) { $online = "<p class=\"userStatus\" style=\"color:lightslategray\">Был(а) в сети:<br>".$lastOnline->diff($now)->i." минут назад</p>"; }
+else { $online = "<p class=\"userStatus\" style=\"color:lightslategray\">Был(а) в сети:<br>".$userData[6]."</p>"; }
+
+if(isset($_POST["setAvatar"])) {
+    $target_file = "tmp/" . basename($_FILES["fileToUpload"]["name"]);
+    $uploadOk = 1;
+    $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+    $blob = "";
+
+    if ($_FILES["fileToUpload"]["tmp_name"] != "") {
+        if (!getimagesize($_FILES["fileToUpload"]["tmp_name"])) { $status = "Файл не является изображением."; $uploadOk = 0; }
+        if ($_FILES["fileToUpload"]["size"] > 16777215) { $status = "Аватар не может быть больше 16 MB."; $uploadOk = 0; }
+        if ($imageFileType != "jpg" && $imageFileType != "jpeg") { $status = "Разрешено использовать только JPG файлы."; $uploadOk = 0; }
+        if ($uploadOk == 1) {
+            $source = file_get_contents($_FILES["fileToUpload"]["tmp_name"]);
+            $blob = 'data:image/jpeg;base64,'.base64_encode($source);
+            $status = setAvatar($_COOKIE["user_token"],$blob);
+        }
+    } else { $status = "Файл отсутствует"; }
+}
+
+if(isset($_POST['setStatus'])) {
+    $newStatus = validate($_POST["status"]);
+    if (strlen($newStatus) > 127) {$wallStatus = "Статус максимум 127 символа";}
+    else {
+        $userData[3] = setStatus($_COOKIE["user_token"],$newStatus);
+    }
+}
+
+if(isset($_POST['postWall'])) {
+    $wallText = validate($_POST["message"]);
+    if (strlen($wallText) > 1023) {$wallStatus = "Максимум 1023 символа";}
+    else {
+        $target_file = "tmp/" . basename($_FILES["fileToUpload"]["name"]);
+        $uploadOk = 1;
+        $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+        $blob = "";
+
+        if ($_FILES["fileToUpload"]["tmp_name"] != "") {
+            if (!getimagesize($_FILES["fileToUpload"]["tmp_name"])) { $status = "Файл не является изображением."; $uploadOk = 0; }
+            if ($_FILES["fileToUpload"]["size"] > 16777215) { $status = "Аватар не может быть больше 16 MB."; $uploadOk = 0; }
+            if ($imageFileType != "jpg" && $imageFileType != "jpeg") { $status = "Разрешено использовать только JPG файлы."; $uploadOk = 0; }
+            if ($uploadOk == 1) {
+                $source = file_get_contents($_FILES["fileToUpload"]["tmp_name"]);
+                $blob = 'data:image/jpeg;base64,'.base64_encode($source);
+                $wallStatus = addWallEntry($loggedUser, $showName, $wallText, $blob);
+            }
+        } else {
+            if ($wallText != "") { $wallStatus = addWallEntry($loggedUser, $showName, $wallText, $blob); }
+            else { $wallStatus = "Введите текст"; }
+        }
+        }
+}
+
+if(isset($_POST['checkDeletePermission'])) { $wallStatus = deleteWallEntry($_COOKIE["user_token"], $_POST["id"]); }
+?>
+
+<div class="left">
+    <?php echo $showAvatar ?>
+    <form class="<?php echo $personalElement ?>" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>"
+        method="post" enctype="multipart/form-data">
+        <input class="fileInput wide" type="file" name="fileToUpload" id="fileToUpload">
+        <button class="button wide" type="submit" name="setAvatar">Сменить аватар</button>
+    </form>
+    <button class="a button wide <?php echo $publicElement ?>" data-href="messages.php?id=<?php echo $showUser ?>">Написать сообщение</button>
+    <p class="console"><?php echo $status ?></p>
+</div>
+
+<div class="right">
+    <h1 class="clearfix"><?php echo $showName ?><?php echo $online ?></h1>
+    <div class="info">
+        <form id="statusForm" style="display:none" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post">
+            <input type="text" name="status" value="<?php echo $userData[3] ?>">
+            <button class="hidden" type="submit" name="setStatus"></button>
+        </form>
+        <span id="statusBar"><?php echo $userData[3] ?><br><span id="setStatusButton"class="<?php
+            echo $personalElement ?>" style="color: lightslategray">Установить статус</span></span>
+        <?php echo $city.$bio ?>
+    </div>
+    <form class="<?php echo $personalElement ?>" style="padding-bottom:5%" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>"
+        method="post" enctype="multipart/form-data">
+        <textarea name="message"></textarea>
+        <button class="button mobile-expand" style="margin-right:-3px" type="submit" name="postWall">Опубликовать на стене</button>
+        <input class="fileInput attachment mobile-expand" type="file" name="fileToUpload" id="fileToUpload">
+        <span id="wallStatus"><?php echo $wallStatus ?></span>
+    </form>
+</div>
+
+<div class="wall">
+    <?php getWallEntries($showUser) ?>
+</div>
+
+<form class="hidden" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post"><input id="idToCheck" name="id"><button id="tryDelete" type="submit" name="checkDeletePermission"></button></form><span class="hidden" id="title"><?php echo $showName ?></span>
+
+<script>$(function(){
+    document.title = $("#title").text();
+    $("<?php echo $activeMenu ?>").addClass("active");
+    function toggleStatusEditor() { $("#statusBar").slideToggle(250,function(){ $("#statusForm").slideToggle(300); }); };
+    $("#setStatusButton").click(function(){ toggleStatusEditor(); });
+    $(".delPostButton").click(function(){ $("#idToCheck").val($(this).attr("id")); $("#tryDelete").trigger("click"); });
+    if ($("#setStatusButton").attr("class") == "hidden") { $(".delPostButton").hide(); }
+    $(".a").click(function() { window.location = $(this).data("href"); });
+});</script>
+
+<?php include 'footer.php'; ?>

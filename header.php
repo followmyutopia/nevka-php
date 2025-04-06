@@ -1,0 +1,34 @@
+<!DOCTYPE HTML>
+<html lang="ru">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+      integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+      crossorigin="anonymous"></script>
+    <title>Не ВК</title>
+    <meta name="description" content="Социальная сеть Невка">
+  </head>
+<body>
+  <header>
+    <span id="mainlogo">Невка</span>
+    <button class="button" id="togglemenu">Меню</button>
+    <div id="mainmenu">
+      <a id="profilemenu" href="profile.php">Моя страница</a>
+      <a id="peoplemenu" href="people.php">Люди</a>
+      <a id="messagesmenu" href="messages.php">Сообщения</a>
+      <a id="discussionsmenu" href="discussions.php">Обсуждения</a>
+      <a id="settingsmenu" href="settings.php">Настройки</a>
+      <a id="logoutbutton" href="<?php echo htmlspecialchars($_SERVER["PHP_SELF"])."?logout";?>">Выход</a>
+    </div>
+  </header>
+  <script>
+    $(function(){
+      $("#togglemenu").click(function(){
+        $("#mainmenu").slideToggle();
+        $("header").toggleClass("solid");
+      });
+    });
+  </script>
+<div class="content">

@@ -1,0 +1,102 @@
+<?php
+/**
+ * NeVK Project v1.0
+ * 2024-2025 Avicus Delacroix
+ */
+
+$loggedUser = "";
+include 'db.php';
+include 'header.php';
+
+if(!isset($_COOKIE["user_token"])) { header("Refresh:0; url=index.php"); exit; }
+else { $loggedUser = checkCookie($_COOKIE["user_token"]); updateOnline($_COOKIE["user_token"]); }
+if(isset($_GET['logout'])) { logout(); }
+
+$newFirstName = $newLastName = $nameStatus = $cityStatus = $bioStatus = $passwordStatus = "";
+
+if(isset($_POST['setName'])) {
+    $newFirstName = validate($_POST["firstname"]);
+    $newLastName = validate($_POST["lastname"]);
+    if (strlen($newFirstName) > 63 || strlen($newLastName) > 63) {$nameStatus = "Поля максимум 63 символа";}
+    else {
+        if (empty($newFirstName) && empty($newLastName)) {
+            $nameStatus = "Введите данные";
+        } else if (empty($newFirstName)) {
+            $nameStatus = "Имя обязательно";
+        } else if (empty($newLastName)) {
+            $nameStatus = "Фамилия обязательна";
+        } else {
+            $nameStatus = setName($_COOKIE["user_token"],$newFirstName,$newLastName);
+        }
+    }
+}
+
+if(isset($_POST['setCity'])) {
+    $newCity = validate($_POST["city"]);
+    if (strlen($newCity) > 63) {$cityStatus = "Максимум 63 символа";}
+    else {
+        $cityStatus = setCity($_COOKIE["user_token"],$newCity);
+    }
+}
+
+if(isset($_POST['setBio'])) {
+    $newBio = validate($_POST["bio"]);
+    if (strlen($newBio) > 255) {$bioStatus = "Максимум 255 символов";}
+    else {
+        $bioStatus = setBio($_COOKIE["user_token"],$newBio);
+    }
+}
+
+if(isset($_POST['changePassword'])) {
+    $oldPassword = validate($_POST["oldPassword"]);
+    $newPassword = validate($_POST["newPassword"]);
+    $confirmPassword = validate($_POST["confirmPassword"]);
+
+    if ($oldPassword == "" || $newPassword == "" || $confirmPassword == "") {
+        $passwordStatus = "Все поля обязательны";
+    } else if ($newPassword != $confirmPassword) {
+        $passwordStatus = "Пароли не совпадают";
+    } else {
+        $passwordStatus = changePassword($loggedUser,$_COOKIE["user_token"],sha1($oldPassword),sha1($newPassword));
+    }
+}
+?>
+
+<div class="equal mobile-expand">
+    <h2>Личная информация</h2>
+        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post">
+        * Имя: <input type="text" name="firstname"><br>
+        * Фамилия: <input type="text" name="lastname"><br>
+        <button class="button" type="submit" name="setName">Установить</button>
+        <span class="status"><?php echo $nameStatus;?></span><br>
+        </form><br>
+        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post">
+        Город: <input type="text" name="city"><br>
+        <button class="button" type="submit" name="setCity">Установить</button>
+        <span class="status"><?php echo $cityStatus;?></span><br>
+        </form><br>
+        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post">
+        Информация о себе: <input type="text" name="bio"><br>
+        <button class="button" type="submit" name="setBio">Установить</button>
+        <span class="status"><?php echo $bioStatus;?></span><br>
+        </form>
+</div>
+
+<div class="equal mobile-expand">
+    <h2>Безопасность</h2>
+        <p style="color: orange">Внимание! При смене пароля все сессии на других устройствах будут автоматически завершены!</p>
+        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post">
+        Старый пароль: <input type="password" name="oldPassword"><br>
+        Новый пароль: <input type="password" name="newPassword"><br>
+        Повторите новый пароль: <input type="password" name="confirmPassword"><br>
+        <button class="button" type="submit" name="changePassword">Сменить пароль</button>
+        <span class="status"><?php echo $passwordStatus;?></span><br>
+        </form><br>
+        <p class="console">Nevka v1.1<br>Avicus Delacroix</p>
+</div>
+
+<script>$(function(){
+    $("#settingsmenu").addClass("active");
+});</script>
+
+<?php include 'footer.php'; ?>
