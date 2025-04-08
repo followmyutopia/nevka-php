@@ -1,6 +1,6 @@
 <?php
 /**
- * NeVK Project v1.0
+ * NeVK Project v1.1
  * 2024-2025 Avicus Delacroix
  */
 

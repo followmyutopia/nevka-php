@@ -1,6 +1,6 @@
 <?php
 /**
- * NeVK Project v1.0
+ * NeVK Project v1.1
  * 2024-2025 Avicus Delacroix
  */
 
@@ -92,7 +92,7 @@ if(isset($_POST['changePassword'])) {
         <button class="button" type="submit" name="changePassword">Сменить пароль</button>
         <span class="status"><?php echo $passwordStatus;?></span><br>
         </form><br>
-        <p class="console">Nevka v1.1<br>Avicus Delacroix</p>
+        <p class="console">Nevka v1.1.5<br>Авикус Делакруа</p>
 </div>
 
 <script>$(function(){

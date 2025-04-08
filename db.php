@@ -1,6 +1,6 @@
 <?php
 /**
- * NeVK Project v1.0 Database inquires
+ * NeVK Project v1.1 Database inquires
  * 2024-2025 Avicus Delacroix
  * 
  * Databases and types (MySQL):
@@ -8,6 +8,8 @@
  * Walls:       id (int), user (int), name (varchar-127), date (varchar-25), text (varchar-1023), image (mediumblob)
  * Messages:    id (int), query (varchar-25), author (int), text (varchar-1023), image (mediumblob), date (varchar-25)
  * Discussions: id (int), topic (varchar-255), author (int), message (varchar-1023), time (int), header (tinyint-1), activity (int)
+ * 
+ * Current database IP: 217.107.219.234
  */
 
 function validate($data) {
@@ -18,10 +20,10 @@ function validate($data) {
 }
 
 function getNameById($id) {
-    $servername = "localhost:3333";
-    $username = "root";
-    $password = "***REMOVED***";
-    $dbname = "nevk";
+    $servername = "217.107.219.234";
+    $username = "nevka";
+    $password = "DB_PASSWORD_HERE";
+    $dbname = "nevka";
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается получить имя пользователя. Код ошибки для поддержки: 133");}
@@ -40,10 +42,10 @@ function getNameById($id) {
 }
 
 function getIdByToken($token) {
-    $servername = "localhost:3333";
-    $username = "root";
-    $password = "***REMOVED***";
-    $dbname = "nevk";
+    $servername = "217.107.219.234";
+    $username = "nevka";
+    $password = "DB_PASSWORD_HERE";
+    $dbname = "nevka";
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается получить ID. Код ошибки для поддержки: 101");}
@@ -62,10 +64,10 @@ function getIdByToken($token) {
 }
 
 function login($login,$hashedPassword) {
-    $servername = "localhost:3333";
-    $username = "root";
-    $password = "***REMOVED***";
-    $dbname = "nevk";
+    $servername = "217.107.219.234";
+    $username = "nevka";
+    $password = "DB_PASSWORD_HERE";
+    $dbname = "nevka";
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается залогиниться. Код ошибки для поддержки: 102");}
@@ -94,10 +96,10 @@ function logout() {
 }
 
 function checkCookie($token) {
-    $servername = "localhost:3333";
-    $username = "root";
-    $password = "***REMOVED***";
-    $dbname = "nevk";
+    $servername = "217.107.219.234";
+    $username = "nevka";
+    $password = "DB_PASSWORD_HERE";
+    $dbname = "nevka";
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается проверить куки. Код ошибки для поддержки: 103");}
@@ -116,10 +118,10 @@ function checkCookie($token) {
 }
 
 function changePassword($loggedUser,$token,$oldPassword,$newPassword) {
-    $servername = "localhost:3333";
-    $username = "root";
-    $password = "***REMOVED***";
-    $dbname = "nevk";
+    $servername = "217.107.219.234";
+    $username = "nevka";
+    $password = "DB_PASSWORD_HERE";
+    $dbname = "nevka";
     $newToken = "User".$loggedUser."-".$newPassword;
 
     $conn = new mysqli($servername, $username, $password, $dbname);
@@ -149,10 +151,10 @@ function changePassword($loggedUser,$token,$oldPassword,$newPassword) {
 }
 
 function getUserData($userId) {
-    $servername = "localhost:3333";
-    $username = "root";
-    $password = "***REMOVED***";
-    $dbname = "nevk";
+    $servername = "217.107.219.234";
+    $username = "nevka";
+    $password = "DB_PASSWORD_HERE";
+    $dbname = "nevka";
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается получить данные пользователя. Код ошибки для поддержки: 106");}
@@ -171,10 +173,10 @@ function getUserData($userId) {
 }
 
 function setAvatar($token,$blob) {
-    $servername = "localhost:3333";
-    $username = "root";
-    $password = "***REMOVED***";
-    $dbname = "nevk";
+    $servername = "217.107.219.234";
+    $username = "nevka";
+    $password = "DB_PASSWORD_HERE";
+    $dbname = "nevka";
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается установить аватар. Код ошибки для поддержки: 107");}
@@ -191,10 +193,10 @@ function setAvatar($token,$blob) {
 }
 
 function setName($token,$newFirstName,$newLastName) {
-    $servername = "localhost:3333";
-    $username = "root";
-    $password = "***REMOVED***";
-    $dbname = "nevk";
+    $servername = "217.107.219.234";
+    $username = "nevka";
+    $password = "DB_PASSWORD_HERE";
+    $dbname = "nevka";
     $query = $newFirstName." ".$newLastName;
 
     $conn = new mysqli($servername, $username, $password, $dbname);
@@ -212,10 +214,10 @@ function setName($token,$newFirstName,$newLastName) {
 }
 
 function setCity($token,$newCity) {
-    $servername = "localhost:3333";
-    $username = "root";
-    $password = "***REMOVED***";
-    $dbname = "nevk";
+    $servername = "217.107.219.234";
+    $username = "nevka";
+    $password = "DB_PASSWORD_HERE";
+    $dbname = "nevka";
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается установить город. Код ошибки для поддержки: 111");}
@@ -232,10 +234,10 @@ function setCity($token,$newCity) {
 }
 
 function setBio($token,$newBio) {
-    $servername = "localhost:3333";
-    $username = "root";
-    $password = "***REMOVED***";
-    $dbname = "nevk";
+    $servername = "217.107.219.234";
+    $username = "nevka";
+    $password = "DB_PASSWORD_HERE";
+    $dbname = "nevka";
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается установить информацию. Код ошибки для поддержки: 113");}
@@ -252,10 +254,10 @@ function setBio($token,$newBio) {
 }
 
 function setStatus($token,$newStatus) {
-    $servername = "localhost:3333";
-    $username = "root";
-    $password = "***REMOVED***";
-    $dbname = "nevk";
+    $servername = "217.107.219.234";
+    $username = "nevka";
+    $password = "DB_PASSWORD_HERE";
+    $dbname = "nevka";
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка. Код ошибки для поддержки: 115");}
@@ -272,10 +274,10 @@ function setStatus($token,$newStatus) {
 }
 
 function updateOnline($token) {
-    $servername = "localhost:3333";
-    $username = "root";
-    $password = "***REMOVED***";
-    $dbname = "nevk";
+    $servername = "217.107.219.234";
+    $username = "nevka";
+    $password = "DB_PASSWORD_HERE";
+    $dbname = "nevka";
     date_default_timezone_set("Europe/Moscow");
     $now = date("d.m.Y в h:i a");
     $timestamp = time();
@@ -295,10 +297,10 @@ function updateOnline($token) {
 }
 
 function addWallEntry($loggedUser, $authorName, $wallText, $wallImage) {
-    $servername = "localhost:3333";
-    $username = "root";
-    $password = "***REMOVED***";
-    $dbname = "nevk";
+    $servername = "217.107.219.234";
+    $username = "nevka";
+    $password = "DB_PASSWORD_HERE";
+    $dbname = "nevka";
     date_default_timezone_set("Europe/Moscow");
     $now = date("d.m.Y в h:i a");
 
@@ -318,10 +320,10 @@ function addWallEntry($loggedUser, $authorName, $wallText, $wallImage) {
 }
 
 function deleteWallEntry($token, $entryId) {
-    $servername = "localhost:3333";
-    $username = "root";
-    $password = "***REMOVED***";
-    $dbname = "nevk";
+    $servername = "217.107.219.234";
+    $username = "nevka";
+    $password = "DB_PASSWORD_HERE";
+    $dbname = "nevka";
     $checkedUser = getIdByToken($token);
 
     $conn = new mysqli($servername, $username, $password, $dbname);
@@ -351,10 +353,10 @@ function deleteWallEntry($token, $entryId) {
 }
 
 function getWallEntries($loggedUser) {
-    $servername = "localhost:3333";
-    $username = "root";
-    $password = "***REMOVED***";
-    $dbname = "nevk";
+    $servername = "217.107.219.234";
+    $username = "nevka";
+    $password = "DB_PASSWORD_HERE";
+    $dbname = "nevka";
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается получить стену. Код ошибки для поддержки: 123");}
@@ -363,13 +365,13 @@ function getWallEntries($loggedUser) {
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
-    while($row = $result->fetch_assoc()) {
-        if ($row["image"] != "") {
-            echo "<div class=\"wallPost\"><p>".$row["date"]." <a href=\"profile.php?id=".$loggedUser.'">'.$row["name"].'</a> написал(а):<span id="'.$row["id"].'" class="delPostButton">×</span></p><img class="postImage" src="'.$row["image"]."\"><p>".$row["text"]."</p></div>";
-        } else {
-            echo "<div class=\"wallPost\"><p>".$row["date"]." <a href=\"profile.php?id=".$loggedUser.'">'.$row["name"].'</a> написал(а):<span id="'.$row["id"].'" class="delPostButton">×</span></p><p>'.$row["text"]."</p></div>";
+        while($row = $result->fetch_assoc()) {
+            if ($row["image"] != "") {
+                echo "<div class=\"wallPost\"><p>".$row["date"]." <a href=\"profile.php?id=".$loggedUser.'">'.$row["name"].'</a> написал(а):<span id="'.$row["id"].'" class="delPostButton">×</span></p><img class="postImage" src="'.$row["image"]."\"><p>".$row["text"]."</p></div>";
+            } else {
+                echo "<div class=\"wallPost\"><p>".$row["date"]." <a href=\"profile.php?id=".$loggedUser.'">'.$row["name"].'</a> написал(а):<span id="'.$row["id"].'" class="delPostButton">×</span></p><p>'.$row["text"]."</p></div>";
+            }
         }
-    }
     } else {
         echo "<p class=\"console\">Записей на стене нет<p>";
     }
@@ -378,10 +380,10 @@ function getWallEntries($loggedUser) {
 }
 
 function signUp($newLogin,$hashedPassword) {
-    $servername = "localhost:3333";
-    $username = "root";
-    $password = "***REMOVED***";
-    $dbname = "nevk";
+    $servername = "217.107.219.234";
+    $username = "nevka";
+    $password = "DB_PASSWORD_HERE";
+    $dbname = "nevka";
     $newToken = $newLogin.$hashedPassword;
 
     $conn = new mysqli($servername, $username, $password, $dbname);
@@ -407,10 +409,10 @@ function signUp($newLogin,$hashedPassword) {
 }
 
 function showUsersTable($query) {
-    $servername = "localhost:3333";
-    $username = "root";
-    $password = "***REMOVED***";
-    $dbname = "nevk";
+    $servername = "217.107.219.234";
+    $username = "nevka";
+    $password = "DB_PASSWORD_HERE";
+    $dbname = "nevka";
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается показать таблицу пользователей. Код ошибки для поддержки: 126");}
@@ -438,10 +440,10 @@ function showUsersTable($query) {
 }
 
 function showChatsTable($token) {
-    $servername = "localhost:3333";
-    $username = "root";
-    $password = "***REMOVED***";
-    $dbname = "nevk";
+    $servername = "217.107.219.234";
+    $username = "nevka";
+    $password = "DB_PASSWORD_HERE";
+    $dbname = "nevka";
     $checkedUser = getIdByToken($token);
     $signature = "M".$checkedUser."M";
 
@@ -477,10 +479,10 @@ function showChatsTable($token) {
 }
 
 function currentUserHeader($userId) {
-    $servername = "localhost:3333";
-    $username = "root";
-    $password = "***REMOVED***";
-    $dbname = "nevk";
+    $servername = "217.107.219.234";
+    $username = "nevka";
+    $password = "DB_PASSWORD_HERE";
+    $dbname = "nevka";
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается отобразить заголовок чата. Код ошибки для поддержки: 128");}
@@ -506,10 +508,10 @@ function currentUserHeader($userId) {
 }
 
 function getMessages($token,$chatUser) {
-    $servername = "localhost:3333";
-    $username = "root";
-    $password = "***REMOVED***";
-    $dbname = "nevk";
+    $servername = "217.107.219.234";
+    $username = "nevka";
+    $password = "DB_PASSWORD_HERE";
+    $dbname = "nevka";
     $query = "";
     $loggedUser = getIdByToken($token);
     if ($loggedUser < $chatUser) {
@@ -551,10 +553,10 @@ function getMessages($token,$chatUser) {
 }
 
 function sendMessage($token, $currentChat, $messageText, $messageImage) {
-    $servername = "localhost:3333";
-    $username = "root";
-    $password = "***REMOVED***";
-    $dbname = "nevk";
+    $servername = "217.107.219.234";
+    $username = "nevka";
+    $password = "DB_PASSWORD_HERE";
+    $dbname = "nevka";
     $loggedUser = getIdByToken($token);
     date_default_timezone_set("Europe/Moscow");
     $now = date("d.m в h:i a");
@@ -581,10 +583,10 @@ function sendMessage($token, $currentChat, $messageText, $messageImage) {
 }
 
 function lastId($loggedUser) {
-    $servername = "localhost:3333";
-    $username = "root";
-    $password = "***REMOVED***";
-    $dbname = "nevk";
+    $servername = "217.107.219.234";
+    $username = "nevka";
+    $password = "DB_PASSWORD_HERE";
+    $dbname = "nevka";
     $signature = "M".$loggedUser."M";
 
     $conn = new mysqli($servername, $username, $password, $dbname);
@@ -606,10 +608,10 @@ function lastId($loggedUser) {
 }
 
 function getDiscussions($query) {
-    $servername = "localhost:3333";
-    $username = "root";
-    $password = "***REMOVED***";
-    $dbname = "nevk";
+    $servername = "217.107.219.234";
+    $username = "nevka";
+    $password = "DB_PASSWORD_HERE";
+    $dbname = "nevka";
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается запросить обсуждения. Код ошибки для поддержки: 134");}
@@ -633,10 +635,10 @@ function getDiscussions($query) {
 }
 
 function getTopicHeader($headerId) {
-    $servername = "localhost:3333";
-    $username = "root";
-    $password = "***REMOVED***";
-    $dbname = "nevk";
+    $servername = "217.107.219.234";
+    $username = "nevka";
+    $password = "DB_PASSWORD_HERE";
+    $dbname = "nevka";
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается запросить обсуждение. Код ошибки для поддержки: 135");}
@@ -657,10 +659,10 @@ function getTopicHeader($headerId) {
 }
 
 function getTopicMessages($header) {
-    $servername = "localhost:3333";
-    $username = "root";
-    $password = "***REMOVED***";
-    $dbname = "nevk";
+    $servername = "217.107.219.234";
+    $username = "nevka";
+    $password = "DB_PASSWORD_HERE";
+    $dbname = "nevka";
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается запросить сообщения в обсуждении. Код ошибки для поддержки: 136");}
@@ -684,10 +686,10 @@ function getTopicMessages($header) {
 }
 
 function sendReply($topic, $who, $what) {
-    $servername = "localhost:3333";
-    $username = "root";
-    $password = "***REMOVED***";
-    $dbname = "nevk";
+    $servername = "217.107.219.234";
+    $username = "nevka";
+    $password = "DB_PASSWORD_HERE";
+    $dbname = "nevka";
     $loggedUser = getIdByToken($who);
     date_default_timezone_set("Europe/Moscow");
     $when = time();
@@ -723,10 +725,10 @@ function sendReply($topic, $who, $what) {
 }
 
 function createTopic($token, $name, $message) {
-    $servername = "localhost:3333";
-    $username = "root";
-    $password = "***REMOVED***";
-    $dbname = "nevk";
+    $servername = "217.107.219.234";
+    $username = "nevka";
+    $password = "DB_PASSWORD_HERE";
+    $dbname = "nevka";
     $loggedUser = getIdByToken($token);
     date_default_timezone_set("Europe/Moscow");
     $when = time();
@@ -747,10 +749,10 @@ function createTopic($token, $name, $message) {
 }
 
 function allowEmail($login) {
-    $servername = "localhost:3333";
-    $username = "root";
-    $password = "***REMOVED***";
-    $dbname = "nevk";
+    $servername = "217.107.219.234";
+    $username = "nevka";
+    $password = "DB_PASSWORD_HERE";
+    $dbname = "nevka";
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается получить имя пользователя. Код ошибки для поддержки: 143");}

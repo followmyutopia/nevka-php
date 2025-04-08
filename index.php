@@ -1,6 +1,6 @@
 <?php
 /**
- * NeVK Project v1.0
+ * NeVK Project v1.1
  * 2024-2025 Avicus Delacroix
  */
 
@@ -96,8 +96,8 @@ $(function(){
     <div id="login" class="<?php echo $loginClass ?>">
         <h2>Войти:</h2>
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post">
-            <label for="login">Логин:</label><br>
-            <input type="text" name="login"><br>
+            <label for="login">Электронная почта:</label><br>
+            <input type="email" name="login"><br>
             <label for="password">Пароль:</label><br>
             <input type="password" name="password"><br>
             <br>
@@ -114,7 +114,7 @@ $(function(){
             <button class="button wide" type="submit" name="confirmEmail">Выслать код подтверждения</button>
         </form>
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post" class="<?php echo $afterConfirmation ?>">
-            Электронная почта: <input type="text" name="newLogin" value="<?php echo $_SESSION['email'] ?>" disabled><br>
+            Электронная почта: <input type="email" name="newLogin" value="<?php echo $_SESSION['email'] ?>" disabled><br>
             Код подтверждения: <input type="text" name="captcha"><br>
             Новый пароль: <input type="password" name="newPassword"><br>
             Повторите пароль: <input type="password" name="confirmPassword"><br>

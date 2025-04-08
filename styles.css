@@ -1,5 +1,5 @@
 /**
- * NeVK Project v1.0
+ * NeVK Project v1.1
  * 2024-2025 Avicus Delacroix
  */
 
@@ -24,7 +24,7 @@
 
 body {
     /* background-color: #141E30; */
-    background-color: #142730;
+    background-color: #142830;
     color: rgba(255, 255, 255, 0.9);
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande',
         'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
@@ -264,6 +264,7 @@ td a {
     white-space: nowrap;
     width:1%;
     vertical-align:top;
+    max-width: 30%;
 }
 
 #chatWindow {
@@ -422,6 +423,15 @@ hr {
     .mobile-expand {
         width: 100%;
     }
+    .b {
+        white-space: normal;
+    }
+    .right {
+        padding: 1% 0%;
+    }
+    header {
+        box-shadow: none;
+    }
     header a, header span {
         float: none;
     }
@@ -429,7 +439,7 @@ hr {
         float: none;
     }
     .solid {
-        background-color: rgba(255, 255, 255, 0.8);
+        background-color: rgba(15, 30, 36, 0.99);
     }
     #mainmenu {
         display: none;
@@ -440,7 +450,7 @@ hr {
     #togglemenu {
         display: block;
         align-self: center;
-        float: right
+        float: right;
     }
     #mainlogo {
         float: left;
@@ -453,7 +463,7 @@ hr {
         background-color: rgba(255, 255, 255, 0.5);
     }
     .solid a {
-        color: rgba(0, 0, 0, 0.7);
+        color: rgba(255, 255, 255, 0.8);
     }
     #peopleList {
         width: 100%;
@@ -485,5 +495,8 @@ hr {
     .buttonpad {
         width: 98%;
         margin: 2% 1%;
+    }
+    .e {
+        white-space: normal;
     }
 }
