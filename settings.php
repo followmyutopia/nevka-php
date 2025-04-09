@@ -1,6 +1,6 @@
 <?php
 /**
- * NeVK Project v1.1
+ * Nevka Project v1.2
  * 2024-2025 Avicus Delacroix
  */
 
@@ -60,6 +60,11 @@ if(isset($_POST['changePassword'])) {
         $passwordStatus = changePassword($loggedUser,$_COOKIE["user_token"],sha1($oldPassword),sha1($newPassword));
     }
 }
+
+if(isset($_POST['setTheme'])) {
+    $_SESSION['theme'] = "#141E30";
+    echo "<script>alert('тема');</script>";
+}
 ?>
 
 <div class="equal mobile-expand">
@@ -91,11 +96,25 @@ if(isset($_POST['changePassword'])) {
         Повторите новый пароль: <input type="password" name="confirmPassword"><br>
         <button class="button" type="submit" name="changePassword">Сменить пароль</button>
         <span class="status"><?php echo $passwordStatus;?></span><br>
-        </form><br>
-        <p class="console">Nevka v1.1.5<br>Авикус Делакруа</p>
+        </form>
+    <h2>Установить тему</h2>
+        
+    <div class="setTheme" style="background-color:rgb(20, 20, 20)" onclick='setTheme("rgb(20, 20, 20)")'></div>
+    <div class="setTheme" style="background-color:rgb(20, 30, 48)" onclick='setTheme("rgb(20, 30, 48)")'></div>
+    <div class="setTheme" style="background-color:rgb(20, 41, 48)" onclick='setTheme("rgb(20, 41, 48)")'></div>
+    <div class="setTheme" style="background-color:rgb(36, 20, 48)" onclick='setTheme("rgb(36, 20, 48)")'></div>
+        
+        
 </div>
+<span class="clearfix"></span>
+<p class="console">Nevka v1.2<br>Авикус Делакруа</p>
 
-<script>$(function(){
+<script>
+function setTheme(color) {
+    document.cookie = "theme="+color;
+    window.location.reload();
+}
+$(function(){
     $("#settingsmenu").addClass("active");
 });</script>
 

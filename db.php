@@ -1,6 +1,6 @@
 <?php
 /**
- * NeVK Project v1.1 Database inquires
+ * Nevka Project v1.2 Database inquires
  * 2024-2025 Avicus Delacroix
  * 
  * Databases and types (MySQL):
@@ -561,6 +561,7 @@ function sendMessage($token, $currentChat, $messageText, $messageImage) {
     date_default_timezone_set("Europe/Moscow");
     $now = date("d.m в h:i a");
     $query = "";
+    $timestamp = time();
     if ($loggedUser < $currentChat) {
         $query = "M".$loggedUser."M".$currentChat."M";
     } else {
@@ -570,8 +571,8 @@ function sendMessage($token, $currentChat, $messageText, $messageImage) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается отправить сообщение. Код ошибки для поддержки: 130");}
 
-    $sql = "INSERT INTO messages (query, author, text, image, date)
-        VALUES ('$query', '$loggedUser', '$messageText', '$messageImage', '$now')";
+    $sql = "INSERT INTO messages (query, author, text, image, date, timestamp)
+        VALUES ('$query', '$loggedUser', '$messageText', '$messageImage', '$now', '$timestamp')";
 
     if ($conn->query($sql) === TRUE) {
         return;

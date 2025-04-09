@@ -10,8 +10,8 @@
     <title>Невка</title>
     <meta name="description" content="Социальная сеть Невка">
   </head>
-<body>
-  <header>
+<body style='background-color: <?php echo $_COOKIE["theme"]?>'>
+  <header id="header">
     <span id="mainlogo">Невка</span>
     <button class="button" id="togglemenu">Меню</button>
     <div id="mainmenu">
@@ -31,4 +31,8 @@
       });
     });
   </script>
+  <?php
+    session_start();
+    if (!isset($_COOKIE["theme"])) { $_COOKIE["theme"] = "#141E30";}
+  ?>
 <div class="content">

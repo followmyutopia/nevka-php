@@ -1,5 +1,5 @@
 /**
- * NeVK Project v1.1
+ * Nevka Project v1.2
  * 2024-2025 Avicus Delacroix
  */
 
@@ -23,8 +23,7 @@
 }
 
 body {
-    /* background-color: #141E30; */
-    background-color: #142830;
+    background-color: #141E30;
     color: rgba(255, 255, 255, 0.9);
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande',
         'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
@@ -419,6 +418,16 @@ hr {
     margin: auto;
 }
 
+.setTheme {
+    width: 10%;
+    aspect-ratio: 1/1;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    float: left;
+    margin-left: 1%;
+}
+
 @media only screen and (max-width: 777px) {
     .mobile-expand {
         width: 100%;
@@ -439,7 +448,8 @@ hr {
         float: none;
     }
     .solid {
-        background-color: rgba(15, 30, 36, 0.99);
+        background-color: rgba(35, 35, 35, 0.9);
+        position: absolute;
     }
     #mainmenu {
         display: none;

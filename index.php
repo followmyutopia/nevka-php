@@ -1,13 +1,12 @@
 <?php
 /**
- * NeVK Project v1.1
+ * Nevka Project v1.2
  * 2024-2025 Avicus Delacroix
  */
 
 include 'db.php';
 include 'header.php';
 include 'mailer.php';
-session_start();
 
 if(isset($_COOKIE["user_token"])) { header("Refresh:0; url=profile.php"); }
 
