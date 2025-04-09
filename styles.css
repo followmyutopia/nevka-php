@@ -428,6 +428,12 @@ hr {
     margin-left: 1%;
 }
 
+#newMessageDot {
+    padding: 0;
+    float: right;
+    color: orange;
+}
+
 @media only screen and (max-width: 777px) {
     .mobile-expand {
         width: 100%;

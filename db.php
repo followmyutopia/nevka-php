@@ -769,4 +769,36 @@ function allowEmail($login) {
 
     $conn->close();
 }
+
+function newMessageAvailable($id) {
+    $servername = "217.107.219.234";
+    $username = "nevka";
+    $password = "DB_PASSWORD_HERE";
+    $dbname = "nevka";
+    $lastonline = 0;
+    $lastmessage = 0;
+    $signature = "M".$id."M";
+
+    $conn = new mysqli($servername, $username, $password, $dbname);
+    if ($conn->connect_error) { die("Ошибка подключения: не получается проверить новые сообщения. Код ошибки для поддержки: 144");}
+
+    $sql = "SELECT timestamp FROM users WHERE id='$id' LIMIT 1";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_row();
+        $lastonline = $row["0"];
+
+        $newSql = "SELECT timestamp FROM messages WHERE query LIKE '%$signature%' ORDER BY id DESC LIMIT 1";
+        $newResult = $conn->query($newSql);
+        if ($newResult->num_rows > 0) {
+            $newRow = $newResult->fetch_row();
+            $lastmessage = $newRow["0"];
+
+            if ($lastmessage > $lastonline) {
+                echo "&nbsp;<b>•</b>";
+            } else { echo ""; }
+        } else { echo ""; }
+    } else { echo ""; }
+}
 ?>

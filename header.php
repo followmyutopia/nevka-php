@@ -17,7 +17,7 @@
     <div id="mainmenu">
       <a id="profilemenu" href="profile.php">Моя страница</a>
       <a id="peoplemenu" href="people.php">Люди</a>
-      <a id="messagesmenu" href="messages.php">Сообщения</a>
+      <a id="messagesmenu" href="messages.php">Сообщения<span id="newMessageDot"></span></a>
       <a id="discussionsmenu" href="discussions.php">Обсуждения</a>
       <a id="settingsmenu" href="settings.php">Настройки</a>
       <a id="logoutbutton" href="<?php echo htmlspecialchars($_SERVER["PHP_SELF"])."?logout";?>">Выход</a>

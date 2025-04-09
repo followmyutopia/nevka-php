@@ -103,11 +103,12 @@ if(isset($_POST['setTheme'])) {
     <div class="setTheme" style="background-color:rgb(20, 30, 48)" onclick='setTheme("rgb(20, 30, 48)")'></div>
     <div class="setTheme" style="background-color:rgb(20, 41, 48)" onclick='setTheme("rgb(20, 41, 48)")'></div>
     <div class="setTheme" style="background-color:rgb(36, 20, 48)" onclick='setTheme("rgb(36, 20, 48)")'></div>
+    <div class="setTheme" style="background-color:rgb(48, 20, 25)" onclick='setTheme("rgb(48, 20, 25)")'></div>
         
         
 </div>
 <span class="clearfix"></span>
-<p class="console">Nevka v1.2<br>Авикус Делакруа</p>
+<p class="console">Nevka v1.2.2<br>Авикус Делакруа</p>
 
 <script>
 function setTheme(color) {

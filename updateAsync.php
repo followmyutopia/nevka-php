@@ -5,11 +5,20 @@
  */
 
 include 'db.php';
-$user = validate($_POST['currentChat']);
+$user = $type = "";
 $type = validate($_POST['type']);
 $loggedUser = checkCookie($_COOKIE["user_token"]);
 
-if ($type == 0) { getMessages($_COOKIE["user_token"],$user); }
-else if ($type == 1) { getTopicMessages($user); }
+if ($type == 0) {
+    $user = validate($_POST['currentChat']);
+    getMessages($_COOKIE["user_token"],$user);
+}
+else if ($type == 1) {
+    $user = validate($_POST['currentChat']);
+    getTopicMessages($user);
+}
+else if ($type == 2) {
+    newMessageAvailable($loggedUser);
+}
 else { logout(); }
 ?>
