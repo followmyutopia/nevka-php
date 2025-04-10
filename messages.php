@@ -91,7 +91,7 @@ if(isset($_POST['sendMessage'])) {
                 });
             }
         });
-    },333);
+    },500);
     $('textarea').keypress(function (e) { if(e.which == 13) { $('#send').click(); } });
     if (<?php echo $currentChat ?> != 0) { $("#pplNotice").hide(); }
 });</script>
