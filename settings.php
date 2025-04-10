@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka Project v1.3
+ * Nevka Project v1.4
  * 2024-2025 Avicus Delacroix
  */
 
@@ -109,7 +109,7 @@ if(isset($_POST['setTheme'])) {
     <p id="notificationButton" style="color: orange; text-decoration: underline">Beta: уведомления о сообщениях (только компьтер)</p>
 </div>
 <span class="clearfix"></span>
-<p class="console">Nevka v1.3.10<br><a href="https://nevka.site/profile.php?id=1" style="text-decoration: none">Авикус Делакруа</a></p>
+<p class="console">Nevka v1.4.0<br><a href="https://nevka.site/profile.php?id=1" style="text-decoration: none">Авикус Делакруа</a></p>
 
 <script>
 function setTheme(color) {

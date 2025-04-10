@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka Project v1.3
+ * Nevka Project v1.4
  * 2024-2025 Avicus Delacroix
  */
 
@@ -83,12 +83,16 @@ if(isset($_POST['sendMessage'])) {
             $("#chatWindow").html(data).scrollTop($('#chatWindow')[0].scrollHeight);
         }
     });
+    var buffer = 0;
     window.setInterval(function(){
         $.post("updateAsync.php", { type: 2 }, function(data){
             if (data > 0) {
-                $.post("updateAsync.php", { currentChat: <?php echo $currentChat ?>, type: 0 }, function(e){
-                    $("#chatWindow").html(e).scrollTop($('#chatWindow')[0].scrollHeight);
-                });
+                if (data != buffer) {
+                    $.post("updateAsync.php", { currentChat: <?php echo $currentChat ?>, type: 0 }, function(e){
+                        $("#chatWindow").html(e).scrollTop($('#chatWindow')[0].scrollHeight);
+                    });
+                }
+                buffer = data;
             }
         });
     },500);

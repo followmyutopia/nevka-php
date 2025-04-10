@@ -1,5 +1,5 @@
 /**
- * Nevka Project v1.3
+ * Nevka Project v1.4
  * 2024-2025 Avicus Delacroix
  */
 
@@ -20,7 +20,6 @@
     position: absolute;
     bottom: 4px;
     right: 4px;
-    z-index: -1;
 }
 
 body {
@@ -298,7 +297,6 @@ td a {
     height: fit-content;
     width: fit-content;
     position: relative;
-    z-index: -1;
 }
 
 .me {

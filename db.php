@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka Project v1.3 Database inquires
+ * Nevka Project v1.4 Database inquires
  * 2024-2025 Avicus Delacroix
  * 
  * Databases and types (MySQL):
@@ -23,7 +23,7 @@ function validate($data) {
 }
 
 function getNameById($id) {
-    $servername = "217.107.219.234";
+    $servername = "localhost";
     $username = "nevka";
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";
@@ -45,7 +45,7 @@ function getNameById($id) {
 }
 
 function getIdByToken($token) {
-    $servername = "217.107.219.234";
+    $servername = "localhost";
     $username = "nevka";
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";
@@ -67,7 +67,7 @@ function getIdByToken($token) {
 }
 
 function login($login,$hashedPassword) {
-    $servername = "217.107.219.234";
+    $servername = "localhost";
     $username = "nevka";
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";
@@ -99,7 +99,7 @@ function logout() {
 }
 
 function checkCookie($token) {
-    $servername = "217.107.219.234";
+    $servername = "localhost";
     $username = "nevka";
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";
@@ -121,7 +121,7 @@ function checkCookie($token) {
 }
 
 function changePassword($loggedUser,$token,$oldPassword,$newPassword) {
-    $servername = "217.107.219.234";
+    $servername = "localhost";
     $username = "nevka";
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";
@@ -154,7 +154,7 @@ function changePassword($loggedUser,$token,$oldPassword,$newPassword) {
 }
 
 function getUserData($userId) {
-    $servername = "217.107.219.234";
+    $servername = "localhost";
     $username = "nevka";
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";
@@ -176,7 +176,7 @@ function getUserData($userId) {
 }
 
 function setAvatar($token,$blob) {
-    $servername = "217.107.219.234";
+    $servername = "localhost";
     $username = "nevka";
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";
@@ -196,7 +196,7 @@ function setAvatar($token,$blob) {
 }
 
 function setName($token,$newFirstName,$newLastName) {
-    $servername = "217.107.219.234";
+    $servername = "localhost";
     $username = "nevka";
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";
@@ -217,7 +217,7 @@ function setName($token,$newFirstName,$newLastName) {
 }
 
 function setCity($token,$newCity) {
-    $servername = "217.107.219.234";
+    $servername = "localhost";
     $username = "nevka";
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";
@@ -237,7 +237,7 @@ function setCity($token,$newCity) {
 }
 
 function setBio($token,$newBio) {
-    $servername = "217.107.219.234";
+    $servername = "localhost";
     $username = "nevka";
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";
@@ -257,7 +257,7 @@ function setBio($token,$newBio) {
 }
 
 function setStatus($token,$newStatus) {
-    $servername = "217.107.219.234";
+    $servername = "localhost";
     $username = "nevka";
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";
@@ -277,7 +277,7 @@ function setStatus($token,$newStatus) {
 }
 
 function updateOnline($token) {
-    $servername = "217.107.219.234";
+    $servername = "localhost";
     $username = "nevka";
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";
@@ -299,7 +299,7 @@ function updateOnline($token) {
 }
 
 function addWallEntry($token, $wallText, $wallImage) {
-    $servername = "217.107.219.234";
+    $servername = "localhost";
     $username = "nevka";
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";
@@ -322,7 +322,7 @@ function addWallEntry($token, $wallText, $wallImage) {
 }
 
 function deleteWallEntry($token, $entryId) {
-    $servername = "217.107.219.234";
+    $servername = "localhost";
     $username = "nevka";
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";
@@ -355,7 +355,7 @@ function deleteWallEntry($token, $entryId) {
 }
 
 function getWallEntries($loggedUser) {
-    $servername = "217.107.219.234";
+    $servername = "localhost";
     $username = "nevka";
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";
@@ -383,7 +383,7 @@ function getWallEntries($loggedUser) {
 }
 
 function signUp($newLogin,$hashedPassword) {
-    $servername = "217.107.219.234";
+    $servername = "localhost";
     $username = "nevka";
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";
@@ -412,7 +412,7 @@ function signUp($newLogin,$hashedPassword) {
 }
 
 function showUsersTable($query) {
-    $servername = "217.107.219.234";
+    $servername = "localhost";
     $username = "nevka";
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";
@@ -443,7 +443,7 @@ function showUsersTable($query) {
 }
 
 function showChatsTable($token) {
-    $servername = "217.107.219.234";
+    $servername = "localhost";
     $username = "nevka";
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";
@@ -482,7 +482,7 @@ function showChatsTable($token) {
 }
 
 function currentUserHeader($userId) {
-    $servername = "217.107.219.234";
+    $servername = "localhost";
     $username = "nevka";
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";
@@ -511,7 +511,7 @@ function currentUserHeader($userId) {
 }
 
 function getMessages($token,$chatUser) {
-    $servername = "217.107.219.234";
+    $servername = "localhost";
     $username = "nevka";
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";
@@ -526,7 +526,7 @@ function getMessages($token,$chatUser) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается отобразить сообщения. Код ошибки для поддержки: 129");}
 
-    $sql = "SELECT query, author, text, image, date FROM messages WHERE query='$query' ORDER BY id LIMIT 1000";
+    $sql = "SELECT * FROM (SELECT id, query, author, text, image, date FROM messages WHERE query='$query' ORDER BY id DESC LIMIT 150) X ORDER BY id ASC;";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -556,7 +556,7 @@ function getMessages($token,$chatUser) {
 }
 
 function sendMessage($token, $currentChat, $messageText, $messageImage) {
-    $servername = "217.107.219.234";
+    $servername = "localhost";
     $username = "nevka";
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";
@@ -591,7 +591,7 @@ function sendMessage($token, $currentChat, $messageText, $messageImage) {
 }
 
 function lastId($loggedUser) {
-    $servername = "217.107.219.234";
+    $servername = "localhost";
     $username = "nevka";
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";
@@ -616,7 +616,7 @@ function lastId($loggedUser) {
 }
 
 function getDiscussions($query) {
-    $servername = "217.107.219.234";
+    $servername = "localhost";
     $username = "nevka";
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";
@@ -643,7 +643,7 @@ function getDiscussions($query) {
 }
 
 function getTopicHeader($headerId) {
-    $servername = "217.107.219.234";
+    $servername = "localhost";
     $username = "nevka";
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";
@@ -667,7 +667,7 @@ function getTopicHeader($headerId) {
 }
 
 function getTopicMessages($header) {
-    $servername = "217.107.219.234";
+    $servername = "localhost";
     $username = "nevka";
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";
@@ -694,7 +694,7 @@ function getTopicMessages($header) {
 }
 
 function sendReply($topic, $who, $what) {
-    $servername = "217.107.219.234";
+    $servername = "localhost";
     $username = "nevka";
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";
@@ -732,7 +732,7 @@ function sendReply($topic, $who, $what) {
 }
 
 function createTopic($token, $name, $message) {
-    $servername = "217.107.219.234";
+    $servername = "localhost";
     $username = "nevka";
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";
@@ -755,7 +755,7 @@ function createTopic($token, $name, $message) {
 }
 
 function allowEmail($login) {
-    $servername = "217.107.219.234";
+    $servername = "localhost";
     $username = "nevka";
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";
@@ -776,7 +776,7 @@ function allowEmail($login) {
 }
 
 function newMessageAvailable($id) {
-    $servername = "217.107.219.234";
+    $servername = "localhost";
     $username = "nevka";
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";
@@ -805,7 +805,7 @@ function newMessageAvailable($id) {
 }
 
 function userExists($id) {
-    $servername = "217.107.219.234";
+    $servername = "localhost";
     $username = "nevka";
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";

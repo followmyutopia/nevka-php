@@ -7,8 +7,7 @@
                 $("#newMessageDot").html(data);
                 if (notificationCounter != data) {
                     new Notification("Новых сообщений в Невке: " + data, {
-                        tag: "newMessageAlert",
-                        requireInteraction: true
+                        tag: "newMessageAlert"
                     });
                     notificationCounter = data;
                 }
