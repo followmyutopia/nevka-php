@@ -5,8 +5,8 @@
  * 
  * Databases and types (MySQL):
  * Users:       id (int), login (varchar-63), password (varchar-40), token (varchar-127), avatar (mediumblob), firstname (varchar-63), lastname (varchar-63), status (varchar-127), city (varchar-63), bio (varchar-255), online (varchar-25), timestamp (int), search (varchar-127)
- * Walls:       id (int), user (int), name (varchar-127), date (varchar-25), text (varchar-1023), image (mediumblob)
- * Messages:    id (int), query (varchar-25), author (int), text (varchar-1023), image (mediumblob), date (varchar-25)
+ * Walls:       id (int), user (int), date (varchar-25), text (varchar-1023), image (mediumblob)
+ * Messages:    id (int), query (varchar-25), author (int), text (varchar-1023), image (mediumblob), date (varchar-25), timestamp (int)
  * Discussions: id (int), topic (varchar-255), author (int), message (varchar-1023), time (int), header (tinyint-1), activity (int)
  * 
  * Current database IP: 217.107.219.234

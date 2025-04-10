@@ -106,10 +106,10 @@ if(isset($_POST['setTheme'])) {
     <div class="setTheme" style="background-color:rgb(48, 20, 25)" onclick='setTheme("rgb(48, 20, 25)")'></div>
     
     <span class="clearfix"></span>
-    <p id="notificationButton" style="color: orange; text-decoration: underline">Beta: включить оповещения о сообщениях</p>
+    <p id="notificationButton" style="color: orange; text-decoration: underline">Beta: уведомления о сообщениях (только компьтер)</p>
 </div>
 <span class="clearfix"></span>
-<p class="console">Nevka v1.3.4<br><a href="https://nevka.site/profile.php?id=1" style="text-decoration: none">Авикус Делакруа</a></p>
+<p class="console">Nevka v1.3.10<br><a href="https://nevka.site/profile.php?id=1" style="text-decoration: none">Авикус Делакруа</a></p>
 
 <script>
 function setTheme(color) {
@@ -121,7 +121,7 @@ $(function(){
     $("#notificationButton").click(() => {
         Notification.requestPermission().then(perm => {
             if (perm === "granted") {
-                alert("Внимание! Оповещения находятся в стадии разработки.\n\nОповещения о количестве новых сообщений будут работать ТОЛЬКО если открыта любая страница соцсети в браузере (можно в фоне).");
+                alert("Внимание! Уведомления находятся в стадии разработки.\n\nУведомления о количестве новых сообщений будут работать ТОЛЬКО если открыта любая страница соцсети в браузере (можно в фоне).");
             }
         });
     });
