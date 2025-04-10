@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka Project v1.2
+ * Nevka Project v1.3
  * 2024-2025 Avicus Delacroix
  */
 
@@ -17,7 +17,7 @@ $newFirstName = $newLastName = $nameStatus = $cityStatus = $bioStatus = $passwor
 if(isset($_POST['setName'])) {
     $newFirstName = validate($_POST["firstname"]);
     $newLastName = validate($_POST["lastname"]);
-    if (strlen($newFirstName) > 63 || strlen($newLastName) > 63) {$nameStatus = "Поля максимум 63 символа";}
+    if (mb_strlen($newFirstName) > 63 || strlen($newLastName) > 63) {$nameStatus = "Поля максимум 63 символа";}
     else {
         if (empty($newFirstName) && empty($newLastName)) {
             $nameStatus = "Введите данные";
@@ -33,7 +33,7 @@ if(isset($_POST['setName'])) {
 
 if(isset($_POST['setCity'])) {
     $newCity = validate($_POST["city"]);
-    if (strlen($newCity) > 63) {$cityStatus = "Максимум 63 символа";}
+    if (mb_strlen($newCity) > 63) {$cityStatus = "Максимум 63 символа";}
     else {
         $cityStatus = setCity($_COOKIE["user_token"],$newCity);
     }
@@ -41,7 +41,7 @@ if(isset($_POST['setCity'])) {
 
 if(isset($_POST['setBio'])) {
     $newBio = validate($_POST["bio"]);
-    if (strlen($newBio) > 255) {$bioStatus = "Максимум 255 символов";}
+    if (mb_strlen($newBio) > 255) {$bioStatus = "Максимум 255 символов";}
     else {
         $bioStatus = setBio($_COOKIE["user_token"],$newBio);
     }
@@ -108,7 +108,7 @@ if(isset($_POST['setTheme'])) {
         
 </div>
 <span class="clearfix"></span>
-<p class="console">Nevka v1.2.2<br>Авикус Делакруа</p>
+<p class="console">Nevka v1.3.1<br>Авикус Делакруа</p>
 
 <script>
 function setTheme(color) {

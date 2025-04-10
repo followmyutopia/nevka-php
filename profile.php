@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka Project v1.2
+ * Nevka Project v1.3
  * 2024-2025 Avicus Delacroix
  */
 
@@ -16,9 +16,12 @@ if (!isset($loggedUserData[1]) || !isset($loggedUserData[2])) {header("Refresh:0
 
 $showUser = $show = $activeMenu = $userData = $status = $wallStatus = $city = $bio = $personalElement = $publicElement = $online = "";
 
-if(!isset($_GET['id'])) { $showUser = $loggedUser; $activeMenu = "#profilemenu"; }
+if(!isset($_GET['id'])) {$showUser = $loggedUser; $activeMenu = "#profilemenu"; }
 else if ($_GET['id'] == $loggedUser) { $showUser = validate($_GET['id']); $activeMenu = "#profilemenu"; }
-else { $showUser = validate($_GET['id']); $activeMenu = "#peoplemenu"; }
+else {
+    if (userExists($_GET['id'])) { $showUser = validate($_GET['id']); $activeMenu = "#peoplemenu"; }
+    else { $showUser = $loggedUser; $activeMenu = "#profilemenu"; }
+}
 
 $userData = getUserData($showUser);
 
@@ -60,7 +63,7 @@ if(isset($_POST["setAvatar"])) {
 
 if(isset($_POST['setStatus'])) {
     $newStatus = validate($_POST["status"]);
-    if (strlen($newStatus) > 127) {$wallStatus = "Статус максимум 127 символа";}
+    if (mb_strlen($newStatus) > 127) {$wallStatus = "Статус максимум 127 символа";}
     else {
         $userData[3] = setStatus($_COOKIE["user_token"],$newStatus);
     }
@@ -68,7 +71,7 @@ if(isset($_POST['setStatus'])) {
 
 if(isset($_POST['postWall'])) {
     $wallText = validate($_POST["message"]);
-    if (strlen($wallText) > 1023) {$wallStatus = "Максимум 1023 символа";}
+    if (mb_strlen($wallText) > 1023) {$wallStatus = "Максимум 1023 символа";}
     else {
         $target_file = "tmp/" . basename($_FILES["fileToUpload"]["name"]);
         $uploadOk = 1;
@@ -82,10 +85,10 @@ if(isset($_POST['postWall'])) {
             if ($uploadOk == 1) {
                 $source = file_get_contents($_FILES["fileToUpload"]["tmp_name"]);
                 $blob = 'data:image/jpeg;base64,'.base64_encode($source);
-                $wallStatus = addWallEntry($loggedUser, $showName, $wallText, $blob);
+                $wallStatus = addWallEntry($_COOKIE["user_token"], $wallText, $blob);
             }
         } else {
-            if ($wallText != "") { $wallStatus = addWallEntry($loggedUser, $showName, $wallText, $blob); }
+            if ($wallText != "") { $wallStatus = addWallEntry($_COOKIE["user_token"], $wallText, $blob); }
             else { $wallStatus = "Введите текст"; }
         }
         }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka Project v1.2 Database inquires
+ * Nevka Project v1.3 Database inquires
  * 2024-2025 Avicus Delacroix
  * 
  * Databases and types (MySQL):
@@ -11,6 +11,9 @@
  * 
  * Current database IP: 217.107.219.234
  */
+
+date_default_timezone_set("Europe/Moscow");
+error_reporting(0);
 
 function validate($data) {
     $data = trim($data);
@@ -278,7 +281,6 @@ function updateOnline($token) {
     $username = "nevka";
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";
-    date_default_timezone_set("Europe/Moscow");
     $now = date("d.m.Y в h:i a");
     $timestamp = time();
 
@@ -296,19 +298,19 @@ function updateOnline($token) {
     $conn->close();
 }
 
-function addWallEntry($loggedUser, $authorName, $wallText, $wallImage) {
+function addWallEntry($token, $wallText, $wallImage) {
     $servername = "217.107.219.234";
     $username = "nevka";
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";
-    date_default_timezone_set("Europe/Moscow");
     $now = date("d.m.Y в h:i a");
+    $loggedUser = getIdByToken($token);
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается опубликовать стену. Код ошибки для поддержки: 119");}
 
-    $sql = "INSERT INTO walls (user, name, date, text, image)
-        VALUES ('$loggedUser', '$authorName', '$now', '$wallText', '$wallImage')";
+    $sql = "INSERT INTO walls (user, date, text, image)
+        VALUES ('$loggedUser', '$now', '$wallText', '$wallImage')";
 
     if ($conn->query($sql) === TRUE) {
         header("Refresh:0");
@@ -361,15 +363,16 @@ function getWallEntries($loggedUser) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается получить стену. Код ошибки для поддержки: 123");}
 
-    $sql = "SELECT id, name, date, text, image FROM walls WHERE user='$loggedUser' ORDER BY id DESC LIMIT 100";
+    $sql = "SELECT id, user, date, text, image FROM walls WHERE user='$loggedUser' ORDER BY id DESC LIMIT 100";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
         while($row = $result->fetch_assoc()) {
+            $authorName = getNameById($row["user"]);
             if ($row["image"] != "") {
-                echo "<div class=\"wallPost\"><p>".$row["date"]." <a href=\"profile.php?id=".$loggedUser.'">'.$row["name"].'</a> написал(а):<span id="'.$row["id"].'" class="delPostButton">×</span></p><img class="postImage" src="'.$row["image"]."\"><p>".$row["text"]."</p></div>";
+                echo "<div class=\"wallPost\"><p>".$row["date"]." <a href=\"profile.php?id=".$loggedUser.'">'.$authorName.'</a> написал(а):<span id="'.$row["id"].'" class="delPostButton">×</span></p><img class="postImage" src="'.$row["image"]."\"><p>".$row["text"]."</p></div>";
             } else {
-                echo "<div class=\"wallPost\"><p>".$row["date"]." <a href=\"profile.php?id=".$loggedUser.'">'.$row["name"].'</a> написал(а):<span id="'.$row["id"].'" class="delPostButton">×</span></p><p>'.$row["text"]."</p></div>";
+                echo "<div class=\"wallPost\"><p>".$row["date"]." <a href=\"profile.php?id=".$loggedUser.'">'.$authorName.'</a> написал(а):<span id="'.$row["id"].'" class="delPostButton">×</span></p><p>'.$row["text"]."</p></div>";
             }
         }
     } else {
@@ -558,29 +561,33 @@ function sendMessage($token, $currentChat, $messageText, $messageImage) {
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";
     $loggedUser = getIdByToken($token);
-    date_default_timezone_set("Europe/Moscow");
     $now = date("d.m в h:i a");
     $query = "";
     $timestamp = time();
-    if ($loggedUser < $currentChat) {
-        $query = "M".$loggedUser."M".$currentChat."M";
+
+    if (userExists($currentChat)) {
+        if ($loggedUser < $currentChat) {
+            $query = "M".$loggedUser."M".$currentChat."M";
+        } else {
+            $query = "M".$currentChat."M".$loggedUser."M";
+        }
+    
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        if ($conn->connect_error) { die("Ошибка подключения: не получается отправить сообщение. Код ошибки для поддержки: 130");}
+    
+        $sql = "INSERT INTO messages (query, author, text, image, date, timestamp)
+            VALUES ('$query', '$loggedUser', '$messageText', '$messageImage', '$now', '$timestamp')";
+    
+        if ($conn->query($sql) === TRUE) {
+            return;
+        } else {
+            return "Ошибка базы данных: невозможно отправить сообщение. Код ошибки для поддержки: 131";
+        }
+    
+        $conn->close();
     } else {
-        $query = "M".$currentChat."M".$loggedUser."M";
+        echo "<script>alert('Панамарь, опять балуешься?');</script>";
     }
-
-    $conn = new mysqli($servername, $username, $password, $dbname);
-    if ($conn->connect_error) { die("Ошибка подключения: не получается отправить сообщение. Код ошибки для поддержки: 130");}
-
-    $sql = "INSERT INTO messages (query, author, text, image, date, timestamp)
-        VALUES ('$query', '$loggedUser', '$messageText', '$messageImage', '$now', '$timestamp')";
-
-    if ($conn->query($sql) === TRUE) {
-        return;
-    } else {
-        return "Ошибка базы данных: невозможно отправить сообщение. Код ошибки для поддержки: 131";
-    }
-
-    $conn->close();
 }
 
 function lastId($loggedUser) {
@@ -692,7 +699,6 @@ function sendReply($topic, $who, $what) {
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";
     $loggedUser = getIdByToken($who);
-    date_default_timezone_set("Europe/Moscow");
     $when = time();
 
     $conn = new mysqli($servername, $username, $password, $dbname);
@@ -731,7 +737,6 @@ function createTopic($token, $name, $message) {
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";
     $loggedUser = getIdByToken($token);
-    date_default_timezone_set("Europe/Moscow");
     $when = time();
 
     $conn = new mysqli($servername, $username, $password, $dbname);
@@ -789,16 +794,33 @@ function newMessageAvailable($id) {
         $row = $result->fetch_row();
         $lastonline = $row["0"];
 
-        $newSql = "SELECT timestamp FROM messages WHERE query LIKE '%$signature%' ORDER BY id DESC LIMIT 1";
+        $newSql = "SELECT timestamp FROM messages WHERE query LIKE '%$signature%' AND timestamp > '$lastonline'
+            ORDER BY id DESC LIMIT 9";
         $newResult = $conn->query($newSql);
-        if ($newResult->num_rows > 0) {
-            $newRow = $newResult->fetch_row();
-            $lastmessage = $newRow["0"];
 
-            if ($lastmessage > $lastonline) {
-                echo "&nbsp;<b>•</b>";
-            } else { echo ""; }
-        } else { echo ""; }
-    } else { echo ""; }
+        echo $newResult->num_rows;
+    } else {
+        echo "";
+    }
+}
+
+function userExists($id) {
+    $servername = "217.107.219.234";
+    $username = "nevka";
+    $password = "DB_PASSWORD_HERE";
+    $dbname = "nevka";
+    $checkedId = validate($id);
+
+    $conn = new mysqli($servername, $username, $password, $dbname);
+    if ($conn->connect_error) { die("Ошибка подключения: не получается проверить наличие пользователя. Код ошибки для поддержки: 145");}
+
+    $sql = "SELECT id FROM users WHERE id='$checkedId' LIMIT 1";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        return true;
+    } else {
+        return false;
+    }
 }
 ?>

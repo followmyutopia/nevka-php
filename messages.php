@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka Project v1.2
+ * Nevka Project v1.3
  * 2024-2025 Avicus Delacroix
  */
 
@@ -16,7 +16,15 @@ if (!isset($loggedUserData[1]) || !isset($loggedUserData[2])) {header("Refresh:0
 
 $currentChat = $messageStatus = $textarea = $leftSection = $rightSection = "";
 
-if(isset($_GET['id'])) { $currentChat = validate($_GET['id']); $leftSection = "mobile-hidden"; }
+if(isset($_GET['id'])) {
+    if (userExists($_GET['id'])) {
+        $currentChat = validate($_GET['id']);
+        $leftSection = "mobile-hidden";
+    } else {
+        $currentChat = lastId($loggedUser); $rightSection = "mobile-hidden";
+    }
+    
+}
 else { $currentChat = lastId($loggedUser); $rightSection = "mobile-hidden"; }
 
 if ($currentChat == 0) { $rightSection = "hidden"; $leftSection = "wide"; }
@@ -24,7 +32,7 @@ if ($currentChat == 0) { $rightSection = "hidden"; $leftSection = "wide"; }
 if(isset($_POST['sendMessage'])) {
     $messageText = validate($_POST["message"]);
     $currentChat = validate($_POST["interlocutor"]);
-    if (strlen($messageText) > 1023) {$messageStatus = "Максимум 1023 символа";}
+    if (mb_strlen($messageText) > 1023) {$messageStatus = "Максимум 1023 символа";}
     else {
         $target_file = "tmp/" . basename($_FILES["fileToUpload"]["name"]);
         $uploadOk = 1;
@@ -76,9 +84,11 @@ if(isset($_POST['sendMessage'])) {
         }
     });
     window.setInterval(function(){
-        $.post("updateAsync.php", { currentChat: <?php echo $currentChat ?>, type: 0 }, function(data){
-            if (data != $("#chatWindow").html()) {
-                $("#chatWindow").html(data).scrollTop($('#chatWindow')[0].scrollHeight);
+        $.post("updateAsync.php", { type: 2 }, function(data){
+            if (data > 0) {
+                $.post("updateAsync.php", { currentChat: <?php echo $currentChat ?>, type: 0 }, function(e){
+                    $("#chatWindow").html(e).scrollTop($('#chatWindow')[0].scrollHeight);
+                });
             }
         });
     },333);

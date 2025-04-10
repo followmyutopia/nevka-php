@@ -1,5 +1,5 @@
 /**
- * Nevka Project v1.2
+ * Nevka Project v1.3
  * 2024-2025 Avicus Delacroix
  */
 
@@ -20,6 +20,7 @@
     position: absolute;
     bottom: 4px;
     right: 4px;
+    z-index: -1;
 }
 
 body {
@@ -297,6 +298,7 @@ td a {
     height: fit-content;
     width: fit-content;
     position: relative;
+    z-index: -1;
 }
 
 .me {
@@ -431,7 +433,14 @@ hr {
 #newMessageDot {
     padding: 0;
     float: right;
-    color: orange;
+    margin-left: 5px;
+    background-color: orange;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: small;
+    line-height: 18px;
+    display: none;
 }
 
 @media only screen and (max-width: 777px) {
@@ -456,6 +465,7 @@ hr {
     .solid {
         background-color: rgba(35, 35, 35, 0.9);
         position: absolute;
+        z-index: 1;
     }
     #mainmenu {
         display: none;

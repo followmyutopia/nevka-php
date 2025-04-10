@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka Project v1.2
+ * Nevka Project v1.3
  * 2024-2025 Avicus Delacroix
  */
 
@@ -19,7 +19,7 @@ $name = $message = $status = $searchQuery = "";
 if(isset($_POST['createTopic'])) {
     $name = validate($_POST["topicName"]);
     $message = validate($_POST["topicMessage"]);
-    if (strlen($message) > 255 || strlen($name) > 255) {$status = "Поля максимум 255 символов";}
+    if (mb_strlen($message) > 255 || strlen($name) > 255) {$status = "Поля максимум 255 символов";}
     else {
         if ($name == "") { $status = "Введите тему"; }
         else if ($message == "") { $status = "Введите сообщение"; }

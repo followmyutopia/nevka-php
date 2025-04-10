@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka Project v1.2
+ * Nevka Project v1.3
  * 2024-2025 Avicus Delacroix
  */
 
@@ -29,7 +29,7 @@ if(isset($_POST['authorize'])) {
 
 if(isset($_POST['confirmEmail'])) {
     $email = validate($_POST["newLogin"]);
-    if (strlen($email) > 63) {$status = "Максимум 63 символа";}
+    if (mb_strlen($email) > 63) {$status = "Максимум 63 символа";}
     else {
         $loginClass = "hidden";
         $signupClass = "";

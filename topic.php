@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka Project v1.2
+ * Nevka Project v1.3
  * 2024-2025 Avicus Delacroix
  */
 
@@ -18,8 +18,9 @@ $data = [];
 $description = $status = $currentTopic = $title = "";
 
 if(isset($_GET['id'])) {
-    $data = getTopicHeader($_GET['id']);
-    $currentTopic = $_GET['id'];
+    $checkedId = validate($_GET['id']);
+    $data = getTopicHeader($checkedId);
+    $currentTopic = $checkedId;
     $title = $data["0"];
     $description = "Тема создана пользователем ".getNameById($data["1"])." ".date("d.m.Y в h:i a", $data["3"]).".";
 } else {
@@ -28,7 +29,7 @@ if(isset($_GET['id'])) {
 
 if(isset($_POST['sendReply'])) {
     $messageText = validate($_POST["reply"]);
-    if (strlen($messageText) > 1023) {$status = "Максимум 1023 символа";}
+    if (mb_strlen($messageText) > 1023) {$status = "Максимум 1023 символа";}
     else {
         if ($messageText == "") {
             $status = "Введите текст";
