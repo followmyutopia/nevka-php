@@ -9,6 +9,7 @@
       crossorigin="anonymous"></script>
     <title>Невка</title>
     <meta name="description" content="Социальная сеть Невка">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
   </head>
 <body style='background-color: <?php echo $_COOKIE["theme"]?>'>
   <header id="header">
