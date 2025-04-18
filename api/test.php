@@ -4,7 +4,7 @@
  * 2024-2025 Avicus Delacroix
  */
 
-$sender = "";
+$sender = "No sender information has been received";
 
 function validate($data) {
     $data = trim($data);
