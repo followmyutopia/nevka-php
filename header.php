@@ -34,6 +34,6 @@
   </script>
   <?php
     session_start();
-    if (!isset($_COOKIE["theme"])) { $_COOKIE["theme"] = "#141E30";}
+    if (!isset($_COOKIE["theme"])) { $_COOKIE["theme"] = "rgb(20, 41, 48)";}
   ?>
 <div class="content">
