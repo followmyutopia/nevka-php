@@ -84,7 +84,7 @@ if(isset($_POST['postWall'])) {
             if ($imageFileType != "jpg" && $imageFileType != "jpeg" && $imageFileType != "jpeg") { $status = "Разрешено использовать только JPG и PNG файлы."; $uploadOk = 0; }
             if ($uploadOk == 1) {
                 $source = file_get_contents($_FILES["fileToUpload"]["tmp_name"]);
-                if ($imageFileType == "jpeg" || $imageFileType == "jpeg") { $blob = 'data:image/jpeg;base64,'.base64_encode($source); }
+                if ($imageFileType == "jpg" || $imageFileType == "jpeg") { $blob = 'data:image/jpeg;base64,'.base64_encode($source); }
                 else if ($imageFileType == "png") { $blob = 'data:image/png;base64,'.base64_encode($source); }
                 $wallStatus = addWallEntry($_COOKIE["user_token"], $wallText, $blob);
             }
