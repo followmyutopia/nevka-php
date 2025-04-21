@@ -1,12 +1,12 @@
 <?php
 /**
- * Nevka Project v1.4 Database inquires
- * 2024-2025 Avicus Delacroix
+ * Nevka Project v1.5 Database inquires
+ * 2025 Avicus Delacroix
  * 
  * Databases and types (MySQL):
- * Users:       id (int), login (varchar-63), password (varchar-40), token (varchar-127), avatar (mediumblob), firstname (varchar-63), lastname (varchar-63), status (varchar-127), city (varchar-63), bio (varchar-255), online (varchar-25), timestamp (int), search (varchar-127), is_banned (tinyint-1), is_admin (tinyint-1)
- * Walls:       id (int), user (int), date (varchar-25), text (varchar-1023), image (mediumblob)
- * Messages:    id (int), query (varchar-25), author (int), text (varchar-1023), image (mediumblob), date (varchar-25), timestamp (int)
+ * Users:       id (int), login (varchar-63), password (varchar-40), token (varchar-127), avatar (mediumblob), firstname (varchar-63), lastname (varchar-63), status (varchar-127), city (varchar-63), bio (varchar-255), timestamp (int), search (varchar-127), is_banned (tinyint-1), is_admin (tinyint-1)
+ * Walls:       id (int), user (int), text (varchar-1023), image (mediumblob), timestamp (int)
+ * Messages:    id (int), query (varchar-25), author (int), text (varchar-1023), image (mediumblob), timestamp (int)
  * Discussions: id (int), topic (varchar-255), author (int), message (varchar-1023), time (int), header (tinyint-1), activity (int)
  * 
  * Current database IP: 217.107.219.234
@@ -163,12 +163,17 @@ function getUserData($userId) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается получить данные пользователя. Код ошибки для поддержки: 106");}
 
-    // approved sorting by id, public data
-    $sql = "SELECT avatar, firstname, lastname, status, city, bio, online FROM users WHERE id='$userId' LIMIT 1";
+    $sql = "SELECT avatar, firstname, lastname, status, city, bio, timestamp FROM users WHERE id='$userId' LIMIT 1";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
-        return $result->fetch_row();
+        $row = $result->fetch_row();
+        // compatibility with the v1.4 database format
+        // this is done for removing support for storing string dates in the database
+        $formattedTime = date("d.m.Y в h:i a", $row[6]);
+        $row[6] = $formattedTime;
+
+        return $row;
     } else {
         header("Refresh:0; url=profile.php");
     }
@@ -282,13 +287,12 @@ function updateOnline($token) {
     $username = "nevka";
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";
-    $now = date("d.m.Y в h:i a");
     $timestamp = time();
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается обновить онлайн. Код ошибки для поддержки: 117");}
 
-    $sql = "UPDATE users SET online='$now', timestamp='$timestamp' WHERE token='$token'";
+    $sql = "UPDATE users SET timestamp='$timestamp' WHERE token='$token'";
 
     if ($conn->query($sql) === TRUE) {
         return;
@@ -304,14 +308,14 @@ function addWallEntry($token, $wallText, $wallImage) {
     $username = "nevka";
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";
-    $now = date("d.m.Y в h:i a");
     $loggedUser = getIdByToken($token);
+    $timestamp = time();
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается опубликовать стену. Код ошибки для поддержки: 119");}
 
-    $sql = "INSERT INTO walls (user, date, text, image)
-        VALUES ('$loggedUser', '$now', '$wallText', '$wallImage')";
+    $sql = "INSERT INTO walls (user, text, image, timestamp)
+        VALUES ('$loggedUser', '$wallText', '$wallImage', '$timestamp')";
 
     if ($conn->query($sql) === TRUE) {
         header("Refresh:0");
@@ -364,16 +368,18 @@ function getWallEntries($loggedUser) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается получить стену. Код ошибки для поддержки: 123");}
 
-    $sql = "SELECT id, user, date, text, image FROM walls WHERE user='$loggedUser' ORDER BY id DESC LIMIT 100";
+    $sql = "SELECT id, user, text, image, timestamp FROM walls WHERE user='$loggedUser' ORDER BY id DESC LIMIT 100";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
         while($row = $result->fetch_assoc()) {
             $authorName = getNameById($row["user"]);
+            // compatibility with the v1.4 database format
+            $formattedTime = date("d.m.Y в h:i a", $row["timestamp"]);
             if ($row["image"] != "") {
-                echo "<div class=\"wallPost\"><p>".$row["date"]." <a href=\"profile.php?id=".$loggedUser.'">'.$authorName.'</a> написал(а):<span id="'.$row["id"].'" class="delPostButton">×</span></p><img class="postImage" src="'.$row["image"]."\"><p>".$row["text"]."</p></div>";
+                echo "<div class=\"wallPost\"><p>".$formattedTime." <a href=\"profile.php?id=".$loggedUser.'">'.$authorName.'</a> написал(а):<span id="'.$row["id"].'" class="delPostButton">×</span></p><img class="postImage" src="'.$row["image"]."\"><p>".$row["text"]."</p></div>";
             } else {
-                echo "<div class=\"wallPost\"><p>".$row["date"]." <a href=\"profile.php?id=".$loggedUser.'">'.$authorName.'</a> написал(а):<span id="'.$row["id"].'" class="delPostButton">×</span></p><p>'.$row["text"]."</p></div>";
+                echo "<div class=\"wallPost\"><p>".$formattedTime." <a href=\"profile.php?id=".$loggedUser.'">'.$authorName.'</a> написал(а):<span id="'.$row["id"].'" class="delPostButton">×</span></p><p>'.$row["text"]."</p></div>";
             }
         }
     } else {
@@ -421,19 +427,21 @@ function showUsersTable($query) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается показать таблицу пользователей. Код ошибки для поддержки: 126");}
 
-    $sql = "SELECT id, avatar, firstname, lastname, online, search FROM users
+    $sql = "SELECT id, avatar, firstname, lastname, timestamp, search FROM users
     WHERE (firstname LIKE '%$query%' OR lastname LIKE '%$query%' OR search LIKE '%$query%') AND (NOT is_banned OR is_banned IS NULL)
     ORDER BY timestamp DESC LIMIT 500";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
         while($row = $result->fetch_assoc()) {
+            // compatibility with the v1.4 database format
+            $formattedTime = date("d.m.Y в h:i a", $row["timestamp"]);
             $online = "";
-            $lastOnline = date_create_from_format("d.m.Y в h:i a", $row["online"]); $now = new DateTime();
+            $lastOnline = date_create_from_format("d.m.Y в h:i a", $formattedTime); $now = new DateTime();
             $difference = ($lastOnline->diff($now)->days * 1440) + ($lastOnline->diff($now)->h * 60) + $lastOnline->diff($now)->i;
             if ($difference <= 5) { $online = "<span style=\"color:greenyellow\">Онлайн</span>"; }
             else if ($difference < 60) { $online = "<span style=\"color:lightslategray\">Был(а) в сети: ".$lastOnline->diff($now)->i." минут назад</span>"; }
-            else { $online = "<span style=\"color:lightslategray\">Был(а) в сети: ".$row["online"]."</span>"; }
+            else { $online = "<span style=\"color:lightslategray\">Был(а) в сети: ".$formattedTime."</span>"; }
             echo "<tr><td class=\"a b\" data-href=\"profile.php?id=".$row["id"]."\"><img class=\"thumbnail\" src=\"".$row["avatar"]."\"></td><td class=\"a\" data-href=\"profile.php?id=".$row["id"]."\">".$row["firstname"]." ".$row["lastname"]."<br>".$online."</td><td class=\"a b\" data-href=\"messages.php?id=".$row["id"]."\"><button class=\"button\">Написать сообщение</button></td></tr>";
         }
     } else {
@@ -463,13 +471,15 @@ function showChatsTable($token) {
             $interlocutor = str_replace("M", "", $interlocutor);
 
             // approved sorting by id, user checked
-            $getName = "SELECT id, avatar, firstname, lastname, online FROM users WHERE id='$interlocutor' LIMIT 500";
+            $getName = "SELECT id, avatar, firstname, lastname, timestamp FROM users WHERE id='$interlocutor' LIMIT 500";
             $entryResult = $conn->query($getName);
             $row = $entryResult->fetch_row();
+            // compatibility with the v1.4 database format
+            $formattedTime = date("d.m.Y в h:i a", $row["4"]);
             $online = "";
-            $lastOnline = date_create_from_format("d.m.Y в h:i a", $row["4"]); $now = new DateTime();
+            $lastOnline = date_create_from_format("d.m.Y в h:i a", $formattedTime); $now = new DateTime();
             $difference = ($lastOnline->diff($now)->days * 1440) + ($lastOnline->diff($now)->h * 60) + $lastOnline->diff($now)->i;
-            $shortDate = str_replace(".".$lastOnline->format("Y"), "", $row["4"]);
+            $shortDate = str_replace(".".$lastOnline->format("Y"), "", $formattedTime);
             if ($difference <= 5) { $online = "<span style=\"color:greenyellow\">Онлайн</span>"; }
             else if ($difference < 60) { $online = "<span style=\"color:lightslategray\">Был(а): ".$lastOnline->diff($now)->i." минут назад</span>"; }
             else { $online = "<span style=\"color:lightslategray\">Был(а): ".$shortDate."</span>"; }
@@ -492,17 +502,19 @@ function currentUserHeader($userId) {
     if ($conn->connect_error) { die("Ошибка подключения: не получается отобразить заголовок чата. Код ошибки для поддержки: 128");}
 
     // approved sorting by id, public data
-    $sql = "SELECT firstname, lastname, online FROM users WHERE id='$userId' LIMIT 1";
+    $sql = "SELECT firstname, lastname, timestamp FROM users WHERE id='$userId' LIMIT 1";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
         $row = $result->fetch_row();
+        // compatibility with the v1.4 database format
+        $formattedTime = date("d.m.Y в h:i a", $row["2"]);
         $online = "";
-        $lastOnline = date_create_from_format("d.m.Y в h:i a", $row["2"]); $now = new DateTime();
+        $lastOnline = date_create_from_format("d.m.Y в h:i a", $formattedTime); $now = new DateTime();
         $difference = ($lastOnline->diff($now)->days * 1440) + ($lastOnline->diff($now)->h * 60) + $lastOnline->diff($now)->i;
         if ($difference <= 5) { $online = "<span style=\"color:greenyellow\">Онлайн</span>"; }
         else if ($difference < 60) { $online = "<span style=\"color:lightslategray\">Был(а): ".$lastOnline->diff($now)->i." минут назад</span>"; }
-        else { $online = "<span style=\"color:lightslategray\">Был(а): ".$row["2"]."</span>"; }
+        else { $online = "<span style=\"color:lightslategray\">Был(а): ".$formattedTime."</span>"; }
         echo "<p class=\"messagesHeader\"><a id=\"msgBack\" href=\"messages.php\">← Назад</a><b><a href=\"profile.php?id=".$userId."\">".$row["0"]." ".$row["1"]."</a></b><br>".$online."</p>";
     } else {
         return;
@@ -527,26 +539,28 @@ function getMessages($token,$chatUser) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается отобразить сообщения. Код ошибки для поддержки: 129");}
 
-    $sql = "SELECT * FROM (SELECT id, query, author, text, image, date FROM messages WHERE query='$query' ORDER BY id DESC LIMIT 75) X ORDER BY id ASC;";
+    $sql = "SELECT * FROM (SELECT id, query, author, text, image, timestamp FROM messages WHERE query='$query' ORDER BY id DESC LIMIT 75) X ORDER BY id ASC;";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
         while($row = $result->fetch_assoc()) {
             $interlocutor = str_replace("M".$loggedUser."M", "", $row["query"]);
             $interlocutor = str_replace("M", "", $interlocutor);
+            // compatibility with the v1.4 database format
+            $formattedTime = date("d.m в h:i a", $row["timestamp"]);
 
             if ($chatUser == $interlocutor) {
                 if ($row["author"] == $loggedUser) {
                     if ($row["image"] == "") {
-                        echo "<div class=\"message me\">".$row["text"]."<span class=\"time\">".$row["date"]."</span></div><span class=\"clearfix\"></span>";
+                        echo "<div class=\"message me\">".$row["text"]."<span class=\"time\">".$formattedTime."</span></div><span class=\"clearfix\"></span>";
                     } else {
-                        echo "<div class=\"message me\">".$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"time\">".$row["date"]."</span></div><span class=\"clearfix\"></span>";
+                        echo "<div class=\"message me\">".$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"time\">".$formattedTime."</span></div><span class=\"clearfix\"></span>";
                     }
                 } else if ($row["author"] == $chatUser) {
                     if ($row["image"] == "") {
-                        echo "<div class=\"message\">".$row["text"]."<span class=\"time\">".$row["date"]."</span></div><span class=\"clearfix\"></span>";
+                        echo "<div class=\"message\">".$row["text"]."<span class=\"time\">".$formattedTime."</span></div><span class=\"clearfix\"></span>";
                     } else {
-                        echo "<div class=\"message\">".$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"time\">".$row["date"]."</span></div><span class=\"clearfix\"></span>";
+                        echo "<div class=\"message\">".$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"time\">".$formattedTime."</span></div><span class=\"clearfix\"></span>";
                     }
                 } else { return; }
             } else { return; }
@@ -562,7 +576,6 @@ function sendMessage($token, $currentChat, $messageText, $messageImage) {
     $password = "DB_PASSWORD_HERE";
     $dbname = "nevka";
     $loggedUser = getIdByToken($token);
-    $now = date("d.m в h:i a");
     $query = "";
     $timestamp = time();
 
@@ -576,8 +589,8 @@ function sendMessage($token, $currentChat, $messageText, $messageImage) {
         $conn = new mysqli($servername, $username, $password, $dbname);
         if ($conn->connect_error) { die("Ошибка подключения: не получается отправить сообщение. Код ошибки для поддержки: 130");}
     
-        $sql = "INSERT INTO messages (query, author, text, image, date, timestamp)
-            VALUES ('$query', '$loggedUser', '$messageText', '$messageImage', '$now', '$timestamp')";
+        $sql = "INSERT INTO messages (query, author, text, image, timestamp)
+            VALUES ('$query', '$loggedUser', '$messageText', '$messageImage', '$timestamp')";
     
         if ($conn->query($sql) === TRUE) {
             return;

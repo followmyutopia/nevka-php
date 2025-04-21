@@ -1,7 +1,7 @@
 <?php
 /**
- * Nevka Project v1.4 API
- * 2024-2025 Avicus Delacroix
+ * Nevka Project v1.5 API
+ * 2025 Avicus Delacroix
  * 
  * Checks the token and returns the logged user ID. If the token is invalid, returns 0.
  * Accepts: token (multipart/form-data)
