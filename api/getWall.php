@@ -37,7 +37,7 @@ if (isset($_POST['id'])) {
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
-        echo "{\"result\": \"success\", \"people\": [";
+        echo "{\"result\": \"success\", \"wall\": [";
 
         while($row = $result->fetch_assoc()) {
             $formattedTime = date("d.m.Y в h:i a", $row['timestamp']);
