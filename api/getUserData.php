@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka Project v1.5 API
+ * Nevka Project v1.6 API
  * 2025 Avicus Delacroix
  * 
  * Receives the data for the specified user.

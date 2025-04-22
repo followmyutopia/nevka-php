@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka Project v1.5 Database inquires
+ * Nevka Project v1.6 Database inquires
  * 2025 Avicus Delacroix
  * 
  * Databases and types (MySQL):
@@ -8,8 +8,6 @@
  * Walls:       id (int), user (int), text (varchar-1023), image (mediumblob), timestamp (int)
  * Messages:    id (int), query (varchar-25), author (int), text (varchar-1023), image (mediumblob), timestamp (int)
  * Discussions: id (int), topic (varchar-255), author (int), message (varchar-1023), time (int), header (tinyint-1), activity (int)
- * 
- * Current database IP: 217.107.219.234
  */
 
 date_default_timezone_set("Europe/Moscow");
@@ -23,10 +21,7 @@ function validate($data) {
 }
 
 function getNameById($id) {
-    $servername = "217.107.219.234";
-    $username = "nevka";
-    $password = "DB_PASSWORD_HERE";
-    $dbname = "nevka";
+    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается получить имя пользователя. Код ошибки для поддержки: 133");}
@@ -45,10 +40,7 @@ function getNameById($id) {
 }
 
 function getIdByToken($token) {
-    $servername = "217.107.219.234";
-    $username = "nevka";
-    $password = "DB_PASSWORD_HERE";
-    $dbname = "nevka";
+    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается получить ID. Код ошибки для поддержки: 101");}
@@ -67,10 +59,7 @@ function getIdByToken($token) {
 }
 
 function login($login,$hashedPassword) {
-    $servername = "217.107.219.234";
-    $username = "nevka";
-    $password = "DB_PASSWORD_HERE";
-    $dbname = "nevka";
+    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается залогиниться. Код ошибки для поддержки: 102");}
@@ -99,10 +88,7 @@ function logout() {
 }
 
 function checkCookie($token) {
-    $servername = "217.107.219.234";
-    $username = "nevka";
-    $password = "DB_PASSWORD_HERE";
-    $dbname = "nevka";
+    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается проверить куки. Код ошибки для поддержки: 103");}
@@ -122,10 +108,7 @@ function checkCookie($token) {
 }
 
 function changePassword($loggedUser,$token,$oldPassword,$newPassword) {
-    $servername = "217.107.219.234";
-    $username = "nevka";
-    $password = "DB_PASSWORD_HERE";
-    $dbname = "nevka";
+    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
     $newToken = "User".$loggedUser."-".$newPassword;
 
     $conn = new mysqli($servername, $username, $password, $dbname);
@@ -155,10 +138,7 @@ function changePassword($loggedUser,$token,$oldPassword,$newPassword) {
 }
 
 function getUserData($userId) {
-    $servername = "217.107.219.234";
-    $username = "nevka";
-    $password = "DB_PASSWORD_HERE";
-    $dbname = "nevka";
+    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается получить данные пользователя. Код ошибки для поддержки: 106");}
@@ -182,10 +162,7 @@ function getUserData($userId) {
 }
 
 function setAvatar($token,$blob) {
-    $servername = "217.107.219.234";
-    $username = "nevka";
-    $password = "DB_PASSWORD_HERE";
-    $dbname = "nevka";
+    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается установить аватар. Код ошибки для поддержки: 107");}
@@ -202,10 +179,8 @@ function setAvatar($token,$blob) {
 }
 
 function setName($token,$newFirstName,$newLastName) {
-    $servername = "217.107.219.234";
-    $username = "nevka";
-    $password = "DB_PASSWORD_HERE";
-    $dbname = "nevka";
+    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+
     $query = $newFirstName." ".$newLastName;
 
     $conn = new mysqli($servername, $username, $password, $dbname);
@@ -223,10 +198,7 @@ function setName($token,$newFirstName,$newLastName) {
 }
 
 function setCity($token,$newCity) {
-    $servername = "217.107.219.234";
-    $username = "nevka";
-    $password = "DB_PASSWORD_HERE";
-    $dbname = "nevka";
+    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается установить город. Код ошибки для поддержки: 111");}
@@ -243,10 +215,7 @@ function setCity($token,$newCity) {
 }
 
 function setBio($token,$newBio) {
-    $servername = "217.107.219.234";
-    $username = "nevka";
-    $password = "DB_PASSWORD_HERE";
-    $dbname = "nevka";
+    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается установить информацию. Код ошибки для поддержки: 113");}
@@ -263,10 +232,7 @@ function setBio($token,$newBio) {
 }
 
 function setStatus($token,$newStatus) {
-    $servername = "217.107.219.234";
-    $username = "nevka";
-    $password = "DB_PASSWORD_HERE";
-    $dbname = "nevka";
+    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка. Код ошибки для поддержки: 115");}
@@ -283,10 +249,8 @@ function setStatus($token,$newStatus) {
 }
 
 function updateOnline($token) {
-    $servername = "217.107.219.234";
-    $username = "nevka";
-    $password = "DB_PASSWORD_HERE";
-    $dbname = "nevka";
+    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+    
     $timestamp = time();
 
     $conn = new mysqli($servername, $username, $password, $dbname);
@@ -304,10 +268,8 @@ function updateOnline($token) {
 }
 
 function addWallEntry($token, $wallText, $wallImage) {
-    $servername = "217.107.219.234";
-    $username = "nevka";
-    $password = "DB_PASSWORD_HERE";
-    $dbname = "nevka";
+    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+
     $loggedUser = getIdByToken($token);
     $timestamp = time();
 
@@ -327,10 +289,8 @@ function addWallEntry($token, $wallText, $wallImage) {
 }
 
 function deleteWallEntry($token, $entryId) {
-    $servername = "217.107.219.234";
-    $username = "nevka";
-    $password = "DB_PASSWORD_HERE";
-    $dbname = "nevka";
+    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+
     $checkedUser = getIdByToken($token);
 
     $conn = new mysqli($servername, $username, $password, $dbname);
@@ -360,10 +320,7 @@ function deleteWallEntry($token, $entryId) {
 }
 
 function getWallEntries($loggedUser) {
-    $servername = "217.107.219.234";
-    $username = "nevka";
-    $password = "DB_PASSWORD_HERE";
-    $dbname = "nevka";
+    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается получить стену. Код ошибки для поддержки: 123");}
@@ -390,10 +347,8 @@ function getWallEntries($loggedUser) {
 }
 
 function signUp($newLogin,$hashedPassword) {
-    $servername = "217.107.219.234";
-    $username = "nevka";
-    $password = "DB_PASSWORD_HERE";
-    $dbname = "nevka";
+    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+
     $newToken = $newLogin.$hashedPassword;
 
     $conn = new mysqli($servername, $username, $password, $dbname);
@@ -419,10 +374,7 @@ function signUp($newLogin,$hashedPassword) {
 }
 
 function showUsersTable($query) {
-    $servername = "217.107.219.234";
-    $username = "nevka";
-    $password = "DB_PASSWORD_HERE";
-    $dbname = "nevka";
+    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается показать таблицу пользователей. Код ошибки для поддержки: 126");}
@@ -452,10 +404,8 @@ function showUsersTable($query) {
 }
 
 function showChatsTable($token) {
-    $servername = "217.107.219.234";
-    $username = "nevka";
-    $password = "DB_PASSWORD_HERE";
-    $dbname = "nevka";
+    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+
     $checkedUser = getIdByToken($token);
     $signature = "M".$checkedUser."M";
 
@@ -493,10 +443,7 @@ function showChatsTable($token) {
 }
 
 function currentUserHeader($userId) {
-    $servername = "217.107.219.234";
-    $username = "nevka";
-    $password = "DB_PASSWORD_HERE";
-    $dbname = "nevka";
+    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается отобразить заголовок чата. Код ошибки для поддержки: 128");}
@@ -524,10 +471,8 @@ function currentUserHeader($userId) {
 }
 
 function getMessages($token,$chatUser) {
-    $servername = "217.107.219.234";
-    $username = "nevka";
-    $password = "DB_PASSWORD_HERE";
-    $dbname = "nevka";
+    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+
     $query = "";
     $loggedUser = getIdByToken($token);
     if ($loggedUser < $chatUser) {
@@ -571,10 +516,8 @@ function getMessages($token,$chatUser) {
 }
 
 function sendMessage($token, $currentChat, $messageText, $messageImage) {
-    $servername = "217.107.219.234";
-    $username = "nevka";
-    $password = "DB_PASSWORD_HERE";
-    $dbname = "nevka";
+    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+
     $loggedUser = getIdByToken($token);
     $query = "";
     $timestamp = time();
@@ -593,6 +536,7 @@ function sendMessage($token, $currentChat, $messageText, $messageImage) {
             VALUES ('$query', '$loggedUser', '$messageText', '$messageImage', '$timestamp')";
     
         if ($conn->query($sql) === TRUE) {
+            updateOnline($token);
             return;
         } else {
             return "Ошибка базы данных: невозможно отправить сообщение. Код ошибки для поддержки: 131";
@@ -605,10 +549,8 @@ function sendMessage($token, $currentChat, $messageText, $messageImage) {
 }
 
 function lastId($loggedUser) {
-    $servername = "217.107.219.234";
-    $username = "nevka";
-    $password = "DB_PASSWORD_HERE";
-    $dbname = "nevka";
+    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+
     $signature = "M".$loggedUser."M";
 
     $conn = new mysqli($servername, $username, $password, $dbname);
@@ -630,10 +572,7 @@ function lastId($loggedUser) {
 }
 
 function getDiscussions($query) {
-    $servername = "217.107.219.234";
-    $username = "nevka";
-    $password = "DB_PASSWORD_HERE";
-    $dbname = "nevka";
+    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается запросить обсуждения. Код ошибки для поддержки: 134");}
@@ -657,10 +596,7 @@ function getDiscussions($query) {
 }
 
 function getTopicHeader($headerId) {
-    $servername = "217.107.219.234";
-    $username = "nevka";
-    $password = "DB_PASSWORD_HERE";
-    $dbname = "nevka";
+    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается запросить обсуждение. Код ошибки для поддержки: 135");}
@@ -681,10 +617,7 @@ function getTopicHeader($headerId) {
 }
 
 function getTopicMessages($header) {
-    $servername = "217.107.219.234";
-    $username = "nevka";
-    $password = "DB_PASSWORD_HERE";
-    $dbname = "nevka";
+    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается запросить сообщения в обсуждении. Код ошибки для поддержки: 136");}
@@ -708,10 +641,8 @@ function getTopicMessages($header) {
 }
 
 function sendReply($topic, $who, $what) {
-    $servername = "217.107.219.234";
-    $username = "nevka";
-    $password = "DB_PASSWORD_HERE";
-    $dbname = "nevka";
+    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+
     $loggedUser = getIdByToken($who);
     $when = time();
 
@@ -746,10 +677,8 @@ function sendReply($topic, $who, $what) {
 }
 
 function createTopic($token, $name, $message) {
-    $servername = "217.107.219.234";
-    $username = "nevka";
-    $password = "DB_PASSWORD_HERE";
-    $dbname = "nevka";
+    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+
     $loggedUser = getIdByToken($token);
     $when = time();
 
@@ -769,10 +698,7 @@ function createTopic($token, $name, $message) {
 }
 
 function allowEmail($login) {
-    $servername = "217.107.219.234";
-    $username = "nevka";
-    $password = "DB_PASSWORD_HERE";
-    $dbname = "nevka";
+    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается получить имя пользователя. Код ошибки для поддержки: 143");}
@@ -790,10 +716,8 @@ function allowEmail($login) {
 }
 
 function newMessageAvailable($id) {
-    $servername = "217.107.219.234";
-    $username = "nevka";
-    $password = "DB_PASSWORD_HERE";
-    $dbname = "nevka";
+    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+
     $lastonline = 0;
     $lastmessage = 0;
     $signature = "M".$id."M";
@@ -808,21 +732,19 @@ function newMessageAvailable($id) {
         $row = $result->fetch_row();
         $lastonline = $row["0"];
 
-        $newSql = "SELECT timestamp FROM messages WHERE query LIKE '%$signature%' AND timestamp > '$lastonline'
-            ORDER BY id DESC LIMIT 9";
+        $newSql = "SELECT count(timestamp) AS countNewMsg FROM messages WHERE query LIKE '%$signature%' AND timestamp > '$lastonline'
+            ORDER BY id DESC";
         $newResult = $conn->query($newSql);
-
-        echo $newResult->num_rows;
+        $newRow = mysqli_fetch_assoc($newResult);
+        echo $newRow["countNewMsg"];
     } else {
         echo "";
     }
 }
 
 function userExists($id) {
-    $servername = "217.107.219.234";
-    $username = "nevka";
-    $password = "DB_PASSWORD_HERE";
-    $dbname = "nevka";
+    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+
     $checkedId = validate($id);
 
     $conn = new mysqli($servername, $username, $password, $dbname);

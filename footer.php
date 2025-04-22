@@ -4,7 +4,10 @@
         $.post("updateAsync.php", { type: 2 }, function(data){
             if (data > 0) {
                 $("#newMessageDot").show(500);
-                $("#newMessageDot").html(data);
+				if (data <= 9)
+					$("#newMessageDot").html(data);
+				else
+					$("#newMessageDot").html("9");
                 if (notificationCounter != data) {
                     new Notification("Новых сообщений в Невке: " + data, {
                         tag: "newMessageAlert"

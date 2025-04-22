@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka Project v1.5
+ * Nevka Project v1.6
  * 2025 Avicus Delacroix
  */
 
@@ -80,7 +80,7 @@ if(isset($_POST['postWall'])) {
 
         if ($_FILES["fileToUpload"]["tmp_name"] != "") {
             if (!getimagesize($_FILES["fileToUpload"]["tmp_name"])) { $status = "Файл не является изображением."; $uploadOk = 0; }
-            if ($_FILES["fileToUpload"]["size"] > 16777215) { $status = "Аватар не может быть больше 16 MB."; $uploadOk = 0; }
+            if ($_FILES["fileToUpload"]["size"] > 16777215) { $status = "Изображение не может быть больше 16 MB."; $uploadOk = 0; }
             if ($imageFileType != "jpg" && $imageFileType != "jpeg" && $imageFileType != "jpeg") { $status = "Разрешено использовать только JPG и PNG файлы."; $uploadOk = 0; }
             if ($uploadOk == 1) {
                 $source = file_get_contents($_FILES["fileToUpload"]["tmp_name"]);
@@ -136,6 +136,12 @@ if(isset($_POST['checkDeletePermission'])) { $wallStatus = deleteWallEntry($_COO
 <form class="hidden" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post"><input id="idToCheck" name="id"><button id="tryDelete" type="submit" name="checkDeletePermission"></button></form><span class="hidden" id="title"><?php echo $showName ?></span>
 
 <script>$(function(){
+    document.addEventListener('dragover', (e) => {
+        e.preventDefault()
+    });
+    document.addEventListener('drop', (e) => {
+        e.preventDefault()
+    });
     document.title = $("#title").text();
     $("<?php echo $activeMenu ?>").addClass("active");
     function toggleStatusEditor() { $("#statusBar").slideToggle(250,function(){ $("#statusForm").slideToggle(300); }); };

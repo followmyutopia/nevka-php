@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka Project v1.5
+ * Nevka Project v1.6
  * 2025 Avicus Delacroix
  */
 
@@ -23,43 +23,15 @@ if(isset($_GET['id'])) {
     } else {
         $currentChat = lastId($loggedUser); $rightSection = "mobile-hidden";
     }
-    
 }
 else { $currentChat = lastId($loggedUser); $rightSection = "mobile-hidden"; }
 
 if ($currentChat == 0) { $rightSection = "hidden"; $leftSection = "wide"; }
-
-if(isset($_POST['sendMessage'])) {
-    $messageText = validate($_POST["message"]);
-    $currentChat = validate($_POST["interlocutor"]);
-    if (mb_strlen($messageText) > 1023) {$messageStatus = "Максимум 1023 символа";}
-    else {
-        $target_file = "tmp/" . basename($_FILES["fileToUpload"]["name"]);
-        $uploadOk = 1;
-        $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
-        $blob = "";
-
-        if ($_FILES["fileToUpload"]["tmp_name"] != "") {
-            if (!getimagesize($_FILES["fileToUpload"]["tmp_name"])) { $messageStatus = "Файл не является изображением."; $uploadOk = 0; }
-            if ($_FILES["fileToUpload"]["size"] > 16777215) { $messageStatus = "Изображение не может быть больше 16 MB."; $uploadOk = 0; }
-            if ($imageFileType != "jpg" && $imageFileType != "jpeg" && $imageFileType != "png") { $messageStatus = "Разрешено использовать только JPG и PNG файлы."; $uploadOk = 0; }
-            if ($uploadOk == 1) {
-                $source = file_get_contents($_FILES["fileToUpload"]["tmp_name"]);
-                if ($imageFileType == "jpg" || $imageFileType == "jpeg") { $blob = 'data:image/jpeg;base64,'.base64_encode($source); }
-                else if ($imageFileType == "png") { $blob = 'data:image/png;base64,'.base64_encode($source); }
-                $messageStatus = sendMessage($_COOKIE["user_token"], $currentChat, $messageText, $blob);
-            }
-        } else {
-            if ($messageText != "") { $wallStatus = sendMessage($_COOKIE["user_token"], $currentChat, $messageText, $blob); }
-            else { $messageStatus = "Введите текст"; }
-        }
-    }
-}
 ?>
 
 <div class="left nomargin-right mobile-expand <?php echo $leftSection ?>">
     <div class="peopleWindow">
-        <table style="float:left"><?php showChatsTable($_COOKIE["user_token"]); ?></table>
+        <table style="float:left" id="chatsTable"></table>
     </div>
 </div>
 <div class="right mobile-expand <?php echo $rightSection ?>">
@@ -67,36 +39,85 @@ if(isset($_POST['sendMessage'])) {
 
     <div class="activeChat">
         <div id="chatWindow"></div>
-        <form class="<?php echo $textarea ?>" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>?id=<?php echo $currentChat ?>" method="post" enctype="multipart/form-data">
-            <textarea name="message"></textarea><input class="hidden" name="interlocutor" value="<?php echo $currentChat ?>">
-            <button id="send" class="button mobile-expand send" type="submit" name="sendMessage">Отправить</button>
+        <form class="<?php echo $textarea ?>" action="sendAsync.php" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="sendMessage">
+            <textarea id="msg" name="message"></textarea><input class="hidden" name="interlocutor" value="<?php echo $currentChat ?>">
+            <button id="send" class="button mobile-expand send" type="submit"<?php // name="sendMessage" ?>>Отправить</button>
             <input class="fileInput attachment mobile-expand send" type="file" name="fileToUpload" id="fileToUpload">
-            <span class="console send" style="margin-top:1px"><?php echo $messageStatus ?></span>
+            <span id="sendStatus" class="console send" style="margin-top:1px"><?php //echo $messageStatus ?></span>
         </form>
 </div>
 
-<script>$(function(){
+<script>
+$(function(){
+    document.addEventListener('dragover', (e) => {
+        e.preventDefault()
+    });
+    document.addEventListener('drop', (e) => {
+        document.getElementById('fileToUpload').files = e.dataTransfer.files;
+        e.preventDefault()
+    });
+
+    // Panamar proDUCKtion
+    var needsUpdate = false;
+    $('form').submit(function(e) {
+        e.preventDefault();
+        var form = new FormData($(this)[0]);
+        var uploadfile = $("#fileToUpload").val();
+        var text_msg = $("#msg").val();
+        $.ajax({
+            url: $(this).attr('action'),
+            method: "POST",
+            data: form,
+            processData: false,
+            contentType: false,
+            success: function(data) {
+                if(data != "OK" && data != "") $("#sendStatus").html(data);
+                else {
+                    if($("#sendStatus").html() != "") $("#sendStatus").html("");
+                    $("#msg").val("");
+                    $("#fileToUpload").val("");
+                }
+                $.post("updateAsync.php", { currentChat: <?php echo $currentChat ?>, type: 0 }, function(data){
+                    if (data != $("#chatWindow").html()) {
+                        $("#chatWindow").html(data).scrollTop($('#chatWindow')[0].scrollHeight);
+                    }
+                });
+                needsUpdate = true;
+            }
+        }); 
+    });
+
+    
+
     $("#messagesmenu").addClass("active");
     $('#chatWindow').scrollTop($('#chatWindow')[0].scrollHeight);
     $(".a").click(function() { window.location = $(this).data("href"); });
+    $.post("updateAsync.php", { type: 3 }, function(data){
+        if (data != $("#chatsTable").html()) { $("#chatsTable").html(data); }
+    });
     $.post("updateAsync.php", { currentChat: <?php echo $currentChat ?>, type: 0 }, function(data){
-        if (data != $("#chatWindow").html()) {
-            $("#chatWindow").html(data).scrollTop($('#chatWindow')[0].scrollHeight);
-        }
+        if (data != $("#chatWindow").html()) { $("#chatWindow").html(data).scrollTop($('#chatWindow')[0].scrollHeight); }
     });
     var buffer = 0;
     window.setInterval(function(){
         $.post("updateAsync.php", { type: 2 }, function(data){
-            if (data > 0) {
-                if (data != buffer) {
-                    $.post("updateAsync.php", { currentChat: <?php echo $currentChat ?>, type: 0 }, function(e){
-                        $("#chatWindow").html(e).scrollTop($('#chatWindow')[0].scrollHeight);
+            if (data > 0 || needsUpdate) {
+                if (data != buffer || needsUpdate) {
+                    $.post("updateAsync.php", { currentChat: <?php echo $currentChat ?>, type: 0 }, function(data){
+                        $("#chatWindow").html(data).scrollTop($('#chatWindow')[0].scrollHeight);
                     });
+                    needsUpdate = false;
                 }
                 buffer = data;
             }
         });
-    },500);
+    },333);
+    window.setInterval(function(){
+        $.post("updateAsync.php", { type: 3 }, function(data){
+            if (data != $("#chatsTable").html()) { $("#chatsTable").html(data); }
+        });
+    },2500);
     $('textarea').keypress(function (e) { if(e.which == 13) { $('#send').click(); } });
     if (<?php echo $currentChat ?> != 0) { $("#pplNotice").hide(); }
 });</script>

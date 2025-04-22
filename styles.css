@@ -1,5 +1,5 @@
 /**
- * Nevka Project v1.5
+ * Nevka Project v1.6
  * 2025 Avicus Delacroix
  */
 
@@ -267,7 +267,7 @@ td a {
 }
 
 #chatWindow {
-    height: 60vh;
+    height: 65vh;
     width: 100%;
     overflow-y: auto;
     margin-bottom: 0;
