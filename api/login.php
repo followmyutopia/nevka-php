@@ -5,7 +5,7 @@
  * 
  * Gets the login token.
  * Accepts: login, password (multipart/form-data)
- * Returns: result, token? || error? (json)
+ * Returns: result, userId?, token? error? (json)
  */
 
 $login = $rawPassword = "";
@@ -38,7 +38,7 @@ if (isset($_POST['login']) && isset($_POST['password'])) {
     if ($result->num_rows > 0) {
         $row = $result->fetch_row();
         if ($hashedPassword == $row[2] && !$row[4]) {
-            echo "{\"result\":\"success\",\"token\":\"".$row[3]."\"}";
+            echo "{\"result\":\"success\",\"token\":\"".$row[3]."\", \"userId\": \"".$row[0]."\"}";
         }
         else if ($row[4]) {
             echo "{\"result\":\"failure\",\"error\":\"Пользователь ".$login." заблокирован модератором\"}";
