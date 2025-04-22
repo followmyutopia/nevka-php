@@ -5,9 +5,10 @@
  * 
  * Receives the data for the specified user.
  * Accepts: id (multipart/form-data)
- * Returns: result, avatar?, firstname?, lastname?, status?, city?, bio?, timestamp?, error? (json)
+ * Returns: result, avatar?, firstname?, lastname?, status?, city?, bio?, timestamp?, online?, error? (json)
  */
 
+date_default_timezone_set("Europe/Moscow");
 $id = "";
 
 function validate($data) {
@@ -35,7 +36,17 @@ if (isset($_POST['id'])) {
 
     if ($result->num_rows > 0) {
         $row = $result->fetch_row();
-        echo "{\"result\": \"success\", \"firstname\": \"".$row[0]."\", \"lastname\": \"".$row[1]."\", \"status\": \"".$row[2]."\", \"city\": \"".$row[3]."\", \"bio\": \"".$row[4]."\", \"timestamp\": \"".$row[5]."\", \"avatar\": \"".$row[6]."\"}";
+
+        $formattedTime = date("d.m.Y в h:i a", $row[5]);
+        $lastOnline = date_create_from_format("d.m.Y в h:i a", $formattedTime);
+        $now = new DateTime(); $online = "";
+        $difference = ($lastOnline->diff($now)->days * 1440) + ($lastOnline->diff($now)->h * 60) + $lastOnline->diff($now)->i;
+
+        if ($difference <= 5) { $online = "online"; }
+        else if ($difference < 60) { $online = $lastOnline->diff($now)->i." минут назад"; }
+        else { $online = $formattedTime; }
+
+        echo "{\"result\": \"success\", \"firstname\": \"".$row[0]."\", \"lastname\": \"".$row[1]."\", \"status\": \"".$row[2]."\", \"city\": \"".$row[3]."\", \"bio\": \"".$row[4]."\", \"timestamp\": \"".$row[5]."\", \"avatar\": \"".$row[6]."\", \"online\": \"".$online."\"}";
     } else {
         echo "{\"result\":\"failure\",\"error\":\"Пользователь не найден\"}";
     }
