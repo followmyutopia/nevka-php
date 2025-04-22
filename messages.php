@@ -42,14 +42,16 @@ if ($currentChat == 0) { $rightSection = "hidden"; $leftSection = "wide"; }
         <form class="<?php echo $textarea ?>" action="sendAsync.php" method="post" enctype="multipart/form-data">
             <input type="hidden" name="sendMessage">
             <textarea id="msg" name="message"></textarea><input class="hidden" name="interlocutor" value="<?php echo $currentChat ?>">
-            <button id="send" class="button mobile-expand send" type="submit"<?php // name="sendMessage" ?>>Отправить</button>
+            <button id="send" class="button mobile-expand send" type="submit">Отправить</button>
             <input class="fileInput attachment mobile-expand send" type="file" name="fileToUpload" id="fileToUpload">
-            <span id="sendStatus" class="console send" style="margin-top:1px"><?php //echo $messageStatus ?></span>
+            <span id="sendStatus" class="console send" style="margin-top:1px"></span>
         </form>
 </div>
 
 <script>
 $(function(){
+    $("#chatsTable").on('click', '.a', function(){ window.location = $(this).data("href"); });
+
     document.addEventListener('dragover', (e) => {
         e.preventDefault()
     });
@@ -87,8 +89,6 @@ $(function(){
             }
         }); 
     });
-
-    
 
     $("#messagesmenu").addClass("active");
     $('#chatWindow').scrollTop($('#chatWindow')[0].scrollHeight);
