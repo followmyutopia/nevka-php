@@ -6,7 +6,7 @@
  * Current database IP: 217.107.219.234
  */
 
-$servername = "localhost";
+$servername = "217.107.219.234";
 $username = "nevka";
 $password = "DB_PASSWORD_HERE";
 $dbname = "nevka";
