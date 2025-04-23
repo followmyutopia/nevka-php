@@ -23,10 +23,7 @@ function validate($data) {
 if (isset($_POST['id'])) {
     $userId = validate($_POST['id']);
 
-    $servername = "localhost";
-    $username = "nevka";
-    $password = "DB_PASSWORD_HERE";
-    $dbname = "nevka";
+    include '../credentials.php';
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) {

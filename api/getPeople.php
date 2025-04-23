@@ -3,7 +3,7 @@
  * Nevka Project v1.6 API
  * 2025 Avicus Delacroix
  * 
- * Receives the data for the specified user.
+ * Receives the list of all people with last onlines and avatars.
  * Accepts: id (multipart/form-data)
  * Returns: result, people?[], error? (json)
  * people?[]: {"id": "", "firstname": "", "lastname": "", "timestamp": "", "online": "", "avatar": ""}
@@ -23,10 +23,7 @@ function validate($data) {
 if (isset($_POST['query'])) {
     $query = validate($_POST['query']);
 
-    $servername = "localhost";
-    $username = "nevka";
-    $password = "DB_PASSWORD_HERE";
-    $dbname = "nevka";
+    include '../credentials.php';
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) {
