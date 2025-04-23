@@ -1,5 +1,5 @@
 <?php
-require 'mailerLibrary.php';
+require 'lib/PHPMailer.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;

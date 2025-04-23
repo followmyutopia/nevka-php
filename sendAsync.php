@@ -5,6 +5,9 @@
  */
 
 include 'db.php';
+include 'lib/ImageResize.php';
+use \Gumlet\ImageResize;
+
 if(isset($_POST['sendMessage'])) {
     $messageStatus = "OK"; // Panamar proDUCKtion
     $messageText = validate($_POST["message"]);
@@ -21,9 +24,17 @@ if(isset($_POST['sendMessage'])) {
             if ($_FILES["fileToUpload"]["size"] > 16777215) { $messageStatus = "Изображение не может быть больше 16 MB."; $uploadOk = 0; }
             if ($imageFileType != "jpg" && $imageFileType != "jpeg" && $imageFileType != "png") { $messageStatus = "Разрешено использовать только JPG и PNG файлы."; $uploadOk = 0; }
             if ($uploadOk == 1) {
-                $source = file_get_contents($_FILES["fileToUpload"]["tmp_name"]);
-                if ($imageFileType == "jpg" || $imageFileType == "jpeg") { $blob = 'data:image/jpeg;base64,'.base64_encode($source); }
-                else if ($imageFileType == "png") { $blob = 'data:image/png;base64,'.base64_encode($source); }
+                $image = new ImageResize($_FILES["fileToUpload"]["tmp_name"]);
+                if ($imageFileType == "jpg" || $imageFileType == "jpeg") {
+                    $image->quality_jpg = 85;
+                    $image->resizeToLongSide(640);
+                    $blob = 'data:image/jpeg;base64,'.base64_encode($image);
+                }
+                else if ($imageFileType == "png") {
+                    $image->quality_jpg = 85;
+                    $image->resizeToLongSide(640);
+                    $blob = 'data:image/jpeg;base64,'.base64_encode($image->getImageAsString(IMAGETYPE_JPEG));
+                }
                 $messageStatus = sendMessage($_COOKIE["user_token"], $currentChat, $messageText, $blob);
             }
         } else {

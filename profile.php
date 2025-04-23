@@ -7,6 +7,8 @@
 $loggedUser = "";
 include 'db.php';
 include 'header.php';
+include 'lib/ImageResize.php';
+use \Gumlet\ImageResize;
 
 if(!isset($_COOKIE["user_token"])) { header("Refresh:0; url=index.php"); exit; }
 else { $loggedUser = checkCookie($_COOKIE["user_token"]); updateOnline($_COOKIE["user_token"]); }
@@ -54,8 +56,12 @@ if(isset($_POST["setAvatar"])) {
         if ($_FILES["fileToUpload"]["size"] > 16777215) { $status = "Аватар не может быть больше 16 MB."; $uploadOk = 0; }
         if ($imageFileType != "jpg" && $imageFileType != "jpeg") { $status = "Разрешено использовать только JPG файлы."; $uploadOk = 0; }
         if ($uploadOk == 1) {
-            $source = file_get_contents($_FILES["fileToUpload"]["tmp_name"]);
-            $blob = 'data:image/jpeg;base64,'.base64_encode($source);
+
+            $image = new ImageResize($_FILES["fileToUpload"]["tmp_name"]);
+            $image->quality_jpg = 85;
+            $image->resizeToLongSide(640);
+            $blob = 'data:image/jpeg;base64,'.base64_encode($image);
+
             $status = setAvatar($_COOKIE["user_token"],$blob);
         }
     } else { $status = "Файл отсутствует"; }
@@ -81,11 +87,19 @@ if(isset($_POST['postWall'])) {
         if ($_FILES["fileToUpload"]["tmp_name"] != "") {
             if (!getimagesize($_FILES["fileToUpload"]["tmp_name"])) { $status = "Файл не является изображением."; $uploadOk = 0; }
             if ($_FILES["fileToUpload"]["size"] > 16777215) { $status = "Изображение не может быть больше 16 MB."; $uploadOk = 0; }
-            if ($imageFileType != "jpg" && $imageFileType != "jpeg" && $imageFileType != "jpeg") { $status = "Разрешено использовать только JPG и PNG файлы."; $uploadOk = 0; }
+            if ($imageFileType != "jpg" && $imageFileType != "jpeg" && $imageFileType != "png") { $status = "Разрешено использовать только JPG и PNG файлы."; $uploadOk = 0; }
             if ($uploadOk == 1) {
-                $source = file_get_contents($_FILES["fileToUpload"]["tmp_name"]);
-                if ($imageFileType == "jpg" || $imageFileType == "jpeg") { $blob = 'data:image/jpeg;base64,'.base64_encode($source); }
-                else if ($imageFileType == "png") { $blob = 'data:image/png;base64,'.base64_encode($source); }
+                $image = new ImageResize($_FILES["fileToUpload"]["tmp_name"]);
+                if ($imageFileType == "jpg" || $imageFileType == "jpeg") {
+                    $image->quality_jpg = 85;
+                    $image->resizeToLongSide(640);
+                    $blob = 'data:image/jpeg;base64,'.base64_encode($image);
+                }
+                else if ($imageFileType == "png") {
+                    $image->quality_jpg = 85;
+                    $image->resizeToLongSide(640);
+                    $blob = 'data:image/jpeg;base64,'.base64_encode($image->getImageAsString(IMAGETYPE_JPEG));
+                }
                 $wallStatus = addWallEntry($_COOKIE["user_token"], $wallText, $blob);
             }
         } else {
