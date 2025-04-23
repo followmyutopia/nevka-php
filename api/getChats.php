@@ -46,7 +46,7 @@ if (isset($_POST['token'])) {
 
     $signature = "M".$checkedUser."M";
 
-    $sql = "SELECT query, MAX(id), text FROM messages WHERE query LIKE '%$signature%' GROUP BY query ORDER BY MAX(id) DESC LIMIT 75";
+    $sql = "SELECT query, MAX(id) FROM messages WHERE query LIKE '%$signature%' GROUP BY query ORDER BY MAX(id) DESC LIMIT 75";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -55,7 +55,14 @@ if (isset($_POST['token'])) {
         while($row = $result->fetch_assoc()) {
             $interlocutor = str_replace($signature, "", $row["query"]);
             $interlocutor = str_replace("M", "", $interlocutor);
-            $lastText = $row['text'];
+            $lastTextId = $row['MAX(id)'];
+
+            $getLastText = "SELECT text, author FROM messages WHERE id='$lastTextId' LIMIT 1";
+            $lastTextResult = $conn->query($getLastText);
+            $lastTextRow = $lastTextResult->fetch_row();
+            
+            $lastText = $lastTextRow[0];
+            $lastTextAuthor = $lastTextRow[1];
 
             // get the interlocutor data
             $getName = "SELECT id, avatar, firstname, lastname, timestamp FROM users WHERE id='$interlocutor' LIMIT 500";
@@ -63,23 +70,24 @@ if (isset($_POST['token'])) {
             $secondRow = $entryResult->fetch_row();
 
             // compatibility with the v1.4 database format
-            $formattedTime = date("d.m.Y в h:i a", $secondRow['timestamp']);
+            $formattedTime = date("d.m.Y в h:i a", $secondRow[4]);
             $online = ""; $now = new DateTime();
             $lastOnline = date_create_from_format("d.m.Y в h:i a", $formattedTime);
             $difference = ($lastOnline->diff($now)->days * 1440) + ($lastOnline->diff($now)->h * 60) + $lastOnline->diff($now)->i;
             if ($difference <= 5) { $online = "online"; }
-            else if ($difference < 60) { $online = $lastOnline->diff($now)->i." минут назад"; }
-            else { $online = date("d.m в h:i a", $secondRow['timestamp']); }
+            else if ($difference < 60) { $online = $lastOnline->diff($now)->i." минут"; }
+            else if ($difference < 1440) { $online = date("h:i a", $secondRow[4]); }
+            else { $online = date("d.m.Y", $secondRow[4]); }
 
-            echo "{\"id\": \"".$secondRow['id']."\", \"firstname\": \"".$secondRow['firstname']."\", \"lastname\": \"".$secondRow['lastname']."\", \"lastText\": \"".$lastText."\", \"avatar\": \"".$secondRow['avatar']."\", \"online\": \"".$online."\"}, ";
+            echo "{\"id\": \"".$secondRow[0]."\", \"firstname\": \"".$secondRow[2]."\", \"lastname\": \"".$secondRow[3]."\", \"lastText\": \"".$lastText."\", \"avatar\": \"".$secondRow[1]."\", \"online\": \"".$online."\", \"lastTextAuthor\": \"".$lastTextAuthor."\"}, ";
         }
-        echo "{\"id\": \"\", \"firstname\": \"\", \"lastname\": \"\", \"lastText\": \"\", \"avatar\": \"\", \"online\": \"\"}]}";
+        echo "{\"id\": \"\", \"firstname\": \"\", \"lastname\": \"\", \"lastText\": \"\", \"avatar\": \"\", \"online\": \"\", \"lastTextAuthor\": \"\"}]}";
     } else {
         echo "{\"result\":\"empty\",\"error\":\"Нет чатов\"}";
     }
 
     $conn->close();
 } else {
-    echo "{\"result\":\"failure\",\"error\":\"Query обязателен\"}";
+    echo "{\"result\":\"failure\",\"error\":\"Token обязателен\"}";
 }
 ?>
