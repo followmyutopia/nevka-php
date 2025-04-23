@@ -58,7 +58,7 @@ if(isset($_POST["setAvatar"])) {
         if ($uploadOk == 1) {
 
             $image = new ImageResize($_FILES["fileToUpload"]["tmp_name"]);
-            $image->quality_jpg = 85;
+            $image->quality_jpg = 90;
             $image->crop(480, 480);
             $blob = 'data:image/jpeg;base64,'.base64_encode($image);
 
@@ -91,12 +91,12 @@ if(isset($_POST['postWall'])) {
             if ($uploadOk == 1) {
                 $image = new ImageResize($_FILES["fileToUpload"]["tmp_name"]);
                 if ($imageFileType == "jpg" || $imageFileType == "jpeg") {
-                    $image->quality_jpg = 85;
+                    $image->quality_jpg = 90;
                     $image->resizeToLongSide(640);
                     $blob = 'data:image/jpeg;base64,'.base64_encode($image);
                 }
                 else if ($imageFileType == "png") {
-                    $image->quality_jpg = 85;
+                    $image->quality_jpg = 90;
                     $image->resizeToLongSide(640);
                     $blob = 'data:image/jpeg;base64,'.base64_encode($image->getImageAsString(IMAGETYPE_JPEG));
                 }

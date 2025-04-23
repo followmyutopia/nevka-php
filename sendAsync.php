@@ -26,12 +26,12 @@ if(isset($_POST['sendMessage'])) {
             if ($uploadOk == 1) {
                 $image = new ImageResize($_FILES["fileToUpload"]["tmp_name"]);
                 if ($imageFileType == "jpg" || $imageFileType == "jpeg") {
-                    $image->quality_jpg = 85;
+                    $image->quality_jpg = 90;
                     $image->resizeToLongSide(640);
                     $blob = 'data:image/jpeg;base64,'.base64_encode($image);
                 }
                 else if ($imageFileType == "png") {
-                    $image->quality_jpg = 85;
+                    $image->quality_jpg = 90;
                     $image->resizeToLongSide(640);
                     $blob = 'data:image/jpeg;base64,'.base64_encode($image->getImageAsString(IMAGETYPE_JPEG));
                 }
