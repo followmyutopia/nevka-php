@@ -462,7 +462,7 @@ hr {
     }
     .solid {
         background-color: rgba(35, 35, 35, 0.9);
-        position: absolute;
+        position: fixed;
         z-index: 1;
     }
     #mainmenu {

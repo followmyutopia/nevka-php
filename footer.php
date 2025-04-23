@@ -1,5 +1,8 @@
 <script>$(function(){
-    var notificationCounter = 0;
+    var isLogged = <?php if (isset($_COOKIE["user_token"])) { echo "true"; } else { echo "false"; }; ?>;
+
+    if (isLogged) {
+        var notificationCounter = 0;
     window.setInterval(function(){
         $.post("updateAsync.php", { type: 2 }, function(data){
             if (data > 0) {
@@ -17,6 +20,7 @@
             }
         });
     },2500);
+    };
 });</script>
 </div>
 </body>
