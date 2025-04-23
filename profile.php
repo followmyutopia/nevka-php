@@ -59,7 +59,7 @@ if(isset($_POST["setAvatar"])) {
 
             $image = new ImageResize($_FILES["fileToUpload"]["tmp_name"]);
             $image->quality_jpg = 85;
-            $image->resizeToLongSide(640);
+            $image->crop(480, 480);
             $blob = 'data:image/jpeg;base64,'.base64_encode($image);
 
             $status = setAvatar($_COOKIE["user_token"],$blob);
