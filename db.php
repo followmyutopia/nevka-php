@@ -90,10 +90,12 @@ function logout() {
 function checkCookie($token) {
     include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
 
+    $checkedToken = validate($token);
+
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается проверить куки. Код ошибки для поддержки: 103");}
 
-    $sql = "SELECT id, is_banned FROM users WHERE token='$token' LIMIT 1";
+    $sql = "SELECT id, is_banned FROM users WHERE token='$checkedToken' LIMIT 1";
     $result = $conn->query($sql);
 
     $conn->close();
