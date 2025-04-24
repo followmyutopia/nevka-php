@@ -130,7 +130,7 @@ if(isset($_POST['checkDeletePermission'])) { $wallStatus = deleteWallEntry($_COO
             <input type="text" name="status" value="<?php echo $userData[3] ?>">
             <button class="hidden" type="submit" name="setStatus"></button>
         </form>
-        <span id="statusBar"><?php echo $userData[3] ?><br><span id="setStatusButton"class="<?php
+        <span id="statusBar"><?php echo $userData[3] ?><br><span id="setStatusButton" class="<?php
             echo $personalElement ?>" style="color: lightslategray">Установить статус</span></span>
         <?php echo $city.$bio ?>
     </div>

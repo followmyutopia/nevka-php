@@ -27,12 +27,12 @@ if(isset($_POST['sendMessage'])) {
                 $image = new ImageResize($_FILES["fileToUpload"]["tmp_name"]);
                 if ($imageFileType == "jpg" || $imageFileType == "jpeg") {
                     $image->quality_jpg = 90;
-                    $image->resizeToLongSide(640);
+                    $image->resizeToLongSide(800);
                     $blob = 'data:image/jpeg;base64,'.base64_encode($image);
                 }
                 else if ($imageFileType == "png") {
                     $image->quality_jpg = 90;
-                    $image->resizeToLongSide(640);
+                    $image->resizeToLongSide(800);
                     $blob = 'data:image/jpeg;base64,'.base64_encode($image->getImageAsString(IMAGETYPE_JPEG));
                 }
                 $messageStatus = sendMessage($_COOKIE["user_token"], $currentChat, $messageText, $blob);

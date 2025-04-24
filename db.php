@@ -292,11 +292,12 @@ function deleteWallEntry($token, $entryId) {
     include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
 
     $checkedUser = getIdByToken($token);
+    $checkedID = validate($entryId);
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается удалить со стены. Код ошибки для поддержки: 121");}
 
-    $sql = "SELECT user FROM walls WHERE id='$entryId' LIMIT 1";
+    $sql = "SELECT user FROM walls WHERE id='$checkedID' LIMIT 1";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {

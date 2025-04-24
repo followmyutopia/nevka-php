@@ -46,6 +46,7 @@ if ($currentChat == 0) { $rightSection = "hidden"; $leftSection = "wide"; }
             <input class="fileInput attachment mobile-expand send" type="file" name="fileToUpload" id="fileToUpload">
             <span id="sendStatus" class="console send" style="margin-top:1px"></span>
         </form>
+    </div>
 </div>
 
 <script>
