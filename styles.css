@@ -298,6 +298,7 @@ td a {
     width: fit-content;
     position: relative;
     overflow-y: scroll;
+    scrollbar-width: none;
 }
 
 .me {
