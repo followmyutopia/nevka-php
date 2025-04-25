@@ -38,7 +38,18 @@ if (isset($_POST['id'])) {
 
         while($row = $result->fetch_assoc()) {
             $formattedTime = date("d.m.Y в h:i a", $row['timestamp']);
-            echo "{\"id\": \"".$row['id']."\", \"text\": \"".$row['text']."\", \"image\": \"".$row['image']."\", \"timestamp\": \"".$row['timestamp']."\", \"formattedTime\": \"".$formattedTime."\"}, ";
+            // Костыль для буквы х, почему-то регулярное выражение
+            // воспринимает именно эту букву, как перенос строки
+            $processedText = str_replace("х", "&KOSTYL;", $row['text']);
+            $processedText = preg_replace('/\s*\R\s*/', '\n', $processedText);
+            $processedText = str_replace("&KOSTYL;", "х", $processedText);
+            $processedText = str_replace("<br>", "", $processedText);
+            $processedText = str_replace("<ul>", "", $processedText);
+            $processedText = str_replace("<li>", "  •  ", $processedText);
+            $processedText = str_replace("</li>", "", $processedText);
+            $processedText = str_replace("</ul>", "", $processedText);
+            $processedText = str_replace("&quot;", '\"', $processedText);
+            echo "{\"id\": \"".$row['id']."\", \"text\": \"".$processedText."\", \"image\": \"".$row['image']."\", \"timestamp\": \"".$row['timestamp']."\", \"formattedTime\": \"".$formattedTime."\"}, ";
         }
 
         echo "{\"id\": \"\", \"text\": \"\", \"image\": \"\", \"timestamp\": \"\", \"formattedTime\": \"\"}]}";

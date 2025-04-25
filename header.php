@@ -11,7 +11,7 @@
     <meta name="description" content="Социальная сеть Невка">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
   </head>
-<body style='background-color: <?php echo htmlspecialchars($_COOKIE["theme"])?>'>
+<body style='background-color: <?php error_reporting(0); echo htmlspecialchars($_COOKIE["theme"])?>'>
   <header id="header">
     <span id="mainlogo">Невка</span>
     <button class="button" id="togglemenu">Меню</button>

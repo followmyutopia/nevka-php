@@ -17,8 +17,8 @@ if (!isset($loggedUserData[1]) || !isset($loggedUserData[2])) {header("Refresh:0
 $currentChat = $messageStatus = $textarea = $leftSection = $rightSection = "";
 
 if(isset($_GET['id'])) {
-    if (userExists($_GET['id'])) {
-        $currentChat = validate($_GET['id']);
+    if (userExists(intval($_GET['id']))) {
+        $currentChat = validate(intval($_GET['id']));
         $leftSection = "mobile-hidden";
     } else {
         $currentChat = lastId($loggedUser); $rightSection = "mobile-hidden";

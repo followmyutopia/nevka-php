@@ -1,5 +1,5 @@
 <script>$(function(){
-    var isLogged = <?php if (isset($_COOKIE["user_token"])) { echo "true"; } else { echo "false"; }; ?>;
+    var isLogged = <?php error_reporting(0); if (isset($_COOKIE["user_token"])) { echo "true"; } else { echo "false"; }; ?>;
 
     if (isLogged) {
         var notificationCounter = 0;

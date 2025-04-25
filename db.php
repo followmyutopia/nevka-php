@@ -343,7 +343,7 @@ function getWallEntries($loggedUser) {
             }
         }
     } else {
-        echo "<p class=\"console\">Записей на стене нет<p>";
+        echo "<p class=\"console\">Записей на стене нет<br><br><br>Вы можете использовать стену, как персональный блог.<br><br>Длина сообщения на стене не может быть больше 1023 символа, а так же на стену можно публиковать изображения в форматах JPG/JPEG/PNG.<p>";
     }
 
     $conn->close();
@@ -748,7 +748,7 @@ function newMessageAvailable($id) {
 function userExists($id) {
     include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
 
-    $checkedId = validate($id);
+    $checkedId = validate(intval($id));
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается проверить наличие пользователя. Код ошибки для поддержки: 145");}
