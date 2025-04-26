@@ -42,10 +42,12 @@ function getNameById($id) {
 function getIdByToken($token) {
     include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
 
+    $checkedToken = validate($token);
+
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается получить ID. Код ошибки для поддержки: 101");}
     
-    $sql = "SELECT id FROM users WHERE token='$token' LIMIT 1";
+    $sql = "SELECT id FROM users WHERE token='$checkedToken' LIMIT 1";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -487,7 +489,7 @@ function getMessages($token,$chatUser) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается отобразить сообщения. Код ошибки для поддержки: 129");}
 
-    $sql = "SELECT * FROM (SELECT id, query, author, text, image, timestamp FROM messages WHERE query='$query' ORDER BY id DESC LIMIT 75) X ORDER BY id ASC;";
+    $sql = "SELECT * FROM (SELECT id, query, author, text, image, timestamp FROM messages WHERE query='$query' ORDER BY id DESC LIMIT 100) X ORDER BY id ASC;";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -516,6 +518,8 @@ function getMessages($token,$chatUser) {
     } else {
         echo "<p class=\"console\">Нет сообщений<p>";
     }
+
+    $conn->close();
 }
 
 function sendMessage($token, $currentChat, $messageText, $messageImage) {
