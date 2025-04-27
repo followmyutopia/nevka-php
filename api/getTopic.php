@@ -46,22 +46,22 @@ if (isset($_POST['discussion'])) {
         echo "{\"result\":\"failure\",\"error\":\"Такой темы не существует\"}";
     }
 
+    // get author name
+    $authorId = $header[1];
+    $nameSql = "SELECT firstname, lastname FROM users WHERE id='$authorId' LIMIT 1";
+    $nameResult = $conn->query($nameSql);
+    $nameRow = $nameResult->fetch_row();
+    $authorName = $nameRow[0]." ".$nameRow[1];
+
+    // get formatted creation time
+    $formattedTime = date("d.m.Y в h:i a", $header[3]);
+
     // get the messages
 
     $sql = "SELECT author, message, time, header FROM discussions WHERE topic='$header[0]' ORDER BY id DESC LIMIT 500";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
-        // get author name
-        $authorId = $header[1];
-        $nameSql = "SELECT firstname, lastname FROM users WHERE id='$authorId' LIMIT 1";
-        $nameResult = $conn->query($nameSql);
-        $authorName = $nameRow[0]." ".$nameRow[1];
-
-        // get formatted creation time
-        $formattedTime = date("d.m.Y в h:i a", $header[3]);
-        
-
         echo "{\"result\": \"success\", \"header\": \"".$header[0]."\", \"author\": \"".$authorName."\", \"timestamp\": \"".$header[3]."\", \"formattedTime\": \"".$formattedTime."\", \"topicMessage\": \"".$header[2]."\", \"messages\": [";
         
         while($row = $result->fetch_assoc()) {
@@ -73,90 +73,17 @@ if (isset($_POST['discussion'])) {
                 $authorName = $nameRow[0]." ".$nameRow[1];
                 $formattedTime = date("d.m.Y в h:i a", $row['time']);
 
-                echo "{\"name\": \"".$authorName."\", \"text\": \"".$row['message']."\", \"timestamp\": \"".$row['time']."\", \"formattedTime\": \"".$formattedTime."\"}";
+                echo "{\"name\": \"".$authorName."\", \"text\": \"".$row['message']."\", \"timestamp\": \"".$row['time']."\", \"formattedTime\": \"".$formattedTime."\"}, ";
             }
         }
 
         echo "{\"name\": \"\", \"text\": \"\", \"timestamp\": \"\", \"formattedTime\": \"\"}]}";
     } else {
-        echo "{\"result\":\"empty\",\"error\":\"Нет ответов\"}";
-    }
-
-
-
-
-
-
-
-
-
-
-    $query = $checkedUser = "";
-
-    // get ID by token and record it to checkedUser
-
-    $sql = "SELECT id FROM users WHERE token='$token' LIMIT 1";
-    $result = $conn->query($sql);
-
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_row();
-        $checkedUser = $row[0];
-    } else {
-        echo "{\"result\":\"failure\",\"error\":\"token_not_valid\"}";
-    }
-
-    // form query
-
-    if ($checkedUser < $chat) {
-        $query = "M".$checkedUser."M".$chat."M";
-    } else {
-        $query = "M".$chat."M".$checkedUser."M";
-    }
-
-    $sql = "SELECT * FROM (SELECT id, query, author, text, image, timestamp FROM messages WHERE query='$query' ORDER BY id DESC LIMIT 100) X ORDER BY id ASC;";
-    $result = $conn->query($sql);
-
-    // {"id": "", "me": "", "text": "", "image": "", "timestamp": "", "formattedTime": ""}
-
-    if ($result->num_rows > 0) {
-        echo "{\"result\": \"success\", \"messages\": [";
-
-        while($row = $result->fetch_assoc()) {
-            $interlocutor = str_replace("M".$checkedUser."M", "", $row["query"]);
-            $interlocutor = str_replace("M", "", $interlocutor);
-            // compatibility with the v1.4 database format
-            $formattedTime = date("d.m в h:i a", $row['timestamp']);
-
-            // Костыль для буквы х, почему-то регулярное выражение
-            // воспринимает именно эту букву, как перенос строки
-            $processedText = str_replace("х", "&KOSTYL;", $row['text']);
-            $processedText = preg_replace('/\s*\R\s*/', '\n', $processedText);
-            $processedText = str_replace("&KOSTYL;", "х", $processedText);
-            $processedText = str_replace("<br>", "", $processedText);
-            $processedText = str_replace("<ul>", "", $processedText);
-            $processedText = str_replace("<li>", "  •  ", $processedText);
-            $processedText = str_replace("</li>", "", $processedText);
-            $processedText = str_replace("</ul>", "", $processedText);
-            $processedText = str_replace("&quot;", '\"', $processedText);
-            $processedText = str_replace("&lt;", '<', $processedText);
-            $processedText = str_replace("&gt;", '>', $processedText);
-
-            if ($chat == $interlocutor) {
-                if ($row["author"] == $checkedUser) { // my message
-                    echo "{\"id\": \"".$row['id']."\", \"me\": \"true\", \"text\": \"".$processedText."\", \"image\": \"".$row['image']."\", \"timestamp\": \"".$row['timestamp']."\", \"formattedTime\": \"".$formattedTime."\"}, ";
-                } else if ($row["author"] == $chat) { // interlocutor message
-                    echo "{\"id\": \"".$row['id']."\", \"me\": \"false\", \"text\": \"".$processedText."\", \"image\": \"".$row['image']."\", \"timestamp\": \"".$row['timestamp']."\", \"formattedTime\": \"".$formattedTime."\"}, ";
-                } else { return; }
-            } else { return; }
-        }
-
-        echo "{\"id\": \"\", \"me\": \"\", \"text\": \"\", \"image\": \"\", \"timestamp\": \"\", \"formattedTime\": \"\"}]}";
-    } else {
-        echo "{\"result\":\"empty\",\"error\":\"Нет сообщений\"}";
+        echo "{\"result\":\"empty\", \"header\": \"".$header[0]."\", \"author\": \"".$authorName."\", \"timestamp\": \"".$header[3]."\", \"formattedTime\": \"".$formattedTime."\", \"topicMessage\": \"".$header[2]."\", \"error\":\"Нет ответов\"}";
     }
 
     $conn->close();
 } else {
-    echo "{\"result\":\"failure\",\"error\":\"Token и chat обязательны\"}";
+    echo "{\"result\":\"failure\",\"error\":\"Discussion обязателен\"}";
 }
 ?>
