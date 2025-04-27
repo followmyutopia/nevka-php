@@ -71,12 +71,13 @@ if (isset($_POST['discussion'])) {
                 $authorId = $row['author'];
                 $nameSql = "SELECT firstname, lastname FROM users WHERE id='$authorId' LIMIT 1";
                 $nameResult = $conn->query($nameSql);
-                $authorName = $nameRow[0]." ".$nameRow[1];
+                $nameRow = $nameResult->fetch_row();
+                $messageAuthor = $nameRow[0]." ".$nameRow[1];
                 $formattedTime = date("d.m.Y в h:i a", $row['time']);
 
                 $processedText = prepareText($row['message']);
 
-                echo "{\"name\": \"".$authorName."\", \"text\": \"".$processedText."\", \"timestamp\": \"".$row['time']."\", \"formattedTime\": \"".$formattedTime."\"}, ";
+                echo "{\"name\": \"".$messageAuthor."\", \"text\": \"".$processedText."\", \"timestamp\": \"".$row['time']."\", \"formattedTime\": \"".$formattedTime."\"}, ";
             }
         }
 
