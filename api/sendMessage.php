@@ -25,6 +25,7 @@ if (isset($_POST['token']) && isset($_POST['chat']) && isset($_POST['text']) && 
     $token = validate($_POST['token']);
     $currentChat = validate($_POST['chat']);
     $messageText = validate($_POST['text']);
+    $timestamp = time();
 
     if ($_POST['image'] != "") {
         $image = new ImageResize($_POST['image']);
@@ -52,13 +53,17 @@ if (isset($_POST['token']) && isset($_POST['chat']) && isset($_POST['text']) && 
         echo "{\"result\":\"failure\",\"error\":\"token_not_valid\"}";
     }
 
+    // update online
+
+    $sql = "UPDATE users SET timestamp='$timestamp' WHERE token='$token'";
+    $updateOnline = $conn->query($sql);
+
     // check if user exists
 
     $sql = "SELECT id FROM users WHERE id='$loggedUser' LIMIT 1";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
-        $timestamp = time();
         if ($loggedUser < $currentChat) {
             $query = "M".$loggedUser."M".$currentChat."M";
         } else {
