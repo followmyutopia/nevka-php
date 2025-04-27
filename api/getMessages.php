@@ -11,7 +11,7 @@
  */
 
 date_default_timezone_set("Europe/Moscow");
-$token = "";
+$token = $chat = "";
 
 function validate($data) {
     $data = trim($data);
