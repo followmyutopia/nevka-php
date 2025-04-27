@@ -26,10 +26,12 @@ if (isset($_POST['token']) && isset($_POST['chat']) && isset($_POST['text']) && 
     $currentChat = validate($_POST['chat']);
     $messageText = validate($_POST['text']);
 
-    $image = new ImageResize($_POST['image']);
-    $image->quality_jpg = 90;
-    $image->resizeToLongSide(800);
-    $messageImage = 'data:image/jpeg;base64,'.base64_encode($image->getImageAsString(IMAGETYPE_JPEG));
+    if ($_POST['image'] != "") {
+        $image = new ImageResize($_POST['image']);
+        $image->quality_jpg = 90;
+        $image->resizeToLongSide(800);
+        $messageImage = 'data:image/jpeg;base64,'.base64_encode($image->getImageAsString(IMAGETYPE_JPEG));
+    }
 
     include '../credentials.php';
 
