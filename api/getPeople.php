@@ -11,6 +11,9 @@
  */
 
 date_default_timezone_set("Europe/Moscow");
+include '../lib/ImageResize.php';
+use \Gumlet\ImageResize;
+
 $query = "";
 
 function validate($data) {
@@ -49,7 +52,12 @@ if (isset($_POST['query'])) {
             else if ($difference < 60) { $online = $lastOnline->diff($now)->i." минут назад"; }
             else { $online = date("d.m в h:i a", $row['timestamp']); }
 
-            echo "{\"id\": \"".$row['id']."\", \"firstname\": \"".$row['firstname']."\", \"lastname\": \"".$row['lastname']."\", \"timestamp\": \"".$row['timestamp']."\", \"online\": \"".$online."\", \"avatar\": \"".$row['avatar']."\"}, ";
+            $image = new ImageResize($row['avatar']);
+            $image->quality_jpg = 90;
+            $image->crop(100, 100);
+            $blob = 'data:image/jpeg;base64,'.base64_encode($image);
+
+            echo "{\"id\": \"".$row['id']."\", \"firstname\": \"".$row['firstname']."\", \"lastname\": \"".$row['lastname']."\", \"timestamp\": \"".$row['timestamp']."\", \"online\": \"".$online."\", \"avatar\": \"".$blob."\"}, ";
         }
         echo "{\"id\": \"\", \"firstname\": \"\", \"lastname\": \"\", \"timestamp\": \"\", \"online\": \"\", \"avatar\": \"\"}]}";
     } else {

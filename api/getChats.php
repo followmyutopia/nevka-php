@@ -11,6 +11,9 @@
  */
 
 date_default_timezone_set("Europe/Moscow");
+include '../lib/ImageResize.php';
+use \Gumlet\ImageResize;
+
 $token = "";
 
 function validate($data) {
@@ -79,7 +82,12 @@ if (isset($_POST['token'])) {
             else if ($difference < 1440) { $online = date("h:i a", $secondRow[4]); }
             else { $online = date("d.m.Y", $secondRow[4]); }
 
-            echo "{\"id\": \"".$secondRow[0]."\", \"firstname\": \"".$secondRow[2]."\", \"lastname\": \"".$secondRow[3]."\", \"lastText\": \"".$lastText."\", \"avatar\": \"".$secondRow[1]."\", \"online\": \"".$online."\", \"lastTextAuthor\": \"".$lastTextAuthor."\"}, ";
+            $image = new ImageResize($secondRow[1]);
+            $image->quality_jpg = 90;
+            $image->crop(100, 100);
+            $blob = 'data:image/jpeg;base64,'.base64_encode($image);
+
+            echo "{\"id\": \"".$secondRow[0]."\", \"firstname\": \"".$secondRow[2]."\", \"lastname\": \"".$secondRow[3]."\", \"lastText\": \"".$lastText."\", \"avatar\": \"".$blob."\", \"online\": \"".$online."\", \"lastTextAuthor\": \"".$lastTextAuthor."\"}, ";
         }
         echo "{\"id\": \"\", \"firstname\": \"\", \"lastname\": \"\", \"lastText\": \"\", \"avatar\": \"\", \"online\": \"\", \"lastTextAuthor\": \"\"}]}";
     } else {
