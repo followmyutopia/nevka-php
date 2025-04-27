@@ -49,6 +49,9 @@ if (isset($_POST['id'])) {
             $processedText = str_replace("</li>", "", $processedText);
             $processedText = str_replace("</ul>", "", $processedText);
             $processedText = str_replace("&quot;", '\"', $processedText);
+            $processedText = str_replace("&lt;", '<', $processedText);
+            $processedText = str_replace("&gt;", '>', $processedText);
+            
             echo "{\"id\": \"".$row['id']."\", \"text\": \"".$processedText."\", \"image\": \"".$row['image']."\", \"timestamp\": \"".$row['timestamp']."\", \"formattedTime\": \"".$formattedTime."\"}, ";
         }
 

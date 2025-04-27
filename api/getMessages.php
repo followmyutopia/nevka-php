@@ -65,7 +65,7 @@ if (isset($_POST['token']) && isset($_POST['chat'])) {
             $interlocutor = str_replace("M".$checkedUser."M", "", $row["query"]);
             $interlocutor = str_replace("M", "", $interlocutor);
             // compatibility with the v1.4 database format
-            $formattedTime = date("d.m в h:i a", $row["timestamp"]);
+            $formattedTime = date("d.m в h:i a", $row['timestamp']);
 
             // Костыль для буквы х, почему-то регулярное выражение
             // воспринимает именно эту букву, как перенос строки
@@ -78,12 +78,14 @@ if (isset($_POST['token']) && isset($_POST['chat'])) {
             $processedText = str_replace("</li>", "", $processedText);
             $processedText = str_replace("</ul>", "", $processedText);
             $processedText = str_replace("&quot;", '\"', $processedText);
+            $processedText = str_replace("&lt;", '<', $processedText);
+            $processedText = str_replace("&gt;", '>', $processedText);
 
             if ($chat == $interlocutor) {
                 if ($row["author"] == $checkedUser) { // my message
-                    echo "{\"id\": \"".$row['text']."\", \"me\": \"true\", \"text\": \"".$processedText."\", \"image\": \"".$row['text']."\", \"timestamp\": \"".$row['text']."\", \"formattedTime\": \"".$formattedTime."\"}, ";
+                    echo "{\"id\": \"".$row['id']."\", \"me\": \"true\", \"text\": \"".$processedText."\", \"image\": \"".$row['image']."\", \"timestamp\": \"".$row['timestamp']."\", \"formattedTime\": \"".$formattedTime."\"}, ";
                 } else if ($row["author"] == $chat) { // interlocutor message
-                    echo "{\"id\": \"".$row['text']."\", \"me\": \"false\", \"text\": \"".$processedText."\", \"image\": \"".$row['text']."\", \"timestamp\": \"".$row['text']."\", \"formattedTime\": \"".$formattedTime."\"}, ";
+                    echo "{\"id\": \"".$row['id']."\", \"me\": \"false\", \"text\": \"".$processedText."\", \"image\": \"".$row['image']."\", \"timestamp\": \"".$row['timestamp']."\", \"formattedTime\": \"".$formattedTime."\"}, ";
                 } else { return; }
             } else { return; }
         }
