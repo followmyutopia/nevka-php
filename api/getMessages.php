@@ -25,6 +25,7 @@ if (isset($_POST['token']) && isset($_POST['chat'])) {
     $chat = validate($_POST['chat']);
 
     include '../credentials.php';
+    include 'prepareText.php';
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) {
@@ -67,7 +68,6 @@ if (isset($_POST['token']) && isset($_POST['chat'])) {
             // compatibility with the v1.4 database format
             $formattedTime = date("d.m в h:i a", $row['timestamp']);
 
-            include 'prepareText.php';
             $processedText = prepareText($row['text']);
 
             if ($chat == $interlocutor) {

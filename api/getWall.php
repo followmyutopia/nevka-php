@@ -24,6 +24,7 @@ if (isset($_POST['id'])) {
     $userId = validate($_POST['id']);
 
     include '../credentials.php';
+    include 'prepareText.php';
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) {
@@ -39,7 +40,6 @@ if (isset($_POST['id'])) {
         while($row = $result->fetch_assoc()) {
             $formattedTime = date("d.m.Y в h:i a", $row['timestamp']);
 
-            include 'prepareText.php';
             $processedText = prepareText($row['text']);
             
             echo "{\"id\": \"".$row['id']."\", \"text\": \"".$processedText."\", \"image\": \"".$row['image']."\", \"timestamp\": \"".$row['timestamp']."\", \"formattedTime\": \"".$formattedTime."\"}, ";

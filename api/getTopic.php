@@ -24,6 +24,7 @@ if (isset($_POST['discussion'])) {
     $discussion = validate($_POST['discussion']);
 
     include '../credentials.php';
+    include 'prepareText.php';
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) {
@@ -73,7 +74,6 @@ if (isset($_POST['discussion'])) {
                 $authorName = $nameRow[0]." ".$nameRow[1];
                 $formattedTime = date("d.m.Y в h:i a", $row['time']);
 
-                include 'prepareText.php';
                 $processedText = prepareText($row['message']);
 
                 echo "{\"name\": \"".$authorName."\", \"text\": \"".$processedText."\", \"timestamp\": \"".$row['time']."\", \"formattedTime\": \"".$formattedTime."\"}, ";
