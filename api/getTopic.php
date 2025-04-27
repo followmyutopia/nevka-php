@@ -3,7 +3,7 @@
  * Nevka Project v1.6 API
  * 2025 Avicus Delacroix
  * 
- * Gets all active chats for the specified user.
+ * Gets the topic header and messages for the specified topic ID.
  * Accepts: token, chat (multipart/form-data)
  * Returns: result, header?, author?, timestamp?, formattedTime?, topicMessage?, messages?[], error? (json)
  * messages?[]: {"name": "", "text": "", "timestamp": "", "formattedTime": ""}
@@ -20,8 +20,8 @@ function validate($data) {
     return $data;
 }
 
-if (isset($_POST['discussion'])) {
-    $discussion = validate($_POST['discussion']);
+if (isset($_POST['id'])) {
+    $discussion = validate($_POST['id']);
 
     include '../credentials.php';
     include 'prepareText.php';
@@ -88,6 +88,6 @@ if (isset($_POST['discussion'])) {
 
     $conn->close();
 } else {
-    echo "{\"result\":\"failure\",\"error\":\"Discussion обязателен\"}";
+    echo "{\"result\":\"failure\",\"error\":\"ID обязателен\"}";
 }
 ?>
