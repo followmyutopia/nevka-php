@@ -18,8 +18,10 @@ function validate($data) {
     return $data;
 }
 
-if (isset($_POST['id'])) {
+if (isset($_POST['id']) && isset($_POST['token'])) {
+    $token = validate($_POST['token']);
     $userId = validate($_POST['id']);
+    $timestamp = time();
 
     include '../credentials.php';
 
@@ -27,6 +29,11 @@ if (isset($_POST['id'])) {
     if ($conn->connect_error) {
         echo "{\"result\":\"failure\",\"error\":\"Нет доступа к базе данных\"}";
     }
+
+    // update online
+
+    $sql = "UPDATE users SET timestamp='$timestamp' WHERE token='$token'";
+    $conn->query($sql);
 
     $sql = "SELECT firstname, lastname, status, city, bio, timestamp, avatar FROM users WHERE id='$userId' LIMIT 1";
     $result = $conn->query($sql);

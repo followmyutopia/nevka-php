@@ -10,6 +10,8 @@
  * Discussions: id (int), topic (varchar-255), author (int), message (varchar-1023), time (int), header (tinyint-1), activity (int)
  */
 
+include 'lib/ImageResize.php';
+use \Gumlet\ImageResize;
 date_default_timezone_set("Europe/Moscow");
 error_reporting(0);
 
@@ -399,7 +401,13 @@ function showUsersTable($query) {
             if ($difference <= 5) { $online = "<span style=\"color:greenyellow\">Онлайн</span>"; }
             else if ($difference < 60) { $online = "<span style=\"color:lightslategray\">Был(а) в сети: ".$lastOnline->diff($now)->i." минут назад</span>"; }
             else { $online = "<span style=\"color:lightslategray\">Был(а) в сети: ".$formattedTime."</span>"; }
-            echo "<tr><td class=\"a b\" data-href=\"profile.php?id=".$row["id"]."\"><img class=\"thumbnail\" src=\"".$row["avatar"]."\"></td><td class=\"a\" data-href=\"profile.php?id=".$row["id"]."\">".$row["firstname"]." ".$row["lastname"]."<br>".$online."</td><td class=\"a b\" data-href=\"messages.php?id=".$row["id"]."\"><button class=\"button\">Написать сообщение</button></td></tr>";
+
+            $image = new ImageResize($row["avatar"]);
+            $image->quality_jpg = 90;
+            $image->crop(100, 100);
+            $blob = 'data:image/jpeg;base64,'.base64_encode($image);
+
+            echo "<tr><td class=\"a b\" data-href=\"profile.php?id=".$row["id"]."\"><img class=\"thumbnail\" src=\"".$blob."\"></td><td class=\"a\" data-href=\"profile.php?id=".$row["id"]."\">".$row["firstname"]." ".$row["lastname"]."<br>".$online."</td><td class=\"a b\" data-href=\"messages.php?id=".$row["id"]."\"><button class=\"button\">Написать сообщение</button></td></tr>";
         }
     } else {
         echo "<tr><td>Никого не найдено</td></tr>";
@@ -438,7 +446,13 @@ function showChatsTable($token) {
             if ($difference <= 5) { $online = "<span style=\"color:greenyellow\">Онлайн</span>"; }
             else if ($difference < 60) { $online = "<span style=\"color:lightslategray\">Был(а): ".$lastOnline->diff($now)->i." минут назад</span>"; }
             else { $online = "<span style=\"color:lightslategray\">Был(а): ".$shortDate."</span>"; }
-            echo "<tr><td class=\"a c\" data-href=\"messages.php?id=".$row["0"]."\"><img class=\"thumbnail\" src=\"".$row["1"]."\"></td><td class=\"a d\" data-href=\"messages.php?id=".$row["0"]."\">".$row["2"]." ".$row["3"]."<br>".$online."</td></tr>";
+
+            $image = new ImageResize($row["1"]);
+            $image->quality_jpg = 90;
+            $image->crop(100, 100);
+            $blob = 'data:image/jpeg;base64,'.base64_encode($image);
+
+            echo "<tr><td class=\"a c\" data-href=\"messages.php?id=".$row["0"]."\"><img class=\"thumbnail\" src=\"".$blob."\"></td><td class=\"a d\" data-href=\"messages.php?id=".$row["0"]."\">".$row["2"]." ".$row["3"]."<br>".$online."</td></tr>";
         }
     } else {
         echo "<p class=\"console\">Нет чатов.</p><p id=\"pplNotice\" class=\"console\">Перейдите в раздел <a href=\"people.php\">Люди</a> для выбора собеседника.</p>";

@@ -56,7 +56,7 @@ if (isset($_POST['token']) && isset($_POST['chat']) && isset($_POST['text']) && 
     // update online
 
     $sql = "UPDATE users SET timestamp='$timestamp' WHERE token='$token'";
-    $updateOnline = $conn->query($sql);
+    $conn->query($sql);
 
     // check if user exists
 

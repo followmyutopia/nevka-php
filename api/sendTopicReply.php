@@ -24,12 +24,19 @@ if (isset($_POST['token']) && isset($_POST['topic']) && isset($_POST['text'])) {
     $topic = validate($_POST['topic']);
     $messageText = validate($_POST['text']);
 
+    $timestamp = time();
+
     include '../credentials.php';
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) {
         echo "{\"result\":\"failure\",\"error\":\"Нет доступа к базе данных\"}";
     }
+
+    // update online
+
+    $sql = "UPDATE users SET timestamp='$timestamp' WHERE token='$token'";
+    $conn->query($sql);
 
     // get ID by token and record it to loggedUser
 
@@ -58,8 +65,6 @@ if (isset($_POST['token']) && isset($_POST['topic']) && isset($_POST['text'])) {
     } else {
         echo "{\"result\":\"failure\",\"error\":\"Такой темы не существует\"}";
     }
-
-    $timestamp = time();
 
     $sql = "INSERT INTO discussions (topic, author, message, time, header, activity)
         VALUES ('$header', '$loggedUser', '$messageText', '$timestamp', '0', $timestamp)";

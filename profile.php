@@ -7,8 +7,6 @@
 $loggedUser = "";
 include 'db.php';
 include 'header.php';
-include 'lib/ImageResize.php';
-use \Gumlet\ImageResize;
 
 if(!isset($_COOKIE["user_token"])) { header("Refresh:0; url=index.php"); exit; }
 else { $loggedUser = checkCookie($_COOKIE["user_token"]); updateOnline($_COOKIE["user_token"]); }

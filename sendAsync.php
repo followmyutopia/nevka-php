@@ -5,8 +5,6 @@
  */
 
 include 'db.php';
-include 'lib/ImageResize.php';
-use \Gumlet\ImageResize;
 
 if(isset($_POST['sendMessage'])) {
     $messageStatus = "OK"; // Panamar proDUCKtion
