@@ -73,7 +73,10 @@ if (isset($_POST['discussion'])) {
                 $authorName = $nameRow[0]." ".$nameRow[1];
                 $formattedTime = date("d.m.Y в h:i a", $row['time']);
 
-                echo "{\"name\": \"".$authorName."\", \"text\": \"".$row['message']."\", \"timestamp\": \"".$row['time']."\", \"formattedTime\": \"".$formattedTime."\"}, ";
+                include 'prepareText.php';
+                $processedText = prepareText($row['message']);
+
+                echo "{\"name\": \"".$authorName."\", \"text\": \"".$processedText."\", \"timestamp\": \"".$row['time']."\", \"formattedTime\": \"".$formattedTime."\"}, ";
             }
         }
 

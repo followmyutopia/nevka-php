@@ -67,19 +67,8 @@ if (isset($_POST['token']) && isset($_POST['chat'])) {
             // compatibility with the v1.4 database format
             $formattedTime = date("d.m в h:i a", $row['timestamp']);
 
-            // Костыль для буквы х, почему-то регулярное выражение
-            // воспринимает именно эту букву, как перенос строки
-            $processedText = str_replace("х", "&KOSTYL;", $row['text']);
-            $processedText = preg_replace('/\s*\R\s*/', '\n', $processedText);
-            $processedText = str_replace("&KOSTYL;", "х", $processedText);
-            $processedText = str_replace("<br>", "", $processedText);
-            $processedText = str_replace("<ul>", "", $processedText);
-            $processedText = str_replace("<li>", "  •  ", $processedText);
-            $processedText = str_replace("</li>", "", $processedText);
-            $processedText = str_replace("</ul>", "", $processedText);
-            $processedText = str_replace("&quot;", '\"', $processedText);
-            $processedText = str_replace("&lt;", '<', $processedText);
-            $processedText = str_replace("&gt;", '>', $processedText);
+            include 'prepareText.php';
+            $processedText = prepareText($row['text']);
 
             if ($chat == $interlocutor) {
                 if ($row["author"] == $checkedUser) { // my message
