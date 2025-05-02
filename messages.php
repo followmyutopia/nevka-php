@@ -52,14 +52,8 @@ if ($currentChat == 0) { $rightSection = "hidden"; $leftSection = "wide"; }
 <script>
 $(function(){
     $("#chatsTable").on('click', '.a', function(){ window.location = $(this).data("href"); });
-
-    document.addEventListener('dragover', (e) => {
-        e.preventDefault()
-    });
-    document.addEventListener('drop', (e) => {
-        document.getElementById('fileToUpload').files = e.dataTransfer.files;
-        e.preventDefault()
-    });
+    document.addEventListener('dragover', (e) => { e.preventDefault() });
+    document.addEventListener('drop', (e) => { document.getElementById('fileToUpload').files = e.dataTransfer.files; e.preventDefault() });
 
     // Panamar proDUCKtion
     var needsUpdate = false;
