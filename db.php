@@ -4,9 +4,9 @@
  * 2025 Avicus Delacroix
  * 
  * Databases and types (MySQL):
- * Users:       id (int), login (varchar-63), password (varchar-40), token (varchar-127), avatar (mediumblob), firstname (varchar-63), lastname (varchar-63), status (varchar-127), city (varchar-63), bio (varchar-255), timestamp (int), search (varchar-127), is_banned (tinyint-1), is_admin (tinyint-1)
+ * Users:       id (int), login (varchar-63), password (varchar-40), token (varchar-127), avatar (mediumblob), firstname (varchar-63), lastname (varchar-63), status (varchar-127), city (varchar-63), bio (varchar-255), timestamp (int), search (varchar-127), is_banned (tinyint-1), is_admin (tinyint-1), expo-push-token (varchar-255)
  * Walls:       id (int), user (int), text (varchar-1023), image (mediumblob), timestamp (int)
- * Messages:    id (int), query (varchar-25), author (int), text (varchar-1023), image (mediumblob), timestamp (int)
+ * Messages:    id (int), query (varchar-25), author (int), text (varchar-1023), image (mediumblob), timestamp (int), unread (tinyint-1)
  * Discussions: id (int), topic (varchar-255), author (int), message (varchar-1023), time (int), header (tinyint-1), activity (int)
  */
 
