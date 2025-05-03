@@ -27,6 +27,7 @@ if (isset($_POST['token'])) {
     $token = validate($_POST['token']);
 
     include '../credentials.php';
+    include 'prepareText.php';
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) {
@@ -87,7 +88,9 @@ if (isset($_POST['token'])) {
             $image->crop(100, 100);
             $blob = 'data:image/jpeg;base64,'.base64_encode($image);
 
-            echo "{\"id\": \"".$secondRow[0]."\", \"firstname\": \"".$secondRow[2]."\", \"lastname\": \"".$secondRow[3]."\", \"lastText\": \"".$lastText."\", \"avatar\": \"".$blob."\", \"online\": \"".$online."\", \"lastTextAuthor\": \"".$lastTextAuthor."\"}, ";
+            $processedText = prepareText($lastText);
+
+            echo "{\"id\": \"".$secondRow[0]."\", \"firstname\": \"".$secondRow[2]."\", \"lastname\": \"".$secondRow[3]."\", \"lastText\": \"".$processedText."\", \"avatar\": \"".$blob."\", \"online\": \"".$online."\", \"lastTextAuthor\": \"".$lastTextAuthor."\"}, ";
         }
         echo "{\"id\": \"\", \"firstname\": \"\", \"lastname\": \"\", \"lastText\": \"\", \"avatar\": \"\", \"online\": \"\", \"lastTextAuthor\": \"\"}]}";
     } else {

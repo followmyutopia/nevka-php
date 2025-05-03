@@ -40,7 +40,7 @@ if (isset($_POST['query'])) {
 
         while($row = $result->fetch_assoc()) {
             $formattedTime = date("d.m.Y в h:i a", $row['time']);
-            $id = $row['id'];
+            $id = $row['author'];
             $name = "";
 
             $nameSql = "SELECT firstname, lastname FROM users WHERE id='$id' LIMIT 1";
