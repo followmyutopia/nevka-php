@@ -545,8 +545,12 @@ function sendMessage($token, $currentChat, $messageText, $messageImage) {
     $loggedUser = getIdByToken($token);
     $query = "";
     $timestamp = time();
+    $targetToken = "";
 
     if (userExists($currentChat)) {
+        $senderName = getNameById($loggedUser);
+        $targetToken = getPushTokenById($currentChat);
+
         if ($loggedUser < $currentChat) {
             $query = "M".$loggedUser."M".$currentChat."M";
         } else {
@@ -561,6 +565,24 @@ function sendMessage($token, $currentChat, $messageText, $messageImage) {
     
         if ($conn->query($sql) === TRUE) {
             updateOnline($token);
+
+            $pushHeader = $senderName;
+            if ($messageText != "") {
+                $pushBody = $messageText;
+            } else {
+                $pushBody = "(изображение)";
+            }
+
+            if ($targetToken != "") {
+                $ch = curl_init("https://exp.host/--/api/v2/push/send");
+                $payload = json_encode(array("to" => $targetToken, "title" => $pushHeader, "body" => $pushBody));
+                curl_setopt( $ch, CURLOPT_POSTFIELDS, $payload );
+                curl_setopt( $ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+                curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+                $result = curl_exec($ch);
+                curl_close($ch);
+            }
+
             return;
         } else {
             return "Ошибка базы данных: невозможно отправить сообщение. Код ошибки для поддержки: 131";
@@ -764,6 +786,8 @@ function newMessageAvailable($id) {
     } else {
         echo "";
     }
+
+    $conn->close();
 }
 
 function userExists($id) {
@@ -782,5 +806,29 @@ function userExists($id) {
     } else {
         return false;
     }
+
+    $conn->close();
+}
+
+function getPushTokenById($id) {
+    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+
+    $checkedId = validate(intval($id));
+
+    $conn = new mysqli($servername, $username, $password, $dbname);
+    if ($conn->connect_error) { die("Ошибка подключения: не получается проверить наличие пользователя. Код ошибки для поддержки: 145");}
+
+    $sql = "SELECT expo_push_token FROM users WHERE id='$checkedId' LIMIT 1";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_row();
+        $pushToken = $row[0];
+        return $pushToken;
+    } else {
+        return "";
+    }
+
+    $conn->close();
 }
 ?>

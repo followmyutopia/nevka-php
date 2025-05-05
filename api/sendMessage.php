@@ -12,7 +12,7 @@ date_default_timezone_set("Europe/Moscow");
 include '../lib/ImageResize.php';
 use \Gumlet\ImageResize;
 
-$token = $currentChat = $messageText = $messageImage = $timestamp = $query = "";
+$token = $currentChat = $messageText = $messageImage = $timestamp = $query = $targetToken = "";
 
 function validate($data) {
     $data = trim($data);
@@ -43,12 +43,13 @@ if (isset($_POST['token']) && isset($_POST['chat']) && isset($_POST['text']) && 
 
     // get ID by token and record it to loggedUser
 
-    $sql = "SELECT id FROM users WHERE token='$token' LIMIT 1";
+    $sql = "SELECT id, firstname, lastname FROM users WHERE token='$token' LIMIT 1";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
         $row = $result->fetch_row();
         $loggedUser = $row[0];
+        $senderName = $row[1]." ".$row[2];
     } else {
         echo "{\"result\":\"failure\",\"error\":\"token_not_valid\"}";
     }
@@ -60,10 +61,13 @@ if (isset($_POST['token']) && isset($_POST['chat']) && isset($_POST['text']) && 
 
     // check if user exists
 
-    $sql = "SELECT id FROM users WHERE id='$loggedUser' LIMIT 1";
+    $sql = "SELECT id, expo_push_token FROM users WHERE id='$currentChat' LIMIT 1";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
+        $row = $result->fetch_row();
+        $targetToken = $row[1];
+
         if ($loggedUser < $currentChat) {
             $query = "M".$loggedUser."M".$currentChat."M";
         } else {
@@ -74,6 +78,23 @@ if (isset($_POST['token']) && isset($_POST['chat']) && isset($_POST['text']) && 
         VALUES ('$query', '$loggedUser', '$messageText', '$messageImage', '$timestamp', '1')";
 
         if ($conn->query($sql) === TRUE) {
+            $pushHeader = $senderName;
+            if ($messageText != "") {
+                $pushBody = $messageText;
+            } else {
+                $pushBody = "(изображение)";
+            }
+
+            if ($targetToken != "") {
+                $ch = curl_init("https://exp.host/--/api/v2/push/send");
+                $payload = json_encode(array("to" => $targetToken, "title" => $pushHeader, "body" => $pushBody));
+                curl_setopt( $ch, CURLOPT_POSTFIELDS, $payload );
+                curl_setopt( $ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+                curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+                $result = curl_exec($ch);
+                curl_close($ch);
+            }
+
             echo "{\"result\":\"success\"}";
         } else {
             echo "{\"result\":\"failure\",\"error\":\"Ошибка записи в БД\"}";
