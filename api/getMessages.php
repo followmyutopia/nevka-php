@@ -6,7 +6,7 @@
  * Gets all active chats for the specified user.
  * Accepts: token, chat (multipart/form-data)
  * Returns: result, messages?[], error? (json)
- * messages?[]: {"id": "", "me": "", "text": "", "image": "", "timestamp": "", "formattedTime": ""}
+ * messages?[]: {"id": "", "me": "", "text": "", "image": "", "timestamp": "", "formattedTime": "", "isUnread": ""}
  * The last element of the array is always empty. Remove it from the result by JavaScript pop() function.
  */
 
@@ -54,10 +54,8 @@ if (isset($_POST['token']) && isset($_POST['chat'])) {
         $query = "M".$chat."M".$checkedUser."M";
     }
 
-    $sql = "SELECT * FROM (SELECT id, query, author, text, image, timestamp FROM messages WHERE query='$query' ORDER BY id DESC LIMIT 100) X ORDER BY id ASC;";
+    $sql = "SELECT * FROM (SELECT id, query, author, text, image, timestamp, unread FROM messages WHERE query='$query' ORDER BY id DESC LIMIT 100) X ORDER BY id ASC;";
     $result = $conn->query($sql);
-
-    // {"id": "", "me": "", "text": "", "image": "", "timestamp": "", "formattedTime": ""}
 
     if ($result->num_rows > 0) {
         echo "{\"result\": \"success\", \"messages\": [";
@@ -72,14 +70,18 @@ if (isset($_POST['token']) && isset($_POST['chat'])) {
 
             if ($chat == $interlocutor) {
                 if ($row["author"] == $checkedUser) { // my message
-                    echo "{\"id\": \"".$row['id']."\", \"me\": \"true\", \"text\": \"".$processedText."\", \"image\": \"".$row['image']."\", \"timestamp\": \"".$row['timestamp']."\", \"formattedTime\": \"".$formattedTime."\"}, ";
+                    echo "{\"id\": \"".$row['id']."\", \"me\": \"true\", \"text\": \"".$processedText."\", \"image\": \"".$row['image']."\", \"timestamp\": \"".$row['timestamp']."\", \"formattedTime\": \"".$formattedTime."\", \"isUnread\": \"".$row['unread']."\"}, ";
                 } else if ($row["author"] == $chat) { // interlocutor message
-                    echo "{\"id\": \"".$row['id']."\", \"me\": \"false\", \"text\": \"".$processedText."\", \"image\": \"".$row['image']."\", \"timestamp\": \"".$row['timestamp']."\", \"formattedTime\": \"".$formattedTime."\"}, ";
+                    echo "{\"id\": \"".$row['id']."\", \"me\": \"false\", \"text\": \"".$processedText."\", \"image\": \"".$row['image']."\", \"timestamp\": \"".$row['timestamp']."\", \"formattedTime\": \"".$formattedTime."\", \"isUnread\": \"".$row['unread']."\"}, ";
                 } else { return; }
             } else { return; }
         }
 
-        echo "{\"id\": \"\", \"me\": \"\", \"text\": \"\", \"image\": \"\", \"timestamp\": \"\", \"formattedTime\": \"\"}]}";
+        // set requested as read
+        $readRequest = "UPDATE messages SET unread='0' WHERE query='$query' AND author='$interlocutor'";
+        $conn->query($readRequest);
+
+        echo "{\"id\": \"\", \"me\": \"\", \"text\": \"\", \"image\": \"\", \"timestamp\": \"\", \"formattedTime\": \"\", \"isUnread\": \"\"}]}";
     } else {
         echo "{\"result\":\"empty\",\"error\":\"Нет сообщений\"}";
     }

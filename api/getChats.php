@@ -6,7 +6,7 @@
  * Gets all active chats for the specified user.
  * Accepts: token (multipart/form-data)
  * Returns: result, chats?[], error? (json)
- * chats?[]: {"id": "", "firstname": "", "lastname": "", "lastText": "", "avatar": "", "online": ""}
+ * chats?[]: {"id": "", "firstname": "", "lastname": "", "lastText": "", "isUnread": "", "avatar": "", "online": ""}
  * The last element of the array is always empty. Remove it from the result by JavaScript pop() function.
  */
 
@@ -61,12 +61,13 @@ if (isset($_POST['token'])) {
             $interlocutor = str_replace("M", "", $interlocutor);
             $lastTextId = $row['MAX(id)'];
 
-            $getLastText = "SELECT text, author FROM messages WHERE id='$lastTextId' LIMIT 1";
+            $getLastText = "SELECT text, author, unread FROM messages WHERE id='$lastTextId' LIMIT 1";
             $lastTextResult = $conn->query($getLastText);
             $lastTextRow = $lastTextResult->fetch_row();
             
             $lastText = $lastTextRow[0];
             $lastTextAuthor = $lastTextRow[1];
+            $isUnread = $lastTextRow[2];
 
             // get the interlocutor data
             $getName = "SELECT id, avatar, firstname, lastname, timestamp FROM users WHERE id='$interlocutor' LIMIT 500";
@@ -90,9 +91,9 @@ if (isset($_POST['token'])) {
 
             $processedText = prepareText($lastText);
 
-            echo "{\"id\": \"".$secondRow[0]."\", \"firstname\": \"".$secondRow[2]."\", \"lastname\": \"".$secondRow[3]."\", \"lastText\": \"".$processedText."\", \"avatar\": \"".$blob."\", \"online\": \"".$online."\", \"lastTextAuthor\": \"".$lastTextAuthor."\"}, ";
+            echo "{\"id\": \"".$secondRow[0]."\", \"firstname\": \"".$secondRow[2]."\", \"lastname\": \"".$secondRow[3]."\", \"lastText\": \"".$processedText."\", \"isUnread\": \"".$isUnread."\", \"avatar\": \"".$blob."\", \"online\": \"".$online."\", \"lastTextAuthor\": \"".$lastTextAuthor."\"}, ";
         }
-        echo "{\"id\": \"\", \"firstname\": \"\", \"lastname\": \"\", \"lastText\": \"\", \"avatar\": \"\", \"online\": \"\", \"lastTextAuthor\": \"\"}]}";
+        echo "{\"id\": \"\", \"firstname\": \"\", \"lastname\": \"\", \"lastText\": \"\", \"isUnread\": \"\", \"avatar\": \"\", \"online\": \"\", \"lastTextAuthor\": \"\"}]}";
     } else {
         echo "{\"result\":\"empty\",\"error\":\"Нет чатов\"}";
     }

@@ -529,6 +529,9 @@ function getMessages($token,$chatUser) {
                 } else { return; }
             } else { return; }
         }
+
+        $readRequest = "UPDATE messages SET unread='0' WHERE query='$query' AND author='$interlocutor'";
+        $conn->query($readRequest);
     } else {
         echo "<p class=\"console\">Нет сообщений<p>";
     }
@@ -553,8 +556,8 @@ function sendMessage($token, $currentChat, $messageText, $messageImage) {
         $conn = new mysqli($servername, $username, $password, $dbname);
         if ($conn->connect_error) { die("Ошибка подключения: не получается отправить сообщение. Код ошибки для поддержки: 130");}
     
-        $sql = "INSERT INTO messages (query, author, text, image, timestamp)
-            VALUES ('$query', '$loggedUser', '$messageText', '$messageImage', '$timestamp')";
+        $sql = "INSERT INTO messages (query, author, text, image, timestamp, unread)
+            VALUES ('$query', '$loggedUser', '$messageText', '$messageImage', '$timestamp', '1')";
     
         if ($conn->query($sql) === TRUE) {
             updateOnline($token);

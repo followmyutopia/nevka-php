@@ -70,8 +70,8 @@ if (isset($_POST['token']) && isset($_POST['chat']) && isset($_POST['text']) && 
             $query = "M".$currentChat."M".$loggedUser."M";
         }
 
-        $sql = "INSERT INTO messages (query, author, text, image, timestamp)
-        VALUES ('$query', '$loggedUser', '$messageText', '$messageImage', '$timestamp')";
+        $sql = "INSERT INTO messages (query, author, text, image, timestamp, unread)
+        VALUES ('$query', '$loggedUser', '$messageText', '$messageImage', '$timestamp', '1')";
 
         if ($conn->query($sql) === TRUE) {
             echo "{\"result\":\"success\"}";
