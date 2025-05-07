@@ -1,0 +1,45 @@
+<?php
+/**
+ * Nevka Project v1.6 API
+ * 2025 Avicus Delacroix
+ * 
+ * Sets a status for the currently logged user.
+ * Accepts: token, push_token (multipart/form-data)
+ * Returns: result, error? (json)
+ */
+
+date_default_timezone_set("Europe/Moscow");
+
+$token = $status = "";
+
+function validate($data) {
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return $data;
+}
+
+if (isset($_POST['token']) && isset($_POST['status'])) {
+    $token = validate($_POST['token']);
+    $status = validate($_POST['status']);
+
+    include '../credentials.php';
+
+    $conn = new mysqli($servername, $username, $password, $dbname);
+    if ($conn->connect_error) {
+        echo "{\"result\":\"failure\",\"error\":\"Нет доступа к базе данных\"}";
+    }
+
+    $sql = "UPDATE users SET status='$status' WHERE token='$token'";
+
+    if ($conn->query($sql) === TRUE) {
+        echo "{\"result\":\"success\"}";
+    } else {
+        echo "{\"result\":\"failure\",\"error\":\"Ошибка записи в БД\"}";
+    }
+
+    $conn->close();
+} else {
+    echo "{\"result\":\"failure\",\"error\":\"Параметры token, status обязательны\"}";
+}
+?>
