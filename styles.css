@@ -12,16 +12,6 @@
     display: table;
 }
 
-.time {
-    color: lightslategray;
-    vertical-align: middle;
-    white-space: nowrap;
-    font-size: small;
-    position: absolute;
-    bottom: 4px;
-    right: 4px;
-}
-
 body {
     background-color: #141E30;
     color: rgba(255, 255, 255, 0.9);
@@ -291,17 +281,37 @@ td a {
     background-color: rgba(255, 255, 255, 0.15);
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 10px;
-    padding: 11px;
-    padding-bottom: 23px;
+    padding: 8px;
+    padding-bottom: 26px;
     display: inline-block;
     max-width: 80%;
-    min-width: 140px;
+    min-width: 150px;
     margin-bottom: 5px;
     height: fit-content;
     width: fit-content;
     position: relative;
     overflow-y: scroll;
     scrollbar-width: none;
+}
+
+.time {
+    color: lightslategray;
+    vertical-align: middle;
+    white-space: nowrap;
+    font-size: small;
+    position: absolute;
+    bottom: 5px;
+    right: 8px;
+}
+
+.isUnread {
+    color: lightslategray;
+    vertical-align: middle;
+    white-space: nowrap;
+    font-size: small;
+    position: absolute;
+    bottom: 5px;
+    left: 8px;
 }
 
 .me {

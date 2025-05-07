@@ -504,7 +504,7 @@ function getMessages($token,$chatUser) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается отобразить сообщения. Код ошибки для поддержки: 129");}
 
-    $sql = "SELECT * FROM (SELECT id, query, author, text, image, timestamp FROM messages WHERE query='$query' ORDER BY id DESC LIMIT 100) X ORDER BY id ASC;";
+    $sql = "SELECT * FROM (SELECT id, query, author, text, image, timestamp, unread FROM messages WHERE query='$query' ORDER BY id DESC LIMIT 100) X ORDER BY id ASC;";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -516,16 +516,38 @@ function getMessages($token,$chatUser) {
 
             if ($chatUser == $interlocutor) {
                 if ($row["author"] == $loggedUser) {
-                    if ($row["image"] == "") {
-                        echo "<div class=\"message me\">".$row["text"]."<span class=\"time\">".$formattedTime."</span></div><span class=\"clearfix\"></span>";
+                    // my messages
+                    if ($row["unread"]) {
+                        // unread messages
+                        if ($row["image"] == "") {
+                            echo "<div class=\"message me\">".$row["text"]."<span class=\"isUnread fa fa-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span class=\"clearfix\"></span>";
+                        } else {
+                            echo "<div class=\"message me\">".$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span class=\"clearfix\"></span>";
+                        }
                     } else {
-                        echo "<div class=\"message me\">".$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"time\">".$formattedTime."</span></div><span class=\"clearfix\"></span>";
+                        // read messages
+                        if ($row["image"] == "") {
+                            echo "<div class=\"message me\">".$row["text"]."<span class=\"isUnread fa fa-check-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span class=\"clearfix\"></span>";
+                        } else {
+                            echo "<div class=\"message me\">".$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-check-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span class=\"clearfix\"></span>";
+                        }
                     }
                 } else if ($row["author"] == $chatUser) {
-                    if ($row["image"] == "") {
-                        echo "<div class=\"message\">".$row["text"]."<span class=\"time\">".$formattedTime."</span></div><span class=\"clearfix\"></span>";
+                    // interlocutor messages
+                    if ($row["unread"]) {
+                        // unread messages
+                        if ($row["image"] == "") {
+                            echo "<div class=\"message\">".$row["text"]."<span class=\"isUnread fa fa-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span class=\"clearfix\"></span>";
+                        } else {
+                            echo "<div class=\"message\">".$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span class=\"clearfix\"></span>";
+                        }
                     } else {
-                        echo "<div class=\"message\">".$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"time\">".$formattedTime."</span></div><span class=\"clearfix\"></span>";
+                        // read messages
+                        if ($row["image"] == "") {
+                            echo "<div class=\"message\">".$row["text"]."<span class=\"isUnread fa fa-check-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span class=\"clearfix\"></span>";
+                        } else {
+                            echo "<div class=\"message\">".$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-check-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span class=\"clearfix\"></span>";
+                        }
                     }
                 } else { return; }
             } else { return; }
