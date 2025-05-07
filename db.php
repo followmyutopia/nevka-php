@@ -367,8 +367,9 @@ function signUp($newLogin,$hashedPassword) {
     if ($result->num_rows > 0) {
         return "Логин занят";
     } else {
-        $sql = "INSERT INTO users (login, password, token)
-        VALUES ('$newLogin', '$hashedPassword', '$newToken')";
+        include 'defaultImage.php';
+        $sql = "INSERT INTO users (login, password, token, avatar)
+        VALUES ('$newLogin', '$hashedPassword', '$newToken', '$defaultImage')";
 
         if ($conn->query($sql) === TRUE) {
             return "Новый пользователь успешно создан!";

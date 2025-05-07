@@ -27,7 +27,7 @@ else {
 $userData = getUserData($showUser);
 
 if (isset($userData[0])) { $showAvatar = "<img src=".$userData[0].">";}
-else { $showAvatar = "<p style='text-align: center'>Аватар не установлен<br><br>Пожалуйста, установите аватар. Аватар может быть только в формате JPG/JPEG и с соотношением сторон 1:1. При установке НЕ квадратных фото они будут обрезаны по центру.</p>"; }
+else { $showAvatar = "<p style='text-align: center'>Аватар не установлен<br>Пожалуйста, установите аватар.<br><br>Аватар может быть только в формате JPG/JPEG и с соотношением сторон 1:1. При установке НЕ квадратных фото они будут обрезаны по центру.<br><br></p>"; }
 
 if (isset($userData[1]) && isset($userData[2])) { $showName = $userData[1]." ".$userData[2]; }
 else { header("Refresh:0; url=settings.php"); }
