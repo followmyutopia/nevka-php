@@ -6,11 +6,9 @@
     window.setInterval(function(){
         $.post("updateAsync.php", { type: 2 }, (data) => {
             if (data > 0) {
+                if (data <= 9) $("#newMessageDot").html(data);
+                else $("#newMessageDot").html("9");
                 $("#newMessageDot").show(500);
-				if (data <= 9)
-					$("#newMessageDot").html(data);
-				else
-					$("#newMessageDot").html("9");
                 if (notificationCounter != data) {
                     new Notification("Новых сообщений в Невке: " + data, {
                         tag: "newMessageAlert"
@@ -18,7 +16,7 @@
                     notificationCounter = data;
                 }
             } else {
-                $("#newMessageDot").html("");
+                $("#newMessageDot").hide(500);
             }
         });
     },2500);
