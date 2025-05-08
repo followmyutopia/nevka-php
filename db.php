@@ -822,13 +822,14 @@ function newMessageAvailable($id) {
         $row = $result->fetch_row();
         $lastonline = $row["0"];
 
-        $newSql = "SELECT count(timestamp) AS countNewMsg FROM messages WHERE query LIKE '%$signature%' AND timestamp > '$lastonline'
+        $newSql = "SELECT count(timestamp) AS countNewMsg FROM messages
+            WHERE query LIKE '%$signature%' AND timestamp > '$lastonline'
             ORDER BY id DESC";
         $newResult = $conn->query($newSql);
         $newRow = mysqli_fetch_assoc($newResult);
         echo $newRow["countNewMsg"];
     } else {
-        echo "";
+        echo "0";
     }
 
     $conn->close();

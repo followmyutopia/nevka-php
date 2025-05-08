@@ -96,7 +96,7 @@ $(function(){
     });
     var buffer = 0;
     window.setInterval(function(){
-        $.post("updateAsync.php", { type: 2 }, function(data){
+        $.post("updateAsync.php", { type: 2 }, (data) => {
             if (data > 0 || needsUpdate) {
                 if (data != buffer || needsUpdate) {
                     $.post("updateAsync.php", { currentChat: <?php echo $currentChat ?>, type: 0 }, function(data){

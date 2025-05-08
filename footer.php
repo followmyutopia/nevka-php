@@ -4,7 +4,7 @@
     if (isLogged) {
         var notificationCounter = 0;
     window.setInterval(function(){
-        $.post("updateAsync.php", { type: 2 }, function(data){
+        $.post("updateAsync.php", { type: 2 }, (data) => {
             if (data > 0) {
                 $("#newMessageDot").show(500);
 				if (data <= 9)
@@ -17,6 +17,8 @@
                     });
                     notificationCounter = data;
                 }
+            } else {
+                $("#newMessageDot").html("");
             }
         });
     },2500);
