@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka Project v1.6 Database inquires
+ * Nevka Project v1.7 Database inquires
  * 2025 Avicus Delacroix
  * 
  * Databases and types (MySQL):
@@ -433,6 +433,27 @@ function showChatsTable($token) {
         while($row = $result->fetch_assoc()) {
             $interlocutor = str_replace($signature, "", $row["query"]);
             $interlocutor = str_replace("M", "", $interlocutor);
+            $lastTextId = $row['MAX(id)'];
+
+            $getLastText = "SELECT text, author, unread FROM messages WHERE id='$lastTextId' LIMIT 1";
+            $lastTextResult = $conn->query($getLastText);
+            $lastTextRow = $lastTextResult->fetch_row();
+            
+            $lastText = $lastTextRow[0];
+            if ($lastText == "") {$lastText = "(изображение)";}
+            $lastTextAuthor = $lastTextRow[1];
+            $isUnread = $lastTextRow[2];
+
+            if ($lastTextAuthor != $checkedUser && $isUnread == "1") {
+                $unreadMarker = "<span class=\"fa fa-circle\" style=\"color: orange; margin-left: 10px\"></span>";
+            } else {
+                $unreadMarker = "";
+            }
+            if ($lastTextAuthor == $checkedUser) {
+                $preview = "<p style=\"color: lightslategray; font-size: 14px; margin-top: -3px; text-overflow: ellipsis; overflow: hidden; width: 250px\">Вы: ".$lastText."</p>";
+            } else {
+                $preview = "<p style=\"color: lightslategray; font-size: 14px; margin-top: -3px\">".$lastText."</p>";
+            }
 
             // approved sorting by id, user checked
             $getName = "SELECT id, avatar, firstname, lastname, timestamp FROM users WHERE id='$interlocutor' LIMIT 500";
@@ -444,16 +465,16 @@ function showChatsTable($token) {
             $lastOnline = date_create_from_format("d.m.Y в h:i a", $formattedTime); $now = new DateTime();
             $difference = ($lastOnline->diff($now)->days * 1440) + ($lastOnline->diff($now)->h * 60) + $lastOnline->diff($now)->i;
             $shortDate = str_replace(".".$lastOnline->format("Y"), "", $formattedTime);
-            if ($difference <= 5) { $online = "<span style=\"color:greenyellow\">Онлайн</span>"; }
-            else if ($difference < 60) { $online = "<span style=\"color:lightslategray\">Был(а): ".$lastOnline->diff($now)->i." минут назад</span>"; }
-            else { $online = "<span style=\"color:lightslategray\">Был(а): ".$shortDate."</span>"; }
+            if ($difference <= 5) { $online = "<span style=\"color:greenyellow; font-size: 14px\">Онлайн</span>"; }
+            else if ($difference < 60) { $online = "<span style=\"color:lightslategray; font-size: 14px\">Был(а): ".$lastOnline->diff($now)->i." минут назад</span>"; }
+            else { $online = "<span style=\"color:lightslategray; font-size: 14px\">Был(а): ".$shortDate."</span>"; }
 
             $image = new ImageResize($row["1"]);
             $image->quality_jpg = 90;
             $image->crop(100, 100);
             $blob = 'data:image/jpeg;base64,'.base64_encode($image);
 
-            echo "<tr><td class=\"a c\" data-href=\"messages.php?id=".$row["0"]."\"><img class=\"thumbnail\" src=\"".$blob."\"></td><td class=\"a d\" data-href=\"messages.php?id=".$row["0"]."\">".$row["2"]." ".$row["3"]."<br>".$online."</td></tr>";
+            echo "<tr><td class=\"a c\" data-href=\"messages.php?id=".$row["0"]."\"><img class=\"thumbnail\" style=\"margin-top: -8px\" src=\"".$blob."\"></td><td class=\"a d\" data-href=\"messages.php?id=".$row["0"]."\">".$row["2"]." ".$row["3"].$unreadMarker."<br>".$online.$preview."</td></tr>";
         }
     } else {
         echo "<p class=\"console\">Нет чатов.</p><p id=\"pplNotice\" class=\"console\">Перейдите в раздел <a href=\"people.php\">Люди</a> для выбора собеседника.</p>";

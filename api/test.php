@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka Project v1.6 API
+ * Nevka Project v1.7 API
  * 2025 Avicus Delacroix
  */
 
