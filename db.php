@@ -450,9 +450,9 @@ function showChatsTable($token) {
                 $unreadMarker = "";
             }
             if ($lastTextAuthor == $checkedUser) {
-                $preview = "<p style=\"color: lightslategray; font-size: 14px; margin-top: -3px; text-overflow: ellipsis; overflow: hidden; width: 250px\">Вы: ".$lastText."</p>";
+                $preview = "<p style=\"color: lightslategray; font-size: 14px; margin-top: -3px; margin-bottom: -3px; text-overflow: ellipsis; overflow: hidden; width: 250px\">Вы: ".$lastText."</p>";
             } else {
-                $preview = "<p style=\"color: lightslategray; font-size: 14px; margin-top: -3px\">".$lastText."</p>";
+                $preview = "<p style=\"color: lightslategray; font-size: 14px; margin-top: -3px; margin-bottom: -3px\">".$lastText."</p>";
             }
 
             // approved sorting by id, user checked
@@ -474,7 +474,7 @@ function showChatsTable($token) {
             $image->crop(100, 100);
             $blob = 'data:image/jpeg;base64,'.base64_encode($image);
 
-            echo "<tr><td class=\"a c\" data-href=\"messages.php?id=".$row["0"]."\"><img class=\"thumbnail\" style=\"margin-top: -8px\" src=\"".$blob."\"></td><td class=\"a d\" data-href=\"messages.php?id=".$row["0"]."\">".$row["2"]." ".$row["3"].$unreadMarker."<br>".$online.$preview."</td></tr>";
+            echo "<tr><td class=\"a c\" data-href=\"messages.php?id=".$row["0"]."\"><img class=\"thumbnail\" style=\"margin-top: 7px; margin-left: 7px\" src=\"".$blob."\"></td><td class=\"a d\" data-href=\"messages.php?id=".$row["0"]."\">".$row["2"]." ".$row["3"].$unreadMarker."<br>".$online.$preview."</td></tr>";
         }
     } else {
         echo "<p class=\"console\">Нет чатов.</p><p id=\"pplNotice\" class=\"console\">Перейдите в раздел <a href=\"people.php\">Люди</a> для выбора собеседника.</p>";
