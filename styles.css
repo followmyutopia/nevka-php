@@ -467,6 +467,17 @@ hr {
     color: rgba(255, 255, 255, 0.75);
 }
 
+.preview {
+    color: lightslategray;
+    font-size: 14px;
+    margin-top: -3px;
+    margin-bottom: -3px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 250px;
+    white-space: nowrap;
+}
+
 @media only screen and (max-width: 777px) {
     .mobile-expand {
         width: 100%;

@@ -3,3 +3,6 @@
 
 # DB credentials
 credentials.php
+
+# Android distriutions
+*.apk

@@ -452,9 +452,9 @@ function showChatsTable($token) {
                 $unreadMarker = "";
             }
             if ($lastTextAuthor == $checkedUser) {
-                $preview = "<p style=\"color: lightslategray; font-size: 14px; margin-top: -3px; margin-bottom: -3px; text-overflow: ellipsis; overflow: hidden; width: 250px\">Вы: ".$lastText."</p>";
+                $preview = "<p class=\"preview\">Вы: ".$lastText."</p>";
             } else {
-                $preview = "<p style=\"color: lightslategray; font-size: 14px; margin-top: -3px; margin-bottom: -3px\">".$lastText."</p>";
+                $preview = "<p class=\"preview\">".$lastText."</p>";
             }
 
             // approved sorting by id, user checked
