@@ -1,3 +1,3 @@
 <?php
-    echo "{\"latestVersion\": \"0.55\"}";
+    echo "{\"latestVersion\": \"0.57\"}";
 ?>

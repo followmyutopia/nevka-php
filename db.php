@@ -441,7 +441,7 @@ function showChatsTable($token) {
             $lastTextResult = $conn->query($getLastText);
             $lastTextRow = $lastTextResult->fetch_row();
             
-            $lastText = $lastTextRow[0];
+            $lastText = validate($lastTextRow[0]);
             if ($lastText == "") {$lastText = "(изображение)";}
             $lastTextAuthor = $lastTextRow[1];
             $isUnread = $lastTextRow[2];
