@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka Project v1.7 API
+ * Nevka PHP API v1.0
  * 2025 Avicus Delacroix
  * 
  * Sets an avatar for the currently logged user.
@@ -8,44 +8,47 @@
  * Returns: result, error? (json)
  */
 
-date_default_timezone_set("Europe/Moscow");
 include '../lib/ImageResize.php';
 use \Gumlet\ImageResize;
 
-$token = $status = "";
+if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
+    date_default_timezone_set("Europe/Moscow");
 
-function validate($data) {
-    $data = trim($data);
-    $data = stripslashes($data);
-    $data = htmlspecialchars($data);
-    return $data;
-}
+    $token = $status = "";
 
-if (isset($_POST['token']) && isset($_POST['avatar']) && $_POST['avatar'] != "") {
-    $token = validate($_POST['token']);
-
-    $image = new ImageResize($_POST['avatar']);
-    $image->quality_jpg = 90;
-    $image->crop(480, 480);
-    $newAvatar = 'data:image/jpeg;base64,'.base64_encode($image->getImageAsString(IMAGETYPE_JPEG));
-
-    include '../credentials.php';
-
-    $conn = new mysqli($servername, $username, $password, $dbname);
-    if ($conn->connect_error) {
-        echo "{\"result\":\"failure\",\"error\":\"Нет доступа к базе данных\"}";
+    function validate($data) {
+        $data = trim($data);
+        $data = stripslashes($data);
+        $data = htmlspecialchars($data);
+        return $data;
     }
 
-    $sql = "UPDATE users SET avatar='$newAvatar' WHERE token='$token'";
+    if (isset($_POST['token']) && isset($_POST['avatar']) && $_POST['avatar'] != "") {
+        $token = validate($_POST['token']);
 
-    if ($conn->query($sql) === TRUE) {
-        echo "{\"result\":\"success\"}";
+        $image = new ImageResize($_POST['avatar']);
+        $image->quality_jpg = 90;
+        $image->crop(480, 480);
+        $newAvatar = 'data:image/jpeg;base64,'.base64_encode($image->getImageAsString(IMAGETYPE_JPEG));
+
+        include '../credentials.php';
+
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        if ($conn->connect_error) {
+            echo "{\"result\":\"failure\",\"error\":\"Нет доступа к базе данных\"}";
+        }
+
+        $sql = "UPDATE users SET avatar='$newAvatar' WHERE token='$token'";
+
+        if ($conn->query($sql) === TRUE) {
+            echo "{\"result\":\"success\"}";
+        } else {
+            echo "{\"result\":\"failure\",\"error\":\"Ошибка записи в БД\"}";
+        }
+
+        $conn->close();
     } else {
-        echo "{\"result\":\"failure\",\"error\":\"Ошибка записи в БД\"}";
+        echo "{\"result\":\"failure\",\"error\":\"Параметры token, avatar обязательны. Аватар не может быть пустым.\"}";
     }
-
-    $conn->close();
-} else {
-    echo "{\"result\":\"failure\",\"error\":\"Параметры token, avatar обязательны. Аватар не может быть пустым.\"}";
 }
 ?>

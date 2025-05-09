@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka Project v1.7 API
+ * Nevka PHP API v1.0
  * 2025 Avicus Delacroix
  * 
  * Sets the push token for the currently logged user.
@@ -8,38 +8,40 @@
  * Returns: result, error? (json)
  */
 
-date_default_timezone_set("Europe/Moscow");
+if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
+    date_default_timezone_set("Europe/Moscow");
 
-$token = $pushToken = "";
+    $token = $pushToken = "";
 
-function validate($data) {
-    $data = trim($data);
-    $data = stripslashes($data);
-    $data = htmlspecialchars($data);
-    return $data;
-}
-
-if (isset($_POST['token']) && isset($_POST['push_token'])) {
-    $token = validate($_POST['token']);
-    $pushToken = validate($_POST['push_token']);
-
-    include '../credentials.php';
-
-    $conn = new mysqli($servername, $username, $password, $dbname);
-    if ($conn->connect_error) {
-        echo "{\"result\":\"failure\",\"error\":\"Нет доступа к базе данных\"}";
+    function validate($data) {
+        $data = trim($data);
+        $data = stripslashes($data);
+        $data = htmlspecialchars($data);
+        return $data;
     }
 
-    $sql = "UPDATE users SET expo_push_token='$pushToken' WHERE token='$token'";
+    if (isset($_POST['token']) && isset($_POST['push_token'])) {
+        $token = validate($_POST['token']);
+        $pushToken = validate($_POST['push_token']);
 
-    if ($conn->query($sql) === TRUE) {
-        echo "{\"result\":\"success\"}";
+        include '../credentials.php';
+
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        if ($conn->connect_error) {
+            echo "{\"result\":\"failure\",\"error\":\"Нет доступа к базе данных\"}";
+        }
+
+        $sql = "UPDATE users SET expo_push_token='$pushToken' WHERE token='$token'";
+
+        if ($conn->query($sql) === TRUE) {
+            echo "{\"result\":\"success\"}";
+        } else {
+            echo "{\"result\":\"failure\",\"error\":\"Ошибка записи в БД\"}";
+        }
+
+        $conn->close();
     } else {
-        echo "{\"result\":\"failure\",\"error\":\"Ошибка записи в БД\"}";
+        echo "{\"result\":\"failure\",\"error\":\"Параметры token, push_token обязательны\"}";
     }
-
-    $conn->close();
-} else {
-    echo "{\"result\":\"failure\",\"error\":\"Параметры token, push_token обязательны\"}";
 }
 ?>

@@ -141,6 +141,8 @@ function changePassword($loggedUser,$token,$oldPassword,$newPassword) {
     } else {
         logout();
     }
+
+    $conn->close();
 }
 
 function getUserData($userId) {
