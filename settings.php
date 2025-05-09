@@ -109,7 +109,7 @@ if(isset($_POST['setTheme'])) {
     <p id="notificationButton" style="color: orange; text-decoration: underline">Beta: вклчить уведомления о сообщениях</p>
 </div>
 <span class="clearfix"></span>
-<p class="console">Nevka v1.7.3<br><a href="https://nevka.site/profile.php?id=1" style="text-decoration: none">Авикус Делакруа</a></p>
+<p class="console">Nevka v1.7.4<br><a href="https://nevka.site/profile.php?id=1" style="text-decoration: none">Авикус Делакруа</a></p>
 
 <script>
 function setTheme(color) {

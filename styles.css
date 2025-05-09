@@ -549,4 +549,8 @@ hr {
     .e {
         white-space: normal;
     }
+    .mobile-app-download {
+        margin: 5%;
+        margin-top: 15%;
+    }
 }
