@@ -441,7 +441,7 @@ function showChatsTable($token) {
             $lastTextResult = $conn->query($getLastText);
             $lastTextRow = $lastTextResult->fetch_row();
             
-            $lastText = validate($lastTextRow[0]);
+            $lastText = $lastTextRow[0];
             if ($lastText == "") {$lastText = "(изображение)";}
             $lastTextAuthor = $lastTextRow[1];
             $isUnread = $lastTextRow[2];
@@ -587,6 +587,7 @@ function getMessages($token,$chatUser) {
 
 function sendMessage($token, $currentChat, $messageText, $messageImage) {
     include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+    include 'api/prepareText.php';
 
     $loggedUser = getIdByToken($token);
     $query = "";
@@ -614,7 +615,8 @@ function sendMessage($token, $currentChat, $messageText, $messageImage) {
 
             $pushHeader = $senderName;
             if ($messageText != "") {
-                $pushBody = $messageText;
+                $processedText = prepareText($messageText);
+                $pushBody = $processedText;
             } else {
                 $pushBody = "(изображение)";
             }

@@ -37,6 +37,7 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
         }
 
         include '../credentials.php';
+        include 'prepareText.php';
 
         $conn = new mysqli($servername, $username, $password, $dbname);
         if ($conn->connect_error) {
@@ -82,7 +83,8 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
             if ($conn->query($sql) === TRUE) {
                 $pushHeader = $senderName;
                 if ($messageText != "") {
-                    $pushBody = $messageText;
+                    $processedText = prepareText($messageText);
+                    $pushBody = $processedText;
                 } else {
                     $pushBody = "(изображение)";
                 }
