@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka PHP API v1.0
+ * Nevka PHP API v1.1
  * 2025 Avicus Delacroix
  * 
  * Sends a message to the specified chat.
