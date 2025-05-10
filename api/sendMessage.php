@@ -87,7 +87,7 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
                     $pushBody = "(изображение)";
                 }
 
-                if ($targetToken != "") {
+                if ($targetToken != "" && $targetToken != "undefined") {
                     $ch = curl_init("https://exp.host/--/api/v2/push/send");
                     $payload = json_encode(array("to" => $targetToken, "title" => $pushHeader, "body" => $pushBody));
                     curl_setopt( $ch, CURLOPT_POSTFIELDS, $payload );
