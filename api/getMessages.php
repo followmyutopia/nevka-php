@@ -1,12 +1,12 @@
 <?php
 /**
- * Nevka PHP API v1.0
+ * Nevka PHP API v1.3
  * 2025 Avicus Delacroix
  * 
  * Gets all active chats for the specified user.
  * Accepts: token, chat (multipart/form-data)
  * Returns: result, messages?[], error? (json)
- * messages?[]: {"id": "", "me": "", "text": "", "image": "", "timestamp": "", "formattedTime": "", "isUnread": ""}
+ * messages?[]: {"id": "", "me": "", "text": "", "image": "", "timestamp": "", "formattedTime": "", "isUnread": "", "reply": ""}
  * The last element of the array is always empty. Remove it from the result by JavaScript pop() function.
  */
 
@@ -55,7 +55,7 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
             $query = "M".$chat."M".$checkedUser."M";
         }
 
-        $sql = "SELECT * FROM (SELECT id, query, author, text, image, timestamp, unread FROM messages WHERE query='$query' ORDER BY id DESC LIMIT 100) X ORDER BY id ASC;";
+        $sql = "SELECT * FROM (SELECT id, query, author, text, image, timestamp, unread, reply FROM messages WHERE query='$query' ORDER BY id DESC LIMIT 100) X ORDER BY id ASC;";
         $result = $conn->query($sql);
 
         if ($result->num_rows > 0) {
@@ -71,9 +71,9 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
 
                 if ($chat == $interlocutor) {
                     if ($row["author"] == $checkedUser) { // my message
-                        echo "{\"id\": \"".$row['id']."\", \"me\": \"true\", \"text\": \"".$processedText."\", \"image\": \"".$row['image']."\", \"timestamp\": \"".$row['timestamp']."\", \"formattedTime\": \"".$formattedTime."\", \"isUnread\": \"".$row['unread']."\"}, ";
+                        echo "{\"id\": \"".$row['id']."\", \"me\": \"true\", \"text\": \"".$processedText."\", \"image\": \"".$row['image']."\", \"timestamp\": \"".$row['timestamp']."\", \"formattedTime\": \"".$formattedTime."\", \"isUnread\": \"".$row['unread']."\", \"reply\": \"".$row['reply']."\"}, ";
                     } else if ($row["author"] == $chat) { // interlocutor message
-                        echo "{\"id\": \"".$row['id']."\", \"me\": \"false\", \"text\": \"".$processedText."\", \"image\": \"".$row['image']."\", \"timestamp\": \"".$row['timestamp']."\", \"formattedTime\": \"".$formattedTime."\", \"isUnread\": \"".$row['unread']."\"}, ";
+                        echo "{\"id\": \"".$row['id']."\", \"me\": \"false\", \"text\": \"".$processedText."\", \"image\": \"".$row['image']."\", \"timestamp\": \"".$row['timestamp']."\", \"formattedTime\": \"".$formattedTime."\", \"isUnread\": \"".$row['unread']."\", \"reply\": \"".$row['reply']."\"}, ";
                     } else { return; }
                 } else { return; }
             }
@@ -82,7 +82,7 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
             $readRequest = "UPDATE messages SET unread='0' WHERE query='$query' AND author='$interlocutor'";
             $conn->query($readRequest);
 
-            echo "{\"id\": \"\", \"me\": \"\", \"text\": \"\", \"image\": \"\", \"timestamp\": \"\", \"formattedTime\": \"\", \"isUnread\": \"\"}]}";
+            echo "{\"id\": \"\", \"me\": \"\", \"text\": \"\", \"image\": \"\", \"timestamp\": \"\", \"formattedTime\": \"\", \"isUnread\": \"\", \"reply\": \"\"}]}";
         } else {
             echo "{\"result\":\"empty\",\"error\":\"Нет сообщений\"}";
         }
