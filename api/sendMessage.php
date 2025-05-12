@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka PHP API v1.1
+ * Nevka PHP API v1.3
  * 2025 Avicus Delacroix
  * 
  * Sends a message to the specified chat.
@@ -14,7 +14,7 @@ use \Gumlet\ImageResize;
 if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
     date_default_timezone_set("Europe/Moscow");
 
-    $token = $currentChat = $messageText = $messageImage = $timestamp = $query = $targetToken = "";
+    $token = $currentChat = $messageText = $messageImage = $timestamp = $query = $targetToken = $reply = "";
 
     function validate($data) {
         $data = trim($data);
@@ -23,17 +23,25 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
         return $data;
     }
 
-    if (isset($_POST['token']) && isset($_POST['chat']) && isset($_POST['text']) && isset($_POST['image'])) {
+    if (isset($_POST['token']) && isset($_POST['chat']) && isset($_POST['text'])) {
         $token = validate($_POST['token']);
         $currentChat = validate($_POST['chat']);
         $messageText = validate($_POST['text']);
         $timestamp = time();
 
-        if ($_POST['image'] != "") {
+        if (isset($_POST['image']) && $_POST['image'] != "") {
             $image = new ImageResize($_POST['image']);
             $image->quality_jpg = 90;
             $image->resizeToLongSide(800);
             $messageImage = 'data:image/jpeg;base64,'.base64_encode($image->getImageAsString(IMAGETYPE_JPEG));
+        } else {
+            $messageImage = "";
+        }
+
+        if (isset($_POST['reply'])) {
+            $reply = validate($_POST['reply']);
+        } else {
+            $reply = "";
         }
 
         include '../credentials.php';
@@ -77,8 +85,8 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
                 $query = "M".$currentChat."M".$loggedUser."M";
             }
 
-            $sql = "INSERT INTO messages (query, author, text, image, timestamp, unread)
-            VALUES ('$query', '$loggedUser', '$messageText', '$messageImage', '$timestamp', '1')";
+            $sql = "INSERT INTO messages (query, author, text, image, timestamp, unread, reply)
+            VALUES ('$query', '$loggedUser', '$messageText', '$messageImage', '$timestamp', '1', '$reply')";
 
             if ($conn->query($sql) === TRUE) {
                 $pushHeader = $senderName;
