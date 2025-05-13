@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka Project v1.7
+ * Nevka Project v1.8
  * 2025 Avicus Delacroix
  */
 
@@ -39,7 +39,7 @@ if ($currentChat == 0) { $rightSection = "hidden"; $leftSection = "wide"; }
 
     <div class="activeChat">
         <div id="chatWindow"></div>
-        <form class="<?php echo $textarea ?>" action="sendAsync.php" method="post" enctype="multipart/form-data">
+        <form class="<?php echo $textarea ?>" id="messageComposer" action="sendAsync.php" method="post" enctype="multipart/form-data">
             <input type="hidden" name="sendMessage">
             <textarea id="msg" name="message"></textarea><input class="hidden" name="interlocutor" value="<?php echo $currentChat ?>">
             <button id="send" class="button mobile-expand send" type="submit">Отправить</button>
@@ -51,6 +51,9 @@ if ($currentChat == 0) { $rightSection = "hidden"; $leftSection = "wide"; }
 
 <script>
 $(function(){
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentChatSelector = "#" + urlParams.get('id');
+
     $("#chatsTable").on('click', '.a', function(){ window.location = $(this).data("href"); });
     document.addEventListener('dragover', (e) => { e.preventDefault() });
     document.addEventListener('drop', (e) => { document.getElementById('fileToUpload').files = e.dataTransfer.files; e.preventDefault() });
@@ -89,7 +92,15 @@ $(function(){
     $('#chatWindow').scrollTop($('#chatWindow')[0].scrollHeight);
     $(".a").click(function() { window.location = $(this).data("href"); });
     $.post("updateAsync.php", { type: 3 }, function(data){
-        if (data != $("#chatsTable").html()) { $("#chatsTable").html(data); }
+        if (data != $("#chatsTable").html()) {
+            $("#chatsTable").html(data);
+            const firstChild = "#" + $("#chatsTable tr:first-child").attr('id');
+            if (currentChatSelector != "#null") {
+                $("#chatsTable").find(currentChatSelector).addClass("activechat");
+            } else {
+                $("#chatsTable").find(firstChild).addClass("activechat");
+            }
+        }
     });
     $.post("updateAsync.php", { currentChat: <?php echo $currentChat ?>, type: 0 }, function(data){
         if (data != $("#chatWindow").html()) { $("#chatWindow").html(data).scrollTop($('#chatWindow')[0].scrollHeight); }
@@ -110,7 +121,15 @@ $(function(){
     },333);
     window.setInterval(function(){
         $.post("updateAsync.php", { type: 3 }, function(data){
-            if (data != $("#chatsTable").html()) { $("#chatsTable").html(data); }
+            if (data != $("#chatsTable").html()) {
+                $("#chatsTable").html(data);
+                const firstChild = "#" + $("#chatsTable tr:first-child").attr('id');
+                if (currentChatSelector != "#null") {
+                $("#chatsTable").find(currentChatSelector).addClass("activechat");
+                } else {
+                    $("#chatsTable").find(firstChild).addClass("activechat");
+                }
+            }
         });
     },2500);
     $('textarea').keypress(function (e) { if(e.which == 13) { $('#send').click(); } });

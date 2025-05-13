@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka Project v1.7 Database inquires
+ * Nevka Project v1.8 Database inquires
  * 2025 Avicus Delacroix
  * 
  * Databases and types (MySQL):
@@ -355,32 +355,55 @@ function getWallEntries($loggedUser) {
     $conn->close();
 }
 
-function signUp($newLogin,$hashedPassword) {
-    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+function signUp($newLogin,$hashedPassword,$apiKey) {
+    if ($apiKey == "***REMOVED***") {
+        include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
 
-    $newToken = $newLogin.$hashedPassword;
+        $newToken = "NevkaToken2.0[".$newLogin."-".$hashedPassword."]";
 
-    $conn = new mysqli($servername, $username, $password, $dbname);
-    if ($conn->connect_error) { die("Ошибка подключения: не получается зарегистрироваться. Код ошибки для поддержки: 124");}
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        if ($conn->connect_error) { die("Ошибка подключения: не получается зарегистрироваться. Код ошибки для поддержки: 124");}
 
-    $sql = "SELECT id FROM users WHERE login='$newLogin' LIMIT 1";
-    $result = $conn->query($sql);
+        $sql = "SELECT id FROM users WHERE login='$newLogin' LIMIT 1";
+        $result = $conn->query($sql);
 
-    if ($result->num_rows > 0) {
-        return "Логин занят";
-    } else {
-        include 'defaultImage.php';
-        $sql = "INSERT INTO users (login, password, token, avatar)
-        VALUES ('$newLogin', '$hashedPassword', '$newToken', '$defaultImage')";
+        if ($result->num_rows > 0) {
+            return "Логин занят";
+        } else {
+            include 'defaultImage.php';
+            $sql = "INSERT INTO users (login, password, token, avatar)
+            VALUES ('$newLogin', '$hashedPassword', '$newToken', '$defaultImage')";
+
+            if ($conn->query($sql) === TRUE) {
+                return "Новый пользователь успешно создан!";
+            } else {
+                return "Ошибка создания пользователя! Код ошибки для поддержки: 125<script>console.log($sql $conn->error)</script>";
+            }
+        }
+
+        $conn->close();
+    }
+}
+
+function resetPassword($login,$hashedPassword,$apiKey) {
+    if ($apiKey == "***REMOVED***") {
+        include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+
+        $newToken = "NevkaToken2.0[".$login."-".$hashedPassword."]";
+
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        if ($conn->connect_error) { die("Ошибка подключения: не получается зарегистрироваться. Код ошибки для поддержки: 147");}
+
+        $sql = "UPDATE users SET password='$hashedPassword', token='$newToken' WHERE login='$login'";
 
         if ($conn->query($sql) === TRUE) {
-            return "Новый пользователь успешно создан!";
+            return "Пароль успешно сброшен!";
         } else {
-            return "Ошибка создания пользователя! Код ошибки для поддержки: 125<script>console.log($sql $conn->error)</script>";
+            return "Ошибка сброса пароля! Код ошибки для поддержки: 148<script>console.log($sql $conn->error)</script>";
         }
-    }
 
-    $conn->close();
+        $conn->close();
+    }
 }
 
 function showUsersTable($query) {
@@ -401,9 +424,9 @@ function showUsersTable($query) {
             $online = "";
             $lastOnline = date_create_from_format("d.m.Y в h:i a", $formattedTime); $now = new DateTime();
             $difference = ($lastOnline->diff($now)->days * 1440) + ($lastOnline->diff($now)->h * 60) + $lastOnline->diff($now)->i;
-            if ($difference <= 5) { $online = "<span style=\"color:greenyellow\">Онлайн</span>"; }
-            else if ($difference < 60) { $online = "<span style=\"color:lightslategray\">Был(а) в сети: ".$lastOnline->diff($now)->i." минут назад</span>"; }
-            else { $online = "<span style=\"color:lightslategray\">Был(а) в сети: ".$formattedTime."</span>"; }
+            if ($difference <= 5) { $online = "<span style=\"color:greenyellow; font-size: 14px\">Онлайн</span>"; }
+            else if ($difference < 60) { $online = "<span style=\"color:lightslategray; font-size: 14px\">Был(а) в сети: ".$lastOnline->diff($now)->i." минут назад</span>"; }
+            else { $online = "<span style=\"color:lightslategray; font-size: 14px\">Был(а) в сети: ".$formattedTime."</span>"; }
 
             $image = new ImageResize($row["avatar"]);
             $image->quality_jpg = 90;
@@ -476,7 +499,7 @@ function showChatsTable($token) {
             $image->crop(100, 100);
             $blob = 'data:image/jpeg;base64,'.base64_encode($image);
 
-            echo "<tr><td class=\"a c\" data-href=\"messages.php?id=".$row["0"]."\"><img class=\"thumbnail\" style=\"margin-top: 7px; margin-left: 7px\" src=\"".$blob."\"></td><td class=\"a d\" data-href=\"messages.php?id=".$row["0"]."\">".$row["2"]." ".$row["3"].$unreadMarker."<br>".$online.$preview."</td></tr>";
+            echo "<tr id=\"".$row["0"]."\"><td class=\"a c\" data-href=\"messages.php?id=".$row["0"]."\"><img class=\"thumbnail\" style=\"margin-top: 7px; margin-left: 7px\" src=\"".$blob."\"></td><td class=\"a d\" data-href=\"messages.php?id=".$row["0"]."\">".$row["2"]." ".$row["3"].$unreadMarker."<br>".$online.$preview."</td></tr>";
         }
     } else {
         echo "<p class=\"console\">Нет чатов.</p><p id=\"pplNotice\" class=\"console\">Перейдите в раздел <a href=\"people.php\">Люди</a> для выбора собеседника.</p>";
@@ -865,7 +888,7 @@ function getPushTokenById($id) {
     $checkedId = validate(intval($id));
 
     $conn = new mysqli($servername, $username, $password, $dbname);
-    if ($conn->connect_error) { die("Ошибка подключения: не получается проверить наличие пользователя. Код ошибки для поддержки: 145");}
+    if ($conn->connect_error) { die("Ошибка подключения: не получается проверить наличие пользователя. Код ошибки для поддержки: 146");}
 
     $sql = "SELECT expo_push_token FROM users WHERE id='$checkedId' LIMIT 1";
     $result = $conn->query($sql);

@@ -12,7 +12,7 @@
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   </head>
-<body style='background-color: <?php error_reporting(0); echo htmlspecialchars($_COOKIE["theme"])?>'>
+<body style='background-color: <?php  echo htmlspecialchars($_COOKIE["theme"])?>'>
   <header id="header">
     <span id="mainlogo">Невка</span>
     <button class="button" id="togglemenu">Меню</button>

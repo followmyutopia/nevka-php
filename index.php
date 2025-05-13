@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka Project v1.7
+ * Nevka Project v1.8
  * 2025 Avicus Delacroix
  */
 
@@ -11,7 +11,7 @@ include 'mailer.php';
 if(isset($_COOKIE["user_token"])) { header("Refresh:0; url=profile.php"); }
 
 $login = $password = $newLogin = $newPassword = $confirmPassword = $status = $email = $captcha = $emailSuccess = $loginClass = "";
-$afterConfirmation = $signupClass = "hidden";
+$afterConfirmation = $signupClass = $resetClass = "hidden";
 
 if(isset($_POST['authorize'])) {
     $login = validate($_POST["login"]);
@@ -38,7 +38,7 @@ if(isset($_POST['confirmEmail'])) {
             if ($allowEmail) {
                 $_SESSION['captcha'] = mt_rand(10000, 99999);
                 $_SESSION['email'] = $email;
-                $sent = sendMail($email, $_SESSION['captcha']);
+                $sent = sendRegistrationMail($email, $_SESSION['captcha']);
                 if ($sent) {
                     $status = "Код выслан на почту!";
                     $emailSuccess = "hidden";
@@ -49,6 +49,32 @@ if(isset($_POST['confirmEmail'])) {
                     $afterConfirmation = "";
                 }
             } else { $status = "Пользователь с такой почтой уже существует!"; }
+        } else { $status = "Не похоже на электронную почту"; }
+    }
+}
+
+if(isset($_POST['confirmEmailForPassword'])) {
+    $email = validate($_POST["newLogin"]);
+    if (mb_strlen($email) > 63) {$status = "Максимум 63 символа";}
+    else {
+        $loginClass = "hidden";
+        $resetClass = "";
+        if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $allowEmail = allowEmail($email);
+            if (!$allowEmail) {
+                $_SESSION['captcha'] = mt_rand(10000, 99999);
+                $_SESSION['email'] = $email;
+                $sent = sendPasswordResetMail($email, $_SESSION['captcha']);
+                if ($sent) {
+                    $status = "Код выслан на почту!";
+                    $emailSuccess = "hidden";
+                    $afterConfirmation = "";
+                } else {
+                    $status = "Ошибка почтового сервиса. Код подтверждения: ".$_SESSION['captcha'];
+                    $emailSuccess = "hidden";
+                    $afterConfirmation = "";
+                }
+            } else { $status = "Пользователь с такой почтой не существует!"; }
         } else { $status = "Не похоже на электронную почту"; }
     }
 }
@@ -66,8 +92,26 @@ if(isset($_POST['signup'])) {
     } else if ($newPassword != $confirmPassword) {
         $status = "Пароли не совпадают";
     } else {
-        $status = "Создание пользователя";
-        $status = signup($_SESSION['email'],sha1($newPassword));
+        $status = "Создание пользователя...";
+        $status = signup($_SESSION['email'],sha1($newPassword),"***REMOVED***");
+    }
+}
+
+if(isset($_POST['reset'])) {
+    $newPassword = validate($_POST["newPassword"]);
+    $confirmPassword = validate($_POST["confirmPassword"]);
+    $captcha = validate($_POST['captcha']);
+    if ($captcha != $_SESSION['captcha']) {
+        $status = "Неправильно введена капча";
+    } else if (empty($newLogin) && empty($newPassword) && empty($confirmPassword)) {
+        $status = "Введите данные";
+    } else if (empty($newPassword) || empty($confirmPassword)) {
+        $status = "Пароль обязателен";
+    } else if ($newPassword != $confirmPassword) {
+        $status = "Пароли не совпадают";
+    } else {
+        $status = "Сброс пароля...";
+        $status = resetPassword($_SESSION['email'],sha1($newPassword),"***REMOVED***");
     }
 }
 ?>
@@ -104,6 +148,7 @@ $(function(){
         </form>
         <button class="button wide" style="margin-top:7px" id="signUpButton">Зарегистрироваться</button>
         <p class="console"><?php echo $status ?></p>
+        <p style="text-align: center; margin-top: -15px; color: lightslategray; text-decoration: underline" id="resetPasswordButton">Забыли пароль?</p>
     </div>
     <div id="signup" class="<?php echo $signupClass ?>">
         <h2 style="">Зарегистрироваться:</h2>
@@ -123,11 +168,31 @@ $(function(){
         <button class="button wide" style="margin-top:7px" id="backToLoginButton">Вернуться ко входу</button>
         <p class="console"><?php echo $status ?></p>
     </div>
+    <div id="resetPassword" class="<?php echo $resetClass ?>">
+        <h2 style="">Сбросить пароль:</h2>
+        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post" class="<?php echo $emailSuccess ?>">
+            Электронная почта: <input type="text" name="newLogin"><br>
+            <br>
+            <button class="button wide" type="submit" name="confirmEmailForPassword">Выслать код подтверждения</button>
+        </form>
+        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post" class="<?php echo $afterConfirmation ?>">
+            Электронная почта: <input type="email" name="newLogin" value="<?php echo $_SESSION['email'] ?>" disabled><br>
+            Код подтверждения: <input type="text" name="captcha"><br>
+            Новый пароль: <input type="password" name="newPassword"><br>
+            Повторите пароль: <input type="password" name="confirmPassword"><br>
+            <br>
+            <button class="button wide" type="submit" name="reset">Сбросить пароль</button>
+        </form>
+        <button class="button wide" style="margin-top:7px" id="backToLoginFromReset">Вернуться ко входу</button>
+        <p class="console"><?php echo $status ?></p>
+    </div>
 </div>
 
 <script>$(function(){
     $("#signUpButton").click(() => { $("#login").toggleClass("hidden"); $("#signup").toggleClass("hidden"); });
+    $("#resetPasswordButton").click(() => { $("#login").toggleClass("hidden"); $("#resetPassword").toggleClass("hidden"); });
     $("#backToLoginButton").click(() => { $("#login").toggleClass("hidden"); $("#signup").toggleClass("hidden"); });
+    $("#backToLoginFromReset").click(() => { $("#login").toggleClass("hidden"); $("#resetPassword").toggleClass("hidden"); });
 });</script>
 
 <?php include 'footer.php'; ?>
