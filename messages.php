@@ -94,12 +94,8 @@ $(function(){
     $.post("updateAsync.php", { type: 3 }, function(data){
         if (data != $("#chatsTable").html()) {
             $("#chatsTable").html(data);
-            const firstChild = "#" + $("#chatsTable tr:first-child").attr('id');
-            if (currentChatSelector != "#null") {
-                $("#chatsTable").find(currentChatSelector).addClass("activechat");
-            } else {
-                $("#chatsTable").find(firstChild).addClass("activechat");
-            }
+            const headerId = "#" + $(".messagesHeader").attr('id');
+            $("#chatsTable").find(headerId).addClass("activechat");
         }
     });
     $.post("updateAsync.php", { currentChat: <?php echo $currentChat ?>, type: 0 }, function(data){
@@ -123,12 +119,8 @@ $(function(){
         $.post("updateAsync.php", { type: 3 }, function(data){
             if (data != $("#chatsTable").html()) {
                 $("#chatsTable").html(data);
-                const firstChild = "#" + $("#chatsTable tr:first-child").attr('id');
-                if (currentChatSelector != "#null") {
-                $("#chatsTable").find(currentChatSelector).addClass("activechat");
-                } else {
-                    $("#chatsTable").find(firstChild).addClass("activechat");
-                }
+                const headerId = "#" + $(".messagesHeader").attr('id');
+                $("#chatsTable").find(headerId).addClass("activechat");
             }
         });
     },2500);

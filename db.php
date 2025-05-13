@@ -528,7 +528,7 @@ function currentUserHeader($userId) {
         if ($difference <= 5) { $online = "<span style=\"color:greenyellow\">Онлайн</span>"; }
         else if ($difference < 60) { $online = "<span style=\"color:lightslategray\">Был(а): ".$lastOnline->diff($now)->i." минут назад</span>"; }
         else { $online = "<span style=\"color:lightslategray\">Был(а): ".$formattedTime."</span>"; }
-        echo "<p class=\"messagesHeader\"><a id=\"msgBack\" href=\"messages.php\">← Назад</a><b><a href=\"profile.php?id=".$userId."\">".$row["0"]." ".$row["1"]."</a></b><br>".$online."</p>";
+        echo "<p class=\"messagesHeader\" id=\"".$userId."\"><a id=\"msgBack\" href=\"messages.php\">← Назад</a><b><a href=\"profile.php?id=".$userId."\">".$row["0"]." ".$row["1"]."</a></b><br>".$online."</p>";
     } else {
         return;
     }
