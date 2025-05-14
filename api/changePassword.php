@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka PHP API v1.0
+ * Nevka PHP API v1.4
  * 2025 Avicus Delacroix
  * 
  * Changes the password for the currently logged user.
@@ -54,7 +54,7 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
                 echo "{\"result\":\"failure\",\"error\":\"Неправильный пароль\"}";
             }
         } else {
-            echo "{\"result\":\"failure\",\"error\":\"Несуществующий токен\"}";
+            echo "{\"result\":\"failure\",\"error\":\"wrong_token\"}";
         }
 
         $conn->close();

@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka PHP API v1.0
+ * Nevka PHP API v1.4
  * 2025 Avicus Delacroix
  * 
  * Sends a message to the specified chat.
@@ -48,37 +48,40 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
             $row = $result->fetch_row();
             $loggedUser = $row[0];
         } else {
-            echo "{\"result\":\"failure\",\"error\":\"token_not_valid\"}";
+            $loggedUser = "";
+            echo "{\"result\":\"failure\",\"error\":\"wrong_token\"}";
         }
 
-        // get the header
+        if ($loggedUser != "") {
+            // get the header
 
-        $sql = "SELECT topic, header FROM discussions WHERE id='$topic' LIMIT 1";
-        $result = $conn->query($sql);
+            $sql = "SELECT topic, header FROM discussions WHERE id='$topic' LIMIT 1";
+            $result = $conn->query($sql);
 
-        if ($result->num_rows > 0) {
-            $row = $result->fetch_row();
-            if ($row[1]) {
-                $header = $row[0];
+            if ($result->num_rows > 0) {
+                $row = $result->fetch_row();
+                if ($row[1]) {
+                    $header = $row[0];
+                } else {
+                    echo "{\"result\":\"failure\",\"error\":\"Такой темы не существует\"}";
+                }
             } else {
                 echo "{\"result\":\"failure\",\"error\":\"Такой темы не существует\"}";
             }
-        } else {
-            echo "{\"result\":\"failure\",\"error\":\"Такой темы не существует\"}";
-        }
 
-        $sql = "INSERT INTO discussions (topic, author, message, time, header, activity)
-            VALUES ('$header', '$loggedUser', '$messageText', '$timestamp', '0', $timestamp)";
+            $sql = "INSERT INTO discussions (topic, author, message, time, header, activity)
+                VALUES ('$header', '$loggedUser', '$messageText', '$timestamp', '0', $timestamp)";
 
-        if ($conn->query($sql) === TRUE) {
-            $sqlUpdateHeader = "UPDATE discussions SET activity='$timestamp' WHERE id='$topic'";
-            if ($conn->query($sqlUpdateHeader) === TRUE) {
-                echo "{\"result\":\"success\"}";
+            if ($conn->query($sql) === TRUE) {
+                $sqlUpdateHeader = "UPDATE discussions SET activity='$timestamp' WHERE id='$topic'";
+                if ($conn->query($sqlUpdateHeader) === TRUE) {
+                    echo "{\"result\":\"success\"}";
+                } else {
+                    echo "{\"result\":\"failure\",\"error\":\"Невозможно обновить активность обсуждения\"}";
+                }
             } else {
-                echo "{\"result\":\"failure\",\"error\":\"Невозможно обновить активность обсуждения\"}";
+                echo "{\"result\":\"failure\",\"error\":\"Ошибка записи в БД\"}";
             }
-        } else {
-            echo "{\"result\":\"failure\",\"error\":\"Ошибка записи в БД\"}";
         }
 
         $conn->close();

@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka PHP API v1.0
+ * Nevka PHP API v1.4
  * 2025 Avicus Delacroix
  * 
  * Creates a topic.
@@ -42,7 +42,7 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
             $row = $result->fetch_row();
             $loggedUser = $row[0];
         } else {
-            echo "{\"result\":\"failure\",\"error\":\"token_not_valid\"}";
+            echo "{\"result\":\"failure\",\"error\":\"wrong_token\"}";
         }
 
         // update online

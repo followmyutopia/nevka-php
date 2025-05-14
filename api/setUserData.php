@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka PHP API v1.0
+ * Nevka PHP API v1.4
  * 2025 Avicus Delacroix
  * 
  * Sets user data for the currently logged user.
@@ -41,7 +41,7 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
             if ($conn->query($sql) === TRUE) {
                 echo "{\"result\":\"success\"}";
             } else {
-                echo "{\"result\":\"failure\",\"error\":\"Ошибка записи в БД\"}";
+                echo "{\"result\":\"failure\",\"error\":\"wrong_token\"}";
             }
 
             $conn->close();

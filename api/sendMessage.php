@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka PHP API v1.3
+ * Nevka PHP API v1.4
  * 2025 Avicus Delacroix
  * 
  * Sends a message to the specified chat.
@@ -62,62 +62,65 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
             $loggedUser = $row[0];
             $senderName = $row[1]." ".$row[2];
         } else {
-            echo "{\"result\":\"failure\",\"error\":\"token_not_valid\"}";
+            $loggedUser = "";
+            echo "{\"result\":\"failure\",\"error\":\"wrong_token\"}";
         }
 
-        // update online
+        if ($loggedUser != "") {
+            // update online
 
-        $sql = "UPDATE users SET timestamp='$timestamp' WHERE token='$token'";
-        $conn->query($sql);
+            $sql = "UPDATE users SET timestamp='$timestamp' WHERE token='$token'";
+            $conn->query($sql);
 
-        // check if user exists
+            // check if user exists
 
-        $sql = "SELECT id, expo_push_token FROM users WHERE id='$currentChat' LIMIT 1";
-        $result = $conn->query($sql);
+            $sql = "SELECT id, expo_push_token FROM users WHERE id='$currentChat' LIMIT 1";
+            $result = $conn->query($sql);
 
-        if ($result->num_rows > 0) {
-            $row = $result->fetch_row();
-            $targetToken = $row[1];
+            if ($result->num_rows > 0) {
+                $row = $result->fetch_row();
+                $targetToken = $row[1];
 
-            if ($loggedUser < $currentChat) {
-                $query = "M".$loggedUser."M".$currentChat."M";
-            } else {
-                $query = "M".$currentChat."M".$loggedUser."M";
-            }
-
-            if ($reply != "") {
-                $sql = "INSERT INTO messages (query, author, text, image, timestamp, unread, reply)
-                VALUES ('$query', '$loggedUser', '$messageText', '$messageImage', '$timestamp', '1', '$reply')";
-            } else {
-                $sql = "INSERT INTO messages (query, author, text, image, timestamp, unread)
-                VALUES ('$query', '$loggedUser', '$messageText', '$messageImage', '$timestamp', '1')";
-            }
-
-            if ($conn->query($sql) === TRUE) {
-                $pushHeader = $senderName;
-                if ($messageText != "") {
-                    $processedText = prepareText($messageText);
-                    $pushBody = $processedText;
+                if ($loggedUser < $currentChat) {
+                    $query = "M".$loggedUser."M".$currentChat."M";
                 } else {
-                    $pushBody = "(изображение)";
+                    $query = "M".$currentChat."M".$loggedUser."M";
                 }
 
-                if ($targetToken != "" && $targetToken != "undefined") {
-                    $ch = curl_init("https://exp.host/--/api/v2/push/send");
-                    $payload = json_encode(array("to" => $targetToken, "title" => $pushHeader, "body" => $pushBody));
-                    curl_setopt( $ch, CURLOPT_POSTFIELDS, $payload );
-                    curl_setopt( $ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-                    curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-                    $result = curl_exec($ch);
-                    curl_close($ch);
+                if ($reply != "") {
+                    $sql = "INSERT INTO messages (query, author, text, image, timestamp, unread, reply)
+                    VALUES ('$query', '$loggedUser', '$messageText', '$messageImage', '$timestamp', '1', '$reply')";
+                } else {
+                    $sql = "INSERT INTO messages (query, author, text, image, timestamp, unread)
+                    VALUES ('$query', '$loggedUser', '$messageText', '$messageImage', '$timestamp', '1')";
                 }
 
-                echo "{\"result\":\"success\"}";
+                if ($conn->query($sql) === TRUE) {
+                    $pushHeader = $senderName;
+                    if ($messageText != "") {
+                        $processedText = prepareText($messageText);
+                        $pushBody = $processedText;
+                    } else {
+                        $pushBody = "(изображение)";
+                    }
+
+                    if ($targetToken != "" && $targetToken != "undefined") {
+                        $ch = curl_init("https://exp.host/--/api/v2/push/send");
+                        $payload = json_encode(array("to" => $targetToken, "title" => $pushHeader, "body" => $pushBody));
+                        curl_setopt( $ch, CURLOPT_POSTFIELDS, $payload );
+                        curl_setopt( $ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+                        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+                        $result = curl_exec($ch);
+                        curl_close($ch);
+                    }
+
+                    echo "{\"result\":\"success\"}";
+                } else {
+                    echo "{\"result\":\"failure\",\"error\":\"Ошибка записи в БД\"}";
+                }
             } else {
-                echo "{\"result\":\"failure\",\"error\":\"Ошибка записи в БД\"}";
+                echo "{\"result\":\"failure\",\"error\":\"not_existing_user\"}";
             }
-        } else {
-            echo "{\"result\":\"failure\",\"error\":\"not_existing_user\"}";
         }
 
         $conn->close();

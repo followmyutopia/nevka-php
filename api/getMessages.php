@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka PHP API v1.3
+ * Nevka PHP API v1.4
  * 2025 Avicus Delacroix
  * 
  * Gets all active chats for the specified user.
@@ -44,7 +44,7 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
             $row = $result->fetch_row();
             $checkedUser = $row[0];
         } else {
-            echo "{\"result\":\"failure\",\"error\":\"token_not_valid\"}";
+            echo "{\"result\":\"failure\",\"error\":\"wrong_token\"}";
         }
 
         // form query

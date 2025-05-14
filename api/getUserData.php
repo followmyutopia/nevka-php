@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka PHP API v1.0
+ * Nevka PHP API v1.4
  * 2025 Avicus Delacroix
  * 
  * Receives the data for the specified user.
@@ -31,29 +31,31 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
             echo "{\"result\":\"failure\",\"error\":\"Нет доступа к базе данных\"}";
         }
 
-        // update online
+        // update online and check the token
 
         $sql = "UPDATE users SET timestamp='$timestamp' WHERE token='$token'";
-        $conn->query($sql);
+        if ($conn->query($sql) === TRUE) {
+            $sql = "SELECT firstname, lastname, status, city, bio, timestamp, avatar, id FROM users WHERE id='$userId' LIMIT 1";
+            $result = $conn->query($sql);
 
-        $sql = "SELECT firstname, lastname, status, city, bio, timestamp, avatar, id FROM users WHERE id='$userId' LIMIT 1";
-        $result = $conn->query($sql);
+            if ($result->num_rows > 0) {
+                $row = $result->fetch_row();
 
-        if ($result->num_rows > 0) {
-            $row = $result->fetch_row();
+                $formattedTime = date("d.m.Y в h:i a", $row[5]);
+                $lastOnline = date_create_from_format("d.m.Y в h:i a", $formattedTime);
+                $now = new DateTime(); $online = "";
+                $difference = ($lastOnline->diff($now)->days * 1440) + ($lastOnline->diff($now)->h * 60) + $lastOnline->diff($now)->i;
 
-            $formattedTime = date("d.m.Y в h:i a", $row[5]);
-            $lastOnline = date_create_from_format("d.m.Y в h:i a", $formattedTime);
-            $now = new DateTime(); $online = "";
-            $difference = ($lastOnline->diff($now)->days * 1440) + ($lastOnline->diff($now)->h * 60) + $lastOnline->diff($now)->i;
+                if ($difference <= 5) { $online = "online"; }
+                else if ($difference < 60) { $online = $lastOnline->diff($now)->i." минут назад"; }
+                else { $online = $formattedTime; }
 
-            if ($difference <= 5) { $online = "online"; }
-            else if ($difference < 60) { $online = $lastOnline->diff($now)->i." минут назад"; }
-            else { $online = $formattedTime; }
-
-            echo "{\"result\": \"success\", \"id\": \"".$row[7]."\", \"firstname\": \"".$row[0]."\", \"lastname\": \"".$row[1]."\", \"status\": \"".$row[2]."\", \"city\": \"".$row[3]."\", \"bio\": \"".$row[4]."\", \"timestamp\": \"".$row[5]."\", \"avatar\": \"".$row[6]."\", \"online\": \"".$online."\"}";
+                echo "{\"result\": \"success\", \"id\": \"".$row[7]."\", \"firstname\": \"".$row[0]."\", \"lastname\": \"".$row[1]."\", \"status\": \"".$row[2]."\", \"city\": \"".$row[3]."\", \"bio\": \"".$row[4]."\", \"timestamp\": \"".$row[5]."\", \"avatar\": \"".$row[6]."\", \"online\": \"".$online."\"}";
+            } else {
+                echo "{\"result\":\"failure\",\"error\":\"Пользователь не найден\"}";
+            }
         } else {
-            echo "{\"result\":\"failure\",\"error\":\"Пользователь не найден\"}";
+            echo "{\"result\":\"failure\",\"error\":\"wrong_token\"}";
         }
 
         $conn->close();

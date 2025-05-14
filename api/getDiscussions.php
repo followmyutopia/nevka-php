@@ -1,10 +1,10 @@
 <?php
 /**
- * Nevka PHP API v1.0
+ * Nevka PHP API v1.0.1
  * 2025 Avicus Delacroix
  * 
  * Gets all active discussions.
- * Accepts: token (multipart/form-data)
+ * Accepts: query (multipart/form-data)
  * Returns: result, discussions?[], error? (json)
  * discussions?[]: {"id": "", "topic": "", "name": "", "message": "", "timestamp": "", "formattedTime": ""}
  * The last element of the array is always empty. Remove it from the result by JavaScript pop() function.

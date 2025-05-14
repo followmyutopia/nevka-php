@@ -1,10 +1,10 @@
 <?php
 /**
- * Nevka PHP API v1.0
+ * Nevka PHP API v1.0.1
  * 2025 Avicus Delacroix
  * 
  * Gets the topic header and messages for the specified topic ID.
- * Accepts: token, chat (multipart/form-data)
+ * Accepts: id (multipart/form-data)
  * Returns: result, header?, author?, timestamp?, formattedTime?, topicMessage?, messages?[], error? (json)
  * messages?[]: {"name": "", "text": "", "timestamp": "", "formattedTime": ""}
  * The last element of the array is always empty. Remove it from the result by JavaScript pop() function.
