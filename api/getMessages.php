@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka PHP API v1.4
+ * Nevka PHP API v1.4.1
  * 2025 Avicus Delacroix
  * 
  * Gets all active chats for the specified user.
@@ -73,10 +73,15 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
                     $getReplyText = "SELECT author, text FROM messages WHERE id ='$replyId' LIMIT 1";
                     $textResult = $conn->query($getReplyText);
                     $textRow = $textResult->fetch_row();
-                    if ($checkedUser == $textRow[0]) {
-                        $reply = "Вы: ".$textRow[1];
+                    if ($textRow[1] == "") {
+                        $preview = "(изображение)";
                     } else {
-                        $reply = $textRow[1];
+                        $preview = $textRow[1];
+                    }
+                    if ($checkedUser == $textRow[0]) {
+                        $reply = "Вы: ".$preview;
+                    } else {
+                        $reply = $preview;
                     }
                 } else {
                     $reply = "";
