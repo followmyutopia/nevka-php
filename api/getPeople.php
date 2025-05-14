@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka PHP API v1.0
+ * Nevka PHP API v1.5
  * 2025 Avicus Delacroix
  * 
  * Receives the list of all people with last onlines and avatars.
@@ -27,6 +27,12 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
 
     if (isset($_POST['query'])) {
         $query = validate($_POST['query']);
+        if (isset($_POST['safe'])) {
+            $safe = validate($_POST['safe']);
+            include 'safeFilter.php';
+        } else {
+            $safe = "";
+        }
 
         include '../credentials.php';
 
@@ -35,9 +41,20 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
             echo "{\"result\":\"failure\",\"error\":\"Нет доступа к базе данных\"}";
         }
 
-        $sql = "SELECT id, avatar, firstname, lastname, timestamp, search FROM users
-        WHERE (firstname LIKE '%$query%' OR lastname LIKE '%$query%' OR search LIKE '%$query%') AND (NOT is_banned OR is_banned IS NULL)
-        ORDER BY timestamp DESC LIMIT 500";
+        if ($safe == "true") {
+            $sql = "SELECT id, avatar, firstname, lastname, timestamp, search FROM users
+            WHERE (firstname LIKE '%$query%' OR lastname LIKE '%$query%' OR search LIKE '%$query%')
+            AND (NOT is_banned OR is_banned IS NULL)
+            AND (NOT search LIKE '%$trigger1%') AND (NOT search LIKE '%$trigger2%')
+            AND (NOT search LIKE '%$trigger3%') AND (NOT search LIKE '%$trigger4%')
+            ORDER BY timestamp DESC LIMIT 500";
+        } else {
+            $sql = "SELECT id, avatar, firstname, lastname, timestamp, search FROM users
+            WHERE (firstname LIKE '%$query%' OR lastname LIKE '%$query%' OR search LIKE '%$query%')
+            AND (NOT is_banned OR is_banned IS NULL)
+            ORDER BY timestamp DESC LIMIT 500";
+        }
+
         $result = $conn->query($sql);
 
         if ($result->num_rows > 0) {
