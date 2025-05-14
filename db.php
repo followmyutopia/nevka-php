@@ -550,7 +550,7 @@ function getMessages($token,$chatUser) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается отобразить сообщения. Код ошибки для поддержки: 129");}
 
-    $sql = "SELECT * FROM (SELECT id, query, author, text, image, timestamp, unread FROM messages WHERE query='$query' ORDER BY id DESC LIMIT 100) X ORDER BY id ASC;";
+    $sql = "SELECT * FROM (SELECT id, query, author, text, image, timestamp, unread, reply FROM messages WHERE query='$query' ORDER BY id DESC LIMIT 100) X ORDER BY id ASC;";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -560,22 +560,41 @@ function getMessages($token,$chatUser) {
             // compatibility with the v1.4 database format
             $formattedTime = date("d.m в h:i a", $row["timestamp"]);
 
+            if ($row['reply']) {
+                $replyId = $row['reply'];
+                $getReplyText = "SELECT author, text FROM messages WHERE id ='$replyId' LIMIT 1";
+                $textResult = $conn->query($getReplyText);
+                $textRow = $textResult->fetch_row();
+                if ($textRow[1] == "") $preview = "(изображение)"; 
+                else $preview = mb_strimwidth($textRow[1], 0, 115, '...');
+                if ($checkedUser == $textRow[0]) $reply = "Вы: ".$preview;
+                else $reply = $preview;
+            } else {
+                $reply = "";
+            }
+
+            if ($reply != "") {
+                $replyDOM = "<span class=\"reply\"><span class=\"fa fa-reply\" style=\"margin-right: 8px\"></span>".$reply."</span><hr>";
+            } else {
+                $replyDOM = "";
+            }
+
             if ($chatUser == $interlocutor) {
                 if ($row["author"] == $loggedUser) {
                     // my messages
                     if ($row["unread"]) {
                         // unread messages
                         if ($row["image"] == "") {
-                            echo "<div class=\"message me\">".$row["text"]."<span class=\"isUnread fa fa-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span class=\"clearfix\"></span>";
+                            echo "<div class=\"message me\">".$replyDOM.$row["text"]."<span class=\"isUnread fa fa-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span class=\"clearfix\"></span>";
                         } else {
-                            echo "<div class=\"message me\">".$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span class=\"clearfix\"></span>";
+                            echo "<div class=\"message me\">".$replyDOM.$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span class=\"clearfix\"></span>";
                         }
                     } else {
                         // read messages
                         if ($row["image"] == "") {
-                            echo "<div class=\"message me\">".$row["text"]."<span class=\"isUnread fa fa-check-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span class=\"clearfix\"></span>";
+                            echo "<div class=\"message me\">".$replyDOM.$row["text"]."<span class=\"isUnread fa fa-check-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span class=\"clearfix\"></span>";
                         } else {
-                            echo "<div class=\"message me\">".$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-check-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span class=\"clearfix\"></span>";
+                            echo "<div class=\"message me\">".$replyDOM.$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-check-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span class=\"clearfix\"></span>";
                         }
                     }
                 } else if ($row["author"] == $chatUser) {
@@ -643,10 +662,11 @@ function sendMessage($token, $currentChat, $messageText, $messageImage) {
             } else {
                 $pushBody = "(изображение)";
             }
+            $pushData = "{\"url\": \"/(tabs)/messages/chat?id=".$loggedUser."&name=".$senderName."\"}";
 
             if ($targetToken != "" && $targetToken != "undefined") {
                 $ch = curl_init("https://exp.host/--/api/v2/push/send");
-                $payload = json_encode(array("to" => $targetToken, "title" => $pushHeader, "body" => $pushBody));
+                $payload = json_encode(array("to" => $targetToken, "title" => $pushHeader, "body" => $pushBody, "data" => $pushData));
                 curl_setopt( $ch, CURLOPT_POSTFIELDS, $payload );
                 curl_setopt( $ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
                 curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );

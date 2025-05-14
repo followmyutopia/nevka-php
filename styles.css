@@ -188,6 +188,16 @@ img {
     color: lightslategray;
 }
 
+.signature {
+    margin-top: -10px;
+    text-align: center;
+    color: lightslategray;
+}
+
+.signature a {
+    color: lightslategray;
+}
+
 .nomargin-right {
     margin-right: 0;
     padding-right: 0;
@@ -489,6 +499,10 @@ textarea:focus, input:focus{
 
 .activechat {
     background: linear-gradient(to right, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
+}
+
+.reply {
+    color: lightslategray;
 }
 
 @media only screen and (max-width: 800px) {

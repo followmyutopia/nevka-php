@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka PHP API v1.4
+ * Nevka PHP API v1.6
  * 2025 Avicus Delacroix
  * 
  * Sends a message to the specified chat.
@@ -103,10 +103,11 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
                     } else {
                         $pushBody = "(изображение)";
                     }
+                    $pushData = "{\"url\": \"/(tabs)/messages/chat?id=".$loggedUser."&name=".$senderName."\"}";
 
                     if ($targetToken != "" && $targetToken != "undefined") {
                         $ch = curl_init("https://exp.host/--/api/v2/push/send");
-                        $payload = json_encode(array("to" => $targetToken, "title" => $pushHeader, "body" => $pushBody));
+                        $payload = json_encode(array("to" => $targetToken, "title" => $pushHeader, "body" => $pushBody, "data" => $pushData));
                         curl_setopt( $ch, CURLOPT_POSTFIELDS, $payload );
                         curl_setopt( $ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
                         curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
