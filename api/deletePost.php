@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka PHP API v1.4
+ * Nevka PHP API v1.4.1
  * 2025 Avicus Delacroix
  * 
  * Deletes a post from the wall.
@@ -43,7 +43,7 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
             echo "{\"result\":\"failure\",\"error\":\"wrong_token\"}";
         }
 
-        $sql = "SELECT user FROM walls WHERE id='$loggedUser' LIMIT 1";
+        $sql = "SELECT user FROM walls WHERE id='$postId' LIMIT 1";
         $result = $conn->query($sql);
 
         if ($result->num_rows > 0) {

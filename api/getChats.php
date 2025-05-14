@@ -28,6 +28,12 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
 
     if (isset($_POST['token'])) {
         $token = validate($_POST['token']);
+        if (isset($_POST['safe'])) {
+            $safe = validate($_POST['safe']);
+            include 'safeFilter.php';
+        } else {
+            $safe = "";
+        }
 
         include '../credentials.php';
         include 'prepareText.php';
@@ -76,6 +82,7 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
                 $getName = "SELECT id, avatar, firstname, lastname, timestamp FROM users WHERE id='$interlocutor' LIMIT 500";
                 $entryResult = $conn->query($getName);
                 $secondRow = $entryResult->fetch_row();
+                // you may need to filter the results based on that
 
                 // compatibility with the v1.4 database format
                 $formattedTime = date("d.m.Y в h:i a", $secondRow[4]);
@@ -94,7 +101,18 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
 
                 $processedText = prepareText($lastText);
 
-                echo "{\"id\": \"".$secondRow[0]."\", \"firstname\": \"".$secondRow[2]."\", \"lastname\": \"".$secondRow[3]."\", \"lastText\": \"".$processedText."\", \"isUnread\": \"".$isUnread."\", \"avatar\": \"".$blob."\", \"online\": \"".$online."\", \"lastTextAuthor\": \"".$lastTextAuthor."\"}, ";
+                if ($safe == "true") {
+                    if (
+                        !str_contains($secondRow[2], $trigger1) || !str_contains($secondRow[3], $trigger1) || 
+                        !str_contains($secondRow[2], $trigger2) || !str_contains($secondRow[3], $trigger2) || 
+                        !str_contains($secondRow[2], $trigger3) || !str_contains($secondRow[3], $trigger3) || 
+                        !str_contains($secondRow[2], $trigger4) || !str_contains($secondRow[3], $trigger4)
+                    ) {
+                        echo "{\"id\": \"".$secondRow[0]."\", \"firstname\": \"".$secondRow[2]."\", \"lastname\": \"".$secondRow[3]."\", \"lastText\": \"".$processedText."\", \"isUnread\": \"".$isUnread."\", \"avatar\": \"".$blob."\", \"online\": \"".$online."\", \"lastTextAuthor\": \"".$lastTextAuthor."\"}, ";
+                    }
+                } else {
+                    echo "{\"id\": \"".$secondRow[0]."\", \"firstname\": \"".$secondRow[2]."\", \"lastname\": \"".$secondRow[3]."\", \"lastText\": \"".$processedText."\", \"isUnread\": \"".$isUnread."\", \"avatar\": \"".$blob."\", \"online\": \"".$online."\", \"lastTextAuthor\": \"".$lastTextAuthor."\"}, ";
+                }
             }
             echo "{\"id\": \"\", \"firstname\": \"\", \"lastname\": \"\", \"lastText\": \"\", \"isUnread\": \"\", \"avatar\": \"\", \"online\": \"\", \"lastTextAuthor\": \"\"}]}";
         } else {
