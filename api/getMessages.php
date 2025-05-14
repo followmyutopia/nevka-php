@@ -66,14 +66,27 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
                 $interlocutor = str_replace("M", "", $interlocutor);
                 // compatibility with the v1.4 database format
                 $formattedTime = date("d.m в h:i a", $row['timestamp']);
-
                 $processedText = prepareText($row['text']);
+
+                if ($row['reply']) {
+                    $replyId = $row['reply'];
+                    $getReplyText = "SELECT author, text FROM messages WHERE id ='$replyId' LIMIT 1";
+                    $textResult = $conn->query($getReplyText);
+                    $textRow = $textResult->fetch_row();
+                    if ($checkedUser == $textRow[0]) {
+                        $reply = "Вы: ".$textRow[1];
+                    } else {
+                        $reply = $textRow[1];
+                    }
+                } else {
+                    $reply = "";
+                }
 
                 if ($chat == $interlocutor) {
                     if ($row["author"] == $checkedUser) { // my message
-                        echo "{\"id\": \"".$row['id']."\", \"me\": \"true\", \"text\": \"".$processedText."\", \"image\": \"".$row['image']."\", \"timestamp\": \"".$row['timestamp']."\", \"formattedTime\": \"".$formattedTime."\", \"isUnread\": \"".$row['unread']."\", \"reply\": \"".$row['reply']."\"}, ";
+                        echo "{\"id\": \"".$row['id']."\", \"me\": \"true\", \"text\": \"".$processedText."\", \"image\": \"".$row['image']."\", \"timestamp\": \"".$row['timestamp']."\", \"formattedTime\": \"".$formattedTime."\", \"isUnread\": \"".$row['unread']."\", \"reply\": \"".$reply."\"}, ";
                     } else if ($row["author"] == $chat) { // interlocutor message
-                        echo "{\"id\": \"".$row['id']."\", \"me\": \"false\", \"text\": \"".$processedText."\", \"image\": \"".$row['image']."\", \"timestamp\": \"".$row['timestamp']."\", \"formattedTime\": \"".$formattedTime."\", \"isUnread\": \"".$row['unread']."\", \"reply\": \"".$row['reply']."\"}, ";
+                        echo "{\"id\": \"".$row['id']."\", \"me\": \"false\", \"text\": \"".$processedText."\", \"image\": \"".$row['image']."\", \"timestamp\": \"".$row['timestamp']."\", \"formattedTime\": \"".$formattedTime."\", \"isUnread\": \"".$row['unread']."\", \"reply\": \"".$reply."\"}, ";
                     } else { return; }
                 } else { return; }
             }

@@ -85,8 +85,13 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
                 $query = "M".$currentChat."M".$loggedUser."M";
             }
 
-            $sql = "INSERT INTO messages (query, author, text, image, timestamp, unread, reply)
-            VALUES ('$query', '$loggedUser', '$messageText', '$messageImage', '$timestamp', '1', '$reply')";
+            if ($reply != "") {
+                $sql = "INSERT INTO messages (query, author, text, image, timestamp, unread, reply)
+                VALUES ('$query', '$loggedUser', '$messageText', '$messageImage', '$timestamp', '1', '$reply')";
+            } else {
+                $sql = "INSERT INTO messages (query, author, text, image, timestamp, unread)
+                VALUES ('$query', '$loggedUser', '$messageText', '$messageImage', '$timestamp', '1')";
+            }
 
             if ($conn->query($sql) === TRUE) {
                 $pushHeader = $senderName;
