@@ -124,7 +124,7 @@ $(function(){
             }
         });
     },2500);
-    $('textarea').keypress(function (e) { if(e.which == 13) { $('#send').click(); } });
+    $('textarea').keypress(function (e) { if(e.which == 13) { $('#send').click(); e.preventDefault(); } });
     if (<?php echo $currentChat ?> != 0) { $("#pplNotice").hide(); }
 });</script>
 
