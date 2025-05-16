@@ -11,6 +11,7 @@ if(isset($_POST['sendMessage'])) {
     $messageStatus = "OK"; // Panamar proDUCKtion
     $messageText = validate($_POST["message"]);
     $currentChat = validate($_POST["interlocutor"]);
+    $replyTo = validate($_POST["reply"]);
     if (mb_strlen($messageText) > 1023) {$messageStatus = "Максимум 1023 символа";}
     else {
         $target_file = "tmp/" . basename($_FILES["fileToUpload"]["name"]);
@@ -34,10 +35,10 @@ if(isset($_POST['sendMessage'])) {
                     $image->resizeToLongSide(800);
                     $blob = 'data:image/jpeg;base64,'.base64_encode($image->getImageAsString(IMAGETYPE_JPEG));
                 }
-                $messageStatus = sendMessage($_COOKIE["user_token"], $currentChat, $messageText, $blob);
+                $messageStatus = sendMessage($_COOKIE["user_token"], $currentChat, $messageText, $blob, $replyTo);
             }
         } else {
-            if ($messageText != "") { $wallStatus = sendMessage($_COOKIE["user_token"], $currentChat, $messageText, $blob); }
+            if ($messageText != "") { $wallStatus = sendMessage($_COOKIE["user_token"], $currentChat, $messageText, $blob, $replyTo); }
             else { $messageStatus = "Введите текст"; }
         }
     }

@@ -5,7 +5,7 @@
  * 
  * Databases and types (MySQL):
  * Users:       id (int), login (varchar-63), password (varchar-40), token (varchar-127), avatar (mediumblob), firstname (varchar-63), lastname (varchar-63), status (varchar-127), city (varchar-63), bio (varchar-255), timestamp (int), search (varchar-127), is_banned (tinyint-1), is_admin (tinyint-1), expo-push-token (varchar-255)
- * Walls:       id (int), user (int), text (varchar-1023), image (mediumblob), timestamp (int), likes (varchar-255)
+ * Walls:       id (int), user (int), text (varchar-1023), image (mediumblob), timestamp (int), likes (varchar-1023)
  * Messages:    id (int), query (varchar-63), author (int), text (varchar-1023), image (mediumblob), timestamp (int), unread (tinyint-1), reply (int)
  * Discussions: id (int), topic (varchar-255), author (int), message (varchar-1023), time (int), header (tinyint-1), activity (int)
  */
@@ -284,8 +284,8 @@ function addWallEntry($token, $wallText, $wallImage) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается опубликовать стену. Код ошибки для поддержки: 119");}
 
-    $sql = "INSERT INTO walls (user, text, image, timestamp)
-        VALUES ('$loggedUser', '$wallText', '$wallImage', '$timestamp')";
+    $sql = "INSERT INTO walls (user, text, image, timestamp, likes)
+        VALUES ('$loggedUser', '$wallText', '$wallImage', '$timestamp', '[]')";
 
     if ($conn->query($sql) === TRUE) {
         header("Refresh:0");
@@ -569,50 +569,37 @@ function getMessages($token,$chatUser) {
                 else $preview = mb_strimwidth($textRow[1], 0, 115, '...');
                 if ($checkedUser == $textRow[0]) $reply = "Вы: ".$preview;
                 else $reply = $preview;
-            } else {
-                $reply = "";
-            }
+            } else $reply = "";
+            
 
-            if ($reply != "") {
-                $replyDOM = "<span class=\"reply\"><span class=\"fa fa-reply\" style=\"margin-right: 8px\"></span>".$reply."</span><hr>";
-            } else {
-                $replyDOM = "";
-            }
+            if ($reply != "") $replyDOM = "<span class=\"reply\"><span class=\"fa fa-reply\" style=\"margin-right: 8px\"></span>".$reply."</span><hr>";
+            else $replyDOM = "";
+            
 
             if ($chatUser == $interlocutor) {
                 if ($row["author"] == $loggedUser) {
                     // my messages
                     if ($row["unread"]) {
                         // unread messages
-                        if ($row["image"] == "") {
-                            echo "<div class=\"message me\">".$replyDOM.$row["text"]."<span class=\"isUnread fa fa-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
-                        } else {
-                            echo "<div class=\"message me\">".$replyDOM.$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
-                        }
+                        if ($row["image"] == "") echo "<div class=\"message me\">".$replyDOM.$row["text"]."<span class=\"isUnread fa fa-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
+                        else echo "<div class=\"message me\">".$replyDOM.$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
                     } else {
                         // read messages
-                        if ($row["image"] == "") {
-                            echo "<div class=\"message me\">".$replyDOM.$row["text"]."<span class=\"isUnread fa fa-check-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
-                        } else {
-                            echo "<div class=\"message me\">".$replyDOM.$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-check-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
-                        }
+                        if ($row["image"] == "") echo "<div class=\"message me\">".$replyDOM.$row["text"]."<span class=\"isUnread fa fa-check-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
+                        else echo "<div class=\"message me\">".$replyDOM.$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-check-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
+                        
                     }
                 } else if ($row["author"] == $chatUser) {
                     // interlocutor messages
                     if ($row["unread"]) {
                         // unread messages
-                        if ($row["image"] == "") {
-                            echo "<div class=\"message\">".$row["text"]."<span class=\"isUnread fa fa-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
-                        } else {
-                            echo "<div class=\"message\">".$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
-                        }
+                        if ($row["image"] == "") echo "<div class=\"message\">".$row["text"]."<span class=\"isUnread fa fa-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
+                        else echo "<div class=\"message\">".$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
                     } else {
                         // read messages
-                        if ($row["image"] == "") {
-                            echo "<div class=\"message\">".$row["text"]."<span class=\"isUnread fa fa-check-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
-                        } else {
-                            echo "<div class=\"message\">".$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-check-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
-                        }
+                        if ($row["image"] == "") echo "<div class=\"message\">".$row["text"]."<span class=\"isUnread fa fa-check-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
+                        else echo "<div class=\"message\">".$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-check-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
+                        
                     }
                 } else { return; }
             } else { return; }
@@ -627,7 +614,7 @@ function getMessages($token,$chatUser) {
     $conn->close();
 }
 
-function sendMessage($token, $currentChat, $messageText, $messageImage) {
+function sendMessage($token, $currentChat, $messageText, $messageImage, $replyTo) {
     include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
     include 'api/prepareText.php';
 
@@ -649,8 +636,13 @@ function sendMessage($token, $currentChat, $messageText, $messageImage) {
         $conn = new mysqli($servername, $username, $password, $dbname);
         if ($conn->connect_error) { die("Ошибка подключения: не получается отправить сообщение. Код ошибки для поддержки: 130");}
     
-        $sql = "INSERT INTO messages (query, author, text, image, timestamp, unread)
+        if ($replyTo == "") {
+            $sql = "INSERT INTO messages (query, author, text, image, timestamp, unread)
             VALUES ('$query', '$loggedUser', '$messageText', '$messageImage', '$timestamp', '1')";
+        } else {
+            $sql = "INSERT INTO messages (query, author, text, image, timestamp, unread, reply)
+            VALUES ('$query', '$loggedUser', '$messageText', '$messageImage', '$timestamp', '1', '$replyTo')";
+        }
     
         if ($conn->query($sql) === TRUE) {
             updateOnline($token);

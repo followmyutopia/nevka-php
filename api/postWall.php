@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka PHP API v1.4
+ * Nevka PHP API v1.7
  * 2025 Avicus Delacroix
  * 
  * Posts an entry on the wall.
@@ -59,8 +59,8 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
         $sql = "UPDATE users SET timestamp='$timestamp' WHERE token='$token'";
         $conn->query($sql);
 
-        $sql = "INSERT INTO walls (user, text, image, timestamp)
-            VALUES ('$loggedUser', '$text', '$postImage', '$timestamp')";
+        $sql = "INSERT INTO walls (user, text, image, timestamp, likes)
+            VALUES ('$loggedUser', '$text', '$postImage', '$timestamp', '[]')";
 
         if ($conn->query($sql) === TRUE) {
             echo "{\"result\":\"success\"}";
