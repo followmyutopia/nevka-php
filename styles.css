@@ -527,7 +527,47 @@ textarea:focus, input:focus{
     color: rgba(255, 255, 255, 0.35);
 }
 
+#android {
+    padding: 1px;
+    float: right;
+    margin-top: -0.5px;
+    margin-bottom: 0.5px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+#ios {
+    padding: 1px;
+    float: right;
+    margin-top: 1px;
+    margin-bottom: -1px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+#android:hover, #ios:hover {
+    background-color: rgba(255, 255, 255, 0.1);;
+}
+
+@media only screen and (max-width: 920px) {
+    header a, header span {
+        padding: 14px 12px;
+    }
+    #android, #ios {
+        margin-left: -10px;
+    }
+    #mainlogo {
+        margin-left: 0;
+    }
+    #logoutbutton {
+        margin-left: -10px;
+    }
+}
+
+
 @media only screen and (max-width: 800px) {
+    #android, #ios {
+        margin-left: 0;
+        width: 10%;
+    }
     .mobile-expand {
         width: 100%;
     }

@@ -24,12 +24,16 @@
       <a id="settingsmenu" href="settings.php">Настройки</a>
       <a id="logoutbutton" href="<?php echo htmlspecialchars($_SERVER["PHP_SELF"])."?logout";?>">Выход</a>
     </div>
+      <a id="android" href="android"><span class="fa fa-android fa-lg"></span></a>
+      <a id="ios" href="ios"><span class="fa fa-apple fa-lg"></span></a>
   </header>
   <script>
     $(function(){
       $("#togglemenu").click(function(){
         $("#mainmenu").slideToggle();
         $("header").toggleClass("solid");
+        $("#android").toggle();
+        $("#ios").toggle();
       });
     });
   </script>
