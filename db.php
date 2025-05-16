@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka Project v1.8 Database inquires
+ * Nevka Project v1.9 Database inquires
  * 2025 Avicus Delacroix
  * 
  * Databases and types (MySQL):
