@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka Project v1.9
+ * Nevka Project v1.10
  * 2025 Avicus Delacroix
  */
 
@@ -23,6 +23,10 @@ if(isset($_COOKIE["user_token"])) {
     }
     else if ($type == 3) {
         showChatsTable($_COOKIE["user_token"]);
+    }
+    else if ($type == 4) {
+        $user = validate($_POST['currentChat']);
+        likePost($_COOKIE["user_token"],$user);
     }
     else { logout(); }
 }

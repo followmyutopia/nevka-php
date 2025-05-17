@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka Project v1.9
+ * Nevka Project v1.10
  * 2025 Avicus Delacroix
  */
 
@@ -143,7 +143,7 @@ if(isset($_POST['checkDeletePermission'])) { $wallStatus = deleteWallEntry($_COO
 </div>
 
 <div class="wall">
-    <?php getWallEntries($showUser) ?>
+    <?php getWallEntries($showUser, $loggedUser) ?>
 </div>
 
 <form class="hidden" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post"><input id="idToCheck" name="id"><button id="tryDelete" type="submit" name="checkDeletePermission"></button></form><span class="hidden" id="title"><?php echo $showName ?></span>
@@ -162,6 +162,22 @@ if(isset($_POST['checkDeletePermission'])) { $wallStatus = deleteWallEntry($_COO
     $(".delPostButton").click(function(){ $("#idToCheck").val($(this).attr("id")); $("#tryDelete").trigger("click"); });
     if ($("#setStatusButton").attr("class") == "hidden") { $(".delPostButton").hide(); }
     $(".a").click(function() { window.location = $(this).data("href"); });
+    $(".likeButton").click(function() {
+        var heartId = "#like-" + $(this).data("id");
+        var counterId = "#likeCount-" + $(this).data("id");
+        var counter = parseInt($(counterId).text());
+        $.post("updateAsync.php", { currentChat: $(this).data("id"), type: 4 }, function(data){
+            if (data == 1) {
+                $(heartId).css("color", "crimson");
+                if (counter > 0) $(counterId).text(" " + (counter+1));
+                else $(counterId).text(" " + (1));
+            } else if (data == 0) {
+                $(heartId).css("color", "lightslategray");
+                if (counter == 1) $(counterId).text(""); 
+                else if (counter > 0) $(counterId).text(" " + (counter-1));
+            }
+        });
+    });
 });</script>
 
 <?php include 'footer.php'; ?>

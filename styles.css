@@ -1,5 +1,5 @@
 /**
- * Nevka Project v1.9
+ * Nevka Project v1.10
  * 2025 Avicus Delacroix
  */
 
@@ -130,6 +130,7 @@ img {
 
 .postImage {
     box-shadow: none;
+    margin-bottom: 10px;
 }
 
 .messageImage {
@@ -545,6 +546,15 @@ textarea:focus, input:focus{
 
 #android:hover, #ios:hover {
     background-color: rgba(255, 255, 255, 0.1);;
+}
+
+.likeButton {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 10px 14px;
+    padding-right: 4px;
+    margin-bottom: 14px;
+    width: max-content;
 }
 
 @media only screen and (max-width: 920px) {

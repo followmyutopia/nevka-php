@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka Project v1.9 Database inquires
+ * Nevka Project v1.10 Database inquires
  * 2025 Avicus Delacroix
  * 
  * Databases and types (MySQL):
@@ -328,24 +328,31 @@ function deleteWallEntry($token, $entryId) {
     $conn->close();
 }
 
-function getWallEntries($loggedUser) {
+function getWallEntries($loggedUser, $me) {
     include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается получить стену. Код ошибки для поддержки: 123");}
 
-    $sql = "SELECT id, user, text, image, timestamp FROM walls WHERE user='$loggedUser' ORDER BY id DESC LIMIT 100";
+    $sql = "SELECT id, user, text, image, timestamp, likes FROM walls WHERE user='$loggedUser' ORDER BY id DESC LIMIT 100";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
         while($row = $result->fetch_assoc()) {
             $authorName = getNameById($row["user"]);
+            $likesArray = json_decode($row["likes"]);
+            $redMarker = "";
+            if (in_array($me, $likesArray)) $redMarker = "style=\"color: crimson\" ";
+            $numberOfLikes = count($likesArray);
+            if ($numberOfLikes == 0) $numberOfLikes = "";
+            // else $numberOfLikes = "<span style=\"padding-left: 10px\" id=\"likeCount-".$row["id"]."\">".$numberOfLikes."</span>";
+
             // compatibility with the v1.4 database format
             $formattedTime = date("d.m.Y в h:i a", $row["timestamp"]);
             if ($row["image"] != "") {
-                echo "<div class=\"wallPost\"><p>".$formattedTime." <a href=\"profile.php?id=".$loggedUser.'">'.$authorName.'</a> написал(а):<span id="'.$row["id"].'" class="delPostButton">×</span></p><img class="postImage" src="'.$row["image"]."\"><p>".$row["text"]."</p></div>";
+                echo "<div class=\"wallPost\"><p>".$formattedTime." <a href=\"profile.php?id=".$loggedUser.'">'.$authorName.'</a> написал(а):<span id="'.$row["id"].'" class="delPostButton fa fa-times"></span></p><p>'.$row["text"].'</p><img class="postImage" src="'.$row["image"]."\"><div class=\"likeButton\"><span ".$redMarker."class=\"fa fa-heart\" id=\"like-".$row["id"]."\"></span><span style=\"padding-right: 10px\" id=\"likeCount-".$row["id"]."\"> ".$numberOfLikes."</span></div></div>";
             } else {
-                echo "<div class=\"wallPost\"><p>".$formattedTime." <a href=\"profile.php?id=".$loggedUser.'">'.$authorName.'</a> написал(а):<span id="'.$row["id"].'" class="delPostButton">×</span></p><p>'.$row["text"]."</p></div>";
+                echo "<div class=\"wallPost\"><p>".$formattedTime." <a href=\"profile.php?id=".$loggedUser.'">'.$authorName.'</a> написал(а):<span id="'.$row["id"].'" class="delPostButton fa fa-times"></span></p><p>'.$row["text"]."</p><div data-id=\"".$row["id"]."\" class=\"likeButton\"><span ".$redMarker."class=\"fa fa-heart\" id=\"like-".$row["id"]."\"></span><span style=\"padding-right: 10px\" id=\"likeCount-".$row["id"]."\"> ".$numberOfLikes."</span></div></div>";
             }
         }
     } else {
@@ -914,5 +921,44 @@ function getPushTokenById($id) {
     }
 
     $conn->close();
+}
+
+function likePost($token, $postId) {
+    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+
+    $checkedId = validate(intval($postId));
+    $loggedUser = getIdByToken($token);
+    $status = "not_processed";
+
+    $conn = new mysqli($servername, $username, $password, $dbname);
+    if ($conn->connect_error) { die("Ошибка подключения: не получается проверить наличие пользователя. Код ошибки для поддержки: ???");}
+
+    $sql = "SELECT likes FROM walls WHERE id='$checkedId' LIMIT 1";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_row();
+        $likes = $row[0];
+        $likesPHPArray = json_decode($likes);
+
+        if (in_array($loggedUser, $likesPHPArray)) {
+            // remove like
+            $status = 0;
+            $key = array_search($loggedUser, $likesPHPArray);
+            unset($likesPHPArray[$key]);
+            $likesPHPArray = array_values($likesPHPArray);
+        } else {
+            // like post
+            $status = 1;
+            $likesPHPArray[] = $loggedUser;
+        }
+
+        $updatedLikes = json_encode($likesPHPArray, JSON_NUMERIC_CHECK);
+
+        $sql = "UPDATE walls SET likes='$updatedLikes' WHERE id='$checkedId'";
+        if ($conn->query($sql) === TRUE) {
+            echo $status;
+        }
+    }
 }
 ?>
