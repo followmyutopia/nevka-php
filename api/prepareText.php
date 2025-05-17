@@ -17,6 +17,8 @@ function prepareText($verifiedText) {
     $processedText = str_replace("&lt;", '<', $processedText);
     $processedText = str_replace("&gt;", '>', $processedText);
     $processedText = str_replace("&#039;", "'", $processedText);
+    $processedText = str_replace("&amp;", "&", $processedText);
+    $processedText = str_replace("	", "    ", $processedText);
     return $processedText;
 }
 
