@@ -6,3 +6,6 @@ credentials.php
 
 # Android distriutions
 *.apk
+
+# Possibly danger information
+safeFilter.php
