@@ -172,7 +172,7 @@ if(isset($_POST['checkDeletePermission'])) { $wallStatus = deleteWallEntry($_COO
                 if (counter > 0) $(counterId).text(" " + (counter+1));
                 else $(counterId).text(" " + (1));
             } else if (data == 0) {
-                $(heartId).css("color", "lightslategray");
+                $(heartId).css("color", "rgba(255, 255, 255, 0.85)");
                 if (counter == 1) $(counterId).text(""); 
                 else if (counter > 0) $(counterId).text(" " + (counter-1));
             }

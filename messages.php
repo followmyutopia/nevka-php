@@ -56,7 +56,7 @@ $(function(){
 
     $("#chatsTable").on('click', '.a', function(){ window.location = $(this).data("href"); });
     $("#chatWindow").on('click', '.replyButton', function(){
-        $("#sendStatus").html("Ответ на сообщение <b>×</b>");
+        $("#sendStatus").html('Ответ на сообщение <span class="fa fa-times"></span>');
         $("#reply").val($(this).data("id"));
     });
     $("#sendStatus").click(() => {
