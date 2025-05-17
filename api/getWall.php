@@ -6,7 +6,7 @@
  * Receives the wall for the specified user.
  * Accepts: id (multipart/form-data)
  * Returns: result, wall?[], error? (json)
- * wall?[]: {"id": "", "text": "", "image": "", "timestamp": "", "formattedTime": "", "likes": \""}
+ * wall?[]: {"id": "", "text": "", "image": "", "timestamp": "", "formattedTime": "", "likes": "", "author": ""}
  * The last element of the array is always empty. Remove it from the result by JavaScript pop() function.
  */
 
@@ -32,7 +32,7 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
             echo "{\"result\":\"failure\",\"error\":\"Нет доступа к базе данных\"}";
         }
 
-        $sql = "SELECT id, text, image, timestamp, likes FROM walls WHERE user='$userId' ORDER BY id DESC LIMIT 100";
+        $sql = "SELECT id, text, image, timestamp, likes, user FROM walls WHERE user='$userId' ORDER BY id DESC LIMIT 100";
         $result = $conn->query($sql);
 
         if ($result->num_rows > 0) {
@@ -43,10 +43,10 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
 
                 $processedText = prepareText($row['text']);
                 
-                echo "{\"id\": \"".$row['id']."\", \"text\": \"".$processedText."\", \"image\": \"".$row['image']."\", \"timestamp\": \"".$row['timestamp']."\", \"formattedTime\": \"".$formattedTime."\", \"likes\": \"".$row['likes']."\"}, ";
+                echo "{\"id\": \"".$row['id']."\", \"text\": \"".$processedText."\", \"image\": \"".$row['image']."\", \"timestamp\": \"".$row['timestamp']."\", \"formattedTime\": \"".$formattedTime."\", \"likes\": \"".$row['likes']."\", \"author\": \"".$row['user']."\"}, ";
             }
 
-            echo "{\"id\": \"\", \"text\": \"\", \"image\": \"\", \"timestamp\": \"\", \"formattedTime\": \"\", \"likes\": \"\"}]}";
+            echo "{\"id\": \"\", \"text\": \"\", \"image\": \"\", \"timestamp\": \"\", \"formattedTime\": \"\", \"likes\": \"\", \"author\": \"\"}]}";
         } else {
             echo "{\"result\":\"empty\",\"error\":\"Записей на стене нет\"}";
         }
