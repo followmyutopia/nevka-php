@@ -66,8 +66,6 @@ $(function(){
     document.addEventListener('dragover', (e) => { e.preventDefault() });
     document.addEventListener('drop', (e) => { document.getElementById('fileToUpload').files = e.dataTransfer.files; e.preventDefault() });
 
-    // Panamar proDUCKtion
-    var needsUpdate = false;
     var sending = false;
     $('form').submit(function(e) {
         e.preventDefault();
@@ -92,13 +90,10 @@ $(function(){
                         $("#fileToUpload").val("");
                         $("#reply").val("");
                     }
-                    $.post("updateAsync.php", { currentChat: <?php echo $currentChat ?>, type: 0 }, function(data){
-                        if (data != $("#chatWindow").html()) {
-                            $("#chatWindow").html(data).scrollTop($('#chatWindow')[0].scrollHeight);
-                        }
+                    $.post("updateAsync.php", { currentChat: <?php echo $currentChat ?>, type: 0 }, (messages) => {
+                        $("#chatWindow").html(messages).scrollTop($('#chatWindow')[0].scrollHeight);
                     });
                     sending = false;
-                    needsUpdate = true;
                 }
             }); 
         }
@@ -117,18 +112,11 @@ $(function(){
     $.post("updateAsync.php", { currentChat: <?php echo $currentChat ?>, type: 0 }, function(data){
         if (data != $("#chatWindow").html()) { $("#chatWindow").html(data).scrollTop($('#chatWindow')[0].scrollHeight); }
     });
-    var buffer = 0;
+    var buffer;
     window.setInterval(function(){
-        $.post("updateAsync.php", { type: 2 }, (data) => {
-            if (data > 0 || needsUpdate) {
-                if (data != buffer || needsUpdate) {
-                    $.post("updateAsync.php", { currentChat: <?php echo $currentChat ?>, type: 0 }, function(data){
-                        $("#chatWindow").html(data).scrollTop($('#chatWindow')[0].scrollHeight);
-                    });
-                    needsUpdate = false;
-                }
-                buffer = data;
-            }
+        $.post("updateAsync.php", { currentChat: <?php echo $currentChat ?>, type: 0 }, (messages) => {
+            if (messages != buffer) $("#chatWindow").html(messages).scrollTop($('#chatWindow')[0].scrollHeight);
+            buffer = messages;
         });
     },333);
     window.setInterval(function(){

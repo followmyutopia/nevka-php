@@ -109,7 +109,7 @@ if(isset($_POST['setTheme'])) {
     <p id="notificationButton" style="color: orange; text-decoration: underline">Beta: включить уведомления о сообщениях</p>
 </div>
 <span class="clearfix"></span>
-<p class="signature">Nevka v1.10.4<br><a href="https://nevka.site/profile.php?id=1" style="text-decoration: none">Авикус Делакруа</a></p>
+<p class="signature">Nevka v1.10.5<br><a href="https://nevka.site/profile.php?id=1" style="text-decoration: none">Авикус Делакруа</a></p>
 
 <script>
 function setTheme(color) {
@@ -121,7 +121,7 @@ $(function(){
     $("#notificationButton").click(() => {
         Notification.requestPermission().then(perm => {
             if (perm === "granted") {
-                alert("Внимание! Уведомления находятся в стадии разработки.\n\nУведомления о количестве новых сообщений будут работать ТОЛЬКО если открыта любая страница соцсети в браузере (можно в фоне).");
+                alert("Внимание! Уведомления находятся в стадии разработки.\n\nЧтобы они работали, держите любую открытую вкладку Невки в фоне.\n\nЖелательно, не вкладку сообщений, потому что она будет автоматически отмечать прочитанными сообщения в открытом чате.");
             }
         });
     });
