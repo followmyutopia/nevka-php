@@ -19,7 +19,7 @@ if(isset($_COOKIE["user_token"])) {
         getTopicMessages($user);
     }
     else if ($type == 2) {
-        newMessageAvailable($loggedUser);
+        newMessageAvailable($_COOKIE["user_token"]);
     }
     else if ($type == 3) {
         showChatsTable($_COOKIE["user_token"]);
