@@ -1,7 +1,7 @@
 import mysql from 'mysql2/promise';
 import moment from 'moment';
 import { WebSocketServer } from 'ws';
-import { safeFilterArray } from './variables.js';
+import { safeFilterArray, noAvatar } from './variables.js';
 
 const server = new WebSocketServer({ port: 7190 });
 
@@ -177,12 +177,26 @@ server.on("connection", async (ws) => {
                                     id: interlocutor,
                                     firstname: interlocutorData.firstname,
                                     lastname: interlocutorData.lastname,
-                                    lastText: lastText.text,
+                                    lastText: undefined,
                                     isUnread: lastText.unread,
                                     avatar: interlocutorData.avatar.toString(),
                                     online: undefined,
                                     lastTextAuthor: lastText.author
                                 };
+
+                                let preview;
+
+                                if (lastText.text === "") {
+                                    preview = "(изображение)"
+                                } else {
+                                    preview = lastText.text
+                                }
+
+                                if (lastText.author === checkedUser) {
+                                    format['lastText'] = "Вы: " + preview;
+                                } else {
+                                    format['lastText'] = preview;
+                                }
 
                                 if (diff <= 300) {
                                     format['online'] = "online";
@@ -193,6 +207,19 @@ server.on("connection", async (ws) => {
                                     format['online'] = moment.unix(interlocutorData.timestamp).format("h:mm a");
                                 } else {
                                     format['online'] = moment.unix(interlocutorData.timestamp).format("D.MM");
+                                }
+
+                                if (checkedUser === 1) {
+                                    safeFilterArray.forEach(item => {
+                                        if (interlocutorData.firstname.toLowerCase().includes(item.toLowerCase())) {
+                                            format['firstname'] = "***";
+                                            format['avatar'] = noAvatar;
+                                        }
+                                        if (interlocutorData.lastname.toLowerCase().includes(item.toLowerCase())) {
+                                            format['lastname'] = "***";
+                                            format['avatar'] = noAvatar;
+                                        }
+                                    });
                                 }
 
                                 return format;
