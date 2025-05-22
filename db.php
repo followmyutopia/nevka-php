@@ -600,12 +600,12 @@ function getMessages($token,$chatUser) {
                     // interlocutor messages
                     if ($row["unread"]) {
                         // unread messages
-                        if ($row["image"] == "") echo "<div class=\"message\">".$row["text"]."<span class=\"isUnread fa fa-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
-                        else echo "<div class=\"message\">".$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
+                        if ($row["image"] == "") echo "<div class=\"message\">".$replyDOM.$row["text"]."<span class=\"isUnread fa fa-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
+                        else echo "<div class=\"message\">".$replyDOM.$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
                     } else {
                         // read messages
-                        if ($row["image"] == "") echo "<div class=\"message\">".$row["text"]."<span class=\"isUnread fa fa-check-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
-                        else echo "<div class=\"message\">".$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-check-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
+                        if ($row["image"] == "") echo "<div class=\"message\">".$replyDOM.$row["text"]."<span class=\"isUnread fa fa-check-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
+                        else echo "<div class=\"message\">".$replyDOM.$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-check-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
                         
                     }
                 } else { return; }
