@@ -1,25 +1,35 @@
 import mysql from 'mysql2/promise';
 import moment from 'moment';
 import { WebSocketServer } from 'ws';
+import { safeFilterArray } from './variables.js';
 
 const server = new WebSocketServer({ port: 7190 });
 
+const prepareText = (text) => {
+    return text
+        .replaceAll("<br>", "")
+        .replaceAll("<ul>", "")
+        .replaceAll("<li>", "  •  ")
+        .replaceAll("</li>", "")
+        .replaceAll("</ul>", "")
+        .replaceAll("&quot;", '\"')
+        .replaceAll("&lt;", '<')
+        .replaceAll("&gt;", '>')
+        .replaceAll("&#039;", "'")
+        .replaceAll("&amp;", "&")
+        .replaceAll("	", "    ")
+}
+
 server.on("connection", async (ws) => {
     let connected = true;
-
-    console.log("New connection!");
-
-    ws.on("close", () => {
-        connected = false;
-        console.log("Connection closed!");
-    })
+    ws.on("close", () => { connected = false; })
 
     ws.on("message", async (message) => {
         try {
             const data = JSON.parse(message);
 
             if (data.token && data.subscribeToChat) {
-                // authorize
+                // authorize for receiving messages
 
                 // current IP: 217.107.219.234
                 const connection = await mysql.createConnection({
@@ -70,7 +80,7 @@ server.on("connection", async (ws) => {
                                 let format = {
                                     id: String(item.id),
                                     me: undefined,
-                                    text: item.text,
+                                    text: prepareText(item.text),
                                     image: item.image.toString(),
                                     timestamp: String(item.timestamp),
                                     formattedTime: undefined,
@@ -87,7 +97,7 @@ server.on("connection", async (ws) => {
                                 if (item.reply === null) {
                                     format['reply'] = "";
                                 } else {
-                                    format['reply'] = await getReplyText(item.reply);
+                                    format['reply'] = prepareText(await getReplyText(item.reply));
                                 }
 
                                 format['formattedTime'] = moment.unix(item.timestamp).format("D.MM в h:mm a");
@@ -101,9 +111,102 @@ server.on("connection", async (ws) => {
                                 console.log("Sending chat update with: " + data.subscribeToChat + ", to user: " + checkedUser);
                                 ws.send(json);
                                 oldJson = json;
+                                await connection.execute(
+                                    "UPDATE messages SET unread='0' WHERE query = ? AND author = ?", [query, data.subscribeToChat]
+                                );
                             }
                         }
                     }, 333);
+                } else {
+                    ws.send("Token is incorrect");
+                }
+            } else if (data.token && data.subscribeToChatList) {
+                // authorize for receiving chat list
+
+                // current IP: 217.107.219.234
+                const connection = await mysql.createConnection({
+                    host: 'localhost',
+                    user: 'nevka',
+                    password: "DB_PASSWORD_HERE",
+                    database: 'nevka',
+                });
+
+                const [auth] = await connection.execute(
+                    'SELECT id FROM `users` WHERE `token` = ?', [data.token]
+                );
+
+                if (auth.length > 0) {
+                    const checkedUser = auth[0].id;
+                    console.log("Authorized user: " + checkedUser);
+                    console.log("Requested chat list");
+
+                    const signature = "M" + checkedUser + "M";
+                    let oldJson;
+
+                    setInterval(async () => {
+                        if (connected) {
+                            const [chats] = await connection.execute(
+                                'SELECT query, MAX(id) AS maxid FROM messages WHERE query LIKE ? GROUP BY query ORDER BY MAX(id) DESC LIMIT 75', ["%" + signature + "%"]
+                            );
+
+                            const getInterlocutorData = async (interlocutor) => {
+                                const [data] = await connection.execute(
+                                    'SELECT id, avatar, firstname, lastname, timestamp FROM users WHERE id = ? LIMIT 1', [interlocutor]
+                                );
+
+                                return data[0];
+                            }
+
+                            const getLastText = async (textId) => {
+                                const [data] = await connection.execute(
+                                    'SELECT text, author, unread FROM messages WHERE id = ? LIMIT 1', [textId]
+                                );
+
+                                return data[0];
+                            }
+
+                            let mobileAppFormat = await Promise.all(chats.map(async item => {
+                                const interlocutor = item.query.replace(signature, "").replace("M", "");
+                                const interlocutorData = await getInterlocutorData(interlocutor);
+                                const lastText = await getLastText(item.maxid);
+
+                                const now = Math.floor(Date.now() / 1000);
+                                const diff = now - interlocutorData.timestamp; // difference IN SECONDS
+
+                                let format = {
+                                    id: interlocutor,
+                                    firstname: interlocutorData.firstname,
+                                    lastname: interlocutorData.lastname,
+                                    lastText: lastText.text,
+                                    isUnread: lastText.unread,
+                                    avatar: interlocutorData.avatar.toString(),
+                                    online: undefined,
+                                    lastTextAuthor: lastText.author
+                                };
+
+                                if (diff <= 300) {
+                                    format['online'] = "online";
+                                } else if (diff <= 3600) {
+                                    const minutes = Math.floor(diff / 60);
+                                    format['online'] = minutes + " минут";
+                                } else if (diff <= 86400) {
+                                    format['online'] = moment.unix(interlocutorData.timestamp).format("h:mm a");
+                                } else {
+                                    format['online'] = moment.unix(interlocutorData.timestamp).format("D.MM");
+                                }
+
+                                return format;
+                            }));
+
+                            const json = JSON.stringify(mobileAppFormat);
+
+                            if (json !== oldJson) {
+                                console.log("Sending chat list update to user: " + checkedUser);
+                                ws.send(json);
+                                oldJson = json;
+                            }
+                        }
+                    }, 1000);
                 } else {
                     ws.send("Token is incorrect");
                 }
