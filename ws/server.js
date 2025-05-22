@@ -2,13 +2,12 @@ import mysql from 'mysql2/promise';
 import moment from 'moment';
 import { WebSocketServer } from 'ws';
 
-const server = new WebSocketServer({ port: 769 });
+const server = new WebSocketServer({ port: 7190 });
 
 server.on("connection", async (ws) => {
     let connected = true;
 
     console.log("New connection!");
-    ws.send("Welcome to Nevka WS");
 
     ws.on("close", () => {
         connected = false;
@@ -22,8 +21,9 @@ server.on("connection", async (ws) => {
             if (data.token && data.subscribeToChat) {
                 // authorize
 
+                // current IP: 217.107.219.234
                 const connection = await mysql.createConnection({
-                    host: '217.107.219.234',
+                    host: 'localhost',
                     user: 'nevka',
                     password: "DB_PASSWORD_HERE",
                     database: 'nevka',
@@ -36,6 +36,7 @@ server.on("connection", async (ws) => {
                 if (auth.length > 0) {
                     const checkedUser = auth[0].id;
                     console.log("Authorized user: " + checkedUser);
+                    console.log("Requested chat with: " + data.subscribeToChat);
 
                     let query;
 
@@ -50,40 +51,59 @@ server.on("connection", async (ws) => {
                     setInterval(async () => {
                         if (connected) {
                             const [msg] = await connection.execute(
-                                'SELECT * FROM (SELECT id, query, author, text, image, timestamp, unread, reply FROM messages WHERE query = ? ORDER BY id DESC LIMIT 2) X ORDER BY id ASC;', [query]
+                                'SELECT * FROM (SELECT id, query, author, text, image, timestamp, unread, reply FROM messages WHERE query = ? ORDER BY id DESC LIMIT 100) X ORDER BY id ASC;', [query]
                             );
 
-                            let mobileAppFormat = msg.map(item => {
+                            const getReplyText = async (replyId) => {
+                                const [reply] = await connection.execute(
+                                    'SELECT author, text FROM messages WHERE id = ? LIMIT 1', [replyId]
+                                );
+
+                                if (reply[0].author === checkedUser) {
+                                    return "Вы: " + reply[0].text;
+                                } else {
+                                    return reply[0].text;
+                                }
+                            }
+
+                            let mobileAppFormat = await Promise.all(msg.map(async item => {
                                 let format = {
-                                    id: item.id,
+                                    id: String(item.id),
                                     me: undefined,
                                     text: item.text,
                                     image: item.image.toString(),
-                                    timestamp: item.timestamp,
+                                    timestamp: String(item.timestamp),
                                     formattedTime: undefined,
-                                    isUnread: item.unread,
-                                    reply: item.reply
+                                    isUnread: String(item.unread),
+                                    reply: undefined
                                 };
 
                                 if (item.author === checkedUser) {
-                                    format['me'] = true;
+                                    format['me'] = "true";
                                 } else {
-                                    format['me'] = false;
+                                    format['me'] = "false";
+                                }
+
+                                if (item.reply === null) {
+                                    format['reply'] = "";
+                                } else {
+                                    format['reply'] = await getReplyText(item.reply);
                                 }
 
                                 format['formattedTime'] = moment.unix(item.timestamp).format("D.MM в h:mm a");
 
                                 return format;
-                            });
+                            }));
 
                             const json = JSON.stringify(mobileAppFormat);
 
                             if (json !== oldJson) {
+                                console.log("Sending chat update with: " + data.subscribeToChat + ", to user: " + checkedUser);
                                 ws.send(json);
                                 oldJson = json;
                             }
                         }
-                    }, 500);
+                    }, 333);
                 } else {
                     ws.send("Token is incorrect");
                 }
