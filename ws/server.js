@@ -45,8 +45,6 @@ server.on("connection", async (ws) => {
 
                 if (auth.length > 0) {
                     const checkedUser = auth[0].id;
-                    console.log("Authorized user: " + checkedUser);
-                    console.log("Requested chat with: " + data.subscribeToChat);
 
                     let query;
 
@@ -69,10 +67,18 @@ server.on("connection", async (ws) => {
                                     'SELECT author, text FROM messages WHERE id = ? LIMIT 1', [replyId]
                                 );
 
-                                if (reply[0].author === checkedUser) {
-                                    return "Вы: " + reply[0].text;
+                                let preview;
+
+                                if (reply[0].text === "") {
+                                    preview = "(изображение)";
                                 } else {
-                                    return reply[0].text;
+                                    preview = reply[0].text;
+                                }
+
+                                if (reply[0].author === checkedUser) {
+                                    return "Вы: " + preview;
+                                } else {
+                                    return preview;
                                 }
                             }
 
@@ -108,7 +114,7 @@ server.on("connection", async (ws) => {
                             const json = JSON.stringify(mobileAppFormat);
 
                             if (json !== oldJson) {
-                                console.log("Sending chat update with: " + data.subscribeToChat + ", to user: " + checkedUser);
+                                console.log("Nevka WSS: Sending chat: " + data.subscribeToChat + ", to: " + checkedUser);
                                 ws.send(json);
                                 oldJson = json;
                                 await connection.execute(
@@ -137,8 +143,6 @@ server.on("connection", async (ws) => {
 
                 if (auth.length > 0) {
                     const checkedUser = auth[0].id;
-                    console.log("Authorized user: " + checkedUser);
-                    console.log("Requested chat list");
 
                     const signature = "M" + checkedUser + "M";
                     let oldJson;
@@ -189,7 +193,7 @@ server.on("connection", async (ws) => {
                                 if (lastText.text === "") {
                                     preview = "(изображение)"
                                 } else {
-                                    preview = lastText.text
+                                    preview = prepareText(lastText.text)
                                 }
 
                                 if (lastText.author === checkedUser) {
@@ -228,7 +232,7 @@ server.on("connection", async (ws) => {
                             const json = JSON.stringify(mobileAppFormat);
 
                             if (json !== oldJson) {
-                                console.log("Sending chat list update to user: " + checkedUser);
+                                console.log("Nevka WSS: Sending chat list to: " + checkedUser);
                                 ws.send(json);
                                 oldJson = json;
                             }
