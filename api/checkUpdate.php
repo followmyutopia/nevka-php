@@ -1,1 +1,1 @@
-<?php echo "{\"latestVersion\": \"0.84\"}"; ?>
+<?php echo "{\"latestVersion\": \"1.0\"}"; ?>
