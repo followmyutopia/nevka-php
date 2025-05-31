@@ -350,7 +350,7 @@ function getWallEntries($loggedUser, $me) {
             // compatibility with the v1.4 database format
             $formattedTime = date("d.m.Y в h:i a", $row["timestamp"]);
             if ($row["image"] != "") {
-                echo "<div class=\"wallPost\"><p>".$formattedTime." <a href=\"profile.php?id=".$loggedUser.'">'.$authorName.'</a> написал(а):<span id="'.$row["id"].'" class="delPostButton fa fa-times"></span></p><p>'.$row["text"].'</p><img class="postImage" src="'.$row["image"]."\"><div class=\"likeButton\"><span ".$redMarker."class=\"fa fa-heart\" id=\"like-".$row["id"]."\"></span><span style=\"padding-right: 10px\" id=\"likeCount-".$row["id"]."\"> ".$numberOfLikes."</span></div></div>";
+                echo "<div class=\"wallPost\"><p>".$formattedTime." <a href=\"profile.php?id=".$loggedUser.'">'.$authorName.'</a> написал(а):<span id="'.$row["id"].'" class="delPostButton fa fa-times"></span></p><p>'.$row["text"].'</p><img class="postImage" src="'.$row["image"]."\"><div data-id=\"".$row["id"]."\" class=\"likeButton\"><span ".$redMarker."class=\"fa fa-heart\" id=\"like-".$row["id"]."\"></span><span style=\"padding-right: 10px\" id=\"likeCount-".$row["id"]."\"> ".$numberOfLikes."</span></div></div>";
             } else {
                 echo "<div class=\"wallPost\"><p>".$formattedTime." <a href=\"profile.php?id=".$loggedUser.'">'.$authorName.'</a> написал(а):<span id="'.$row["id"].'" class="delPostButton fa fa-times"></span></p><p>'.$row["text"]."</p><div data-id=\"".$row["id"]."\" class=\"likeButton\"><span ".$redMarker."class=\"fa fa-heart\" id=\"like-".$row["id"]."\"></span><span style=\"padding-right: 10px\" id=\"likeCount-".$row["id"]."\"> ".$numberOfLikes."</span></div></div>";
             }
