@@ -663,7 +663,7 @@ function sendMessage($token, $currentChat, $messageText, $messageImage, $replyTo
             }
             $pushData = "{\"url\": \"/(tabs)/messages/chat?id=".$loggedUser."&name=".$senderName."\"}";
 
-            if ($targetToken != "" && $targetToken != "undefined") {
+            if ($targetToken != "" && $targetToken != NULL) {
                 $ch = curl_init("https://exp.host/--/api/v2/push/send");
                 $payload = json_encode(array("to" => $targetToken, "title" => $pushHeader, "body" => $pushBody, "data" => $pushData));
                 curl_setopt( $ch, CURLOPT_POSTFIELDS, $payload );
