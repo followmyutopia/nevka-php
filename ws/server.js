@@ -22,7 +22,19 @@ const prepareText = (text) => {
 
 server.on("connection", async (ws) => {
     let connected = true;
-    ws.on("close", () => { connected = false; })
+
+    // current IP: 217.107.219.234
+    const connection = await mysql.createConnection({
+        host: 'localhost',
+        user: 'nevka',
+        password: "DB_PASSWORD_HERE",
+        database: 'nevka',
+    });
+
+    ws.on("close", async () => {
+        await connection.end();
+        connected = false;
+    })
 
     ws.on("message", async (message) => {
         try {
@@ -30,14 +42,6 @@ server.on("connection", async (ws) => {
 
             if (data.token && data.subscribeToChat) {
                 // authorize for receiving messages
-
-                // current IP: 217.107.219.234
-                const connection = await mysql.createConnection({
-                    host: 'localhost',
-                    user: 'nevka',
-                    password: "DB_PASSWORD_HERE",
-                    database: 'nevka',
-                });
 
                 const [auth] = await connection.execute(
                     'SELECT id FROM `users` WHERE `token` = ?', [data.token]
@@ -128,14 +132,6 @@ server.on("connection", async (ws) => {
                 }
             } else if (data.token && data.subscribeToChatList) {
                 // authorize for receiving chat list
-
-                // current IP: 217.107.219.234
-                const connection = await mysql.createConnection({
-                    host: 'localhost',
-                    user: 'nevka',
-                    password: "DB_PASSWORD_HERE",
-                    database: 'nevka',
-                });
 
                 const [auth] = await connection.execute(
                     'SELECT id FROM `users` WHERE `token` = ?', [data.token]
