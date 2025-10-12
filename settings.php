@@ -106,14 +106,11 @@ if(isset($_POST['setTheme'])) {
     <div class="setTheme" style="background-color:rgb(48, 20, 25)" onclick='setTheme("rgb(48, 20, 25)")'></div>
     <div class="setTheme" style="background-color:rgb(2, 15, 23)" onclick='setTheme("rgb(2, 15, 23)")'></div>
 
-
-    
-    
     <span class="clearfix"></span>
     <p id="notificationButton" style="color: orange; text-decoration: underline">Beta: включить уведомления о сообщениях</p>
 </div>
 <span class="clearfix"></span>
-<p class="signature">Nevka v1.10.10<br><a href="https://nevka.site/profile.php?id=1" style="text-decoration: none">Авикус Делакруа</a></p>
+<p class="signature">Nevka v1.10.11<br><a href="https://nevka.site/profile.php?id=1" style="text-decoration: none">Авикус Делакруа</a></p>
 
 <script>
 function setTheme(color) {

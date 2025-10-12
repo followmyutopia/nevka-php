@@ -122,7 +122,7 @@ $(function(){
 });
 </script>
 
-<div class="right mobile-expand">
+<div class="right mobile-expand" id="main">
     <h1 style="text-align:center">Добро пожаловать!</h1>
     <p style="text-align:center">Приветствую Вас в своей маленькой социальной сети "Невка"!</p>
     <img src="1.png" style="width:33%; border: none; box-shadow: none"><img src="2.png" style="width:33%; border: none; box-shadow: none"><img src="3.png" style="width:33%; border: none; box-shadow: none">
@@ -135,7 +135,7 @@ $(function(){
     <p style="text-align:center">Надеюсь, вам здесь будет уютно!</p>
 </div>
 
-<div class="left mobile-expand">
+<div class="left mobile-expand" id="dialogs">
     <div id="login" class="<?php echo $loginClass ?>">
         <h2>Войти:</h2>
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post">
@@ -150,8 +150,25 @@ $(function(){
         <p class="console"><?php echo $status ?></p>
         <p style="text-align: center; margin-top: -15px; color: lightslategray; text-decoration: underline" id="resetPasswordButton">Забыли пароль?</p>
     </div>
+    <div id="agreement" class="<?php echo $signupClass ?>">
+        <h2 style="text-align: center;">Соглашение об использовании персональных данных</h2>
+        <p>Невка — некоммерческий продукт, созданный физическим лицом, с целью попрактиковаться в навыках PHP, MySQL и React Native.</p>
+        <p>Тем не менее, Невка может собирать персональные данные, такие, как:</p>
+        <ul>
+            <li>Имя</li>
+            <li>Фамилия</li>
+            <li>Город</li>
+            <li>Электронная почта</li>
+        </ul>
+        <p>Указывать настоящие персональные данные можно, но не обязательно. По этим данным другие пользователи Невки смогут Вас найти или не найти. Поменять эти данные Вы можете в любой момент.</p>
+        <p>Имя, фамилия и город собираются с единственной целью: отображение в Вашем личном профиле. Электронная почта не отображается в профиле, а используется исключительно для авторизации. Пароли пользователей не хранятся и передаются в хэшированном виде по алгоритму SHA1. Все данные хранятся только на защищённом российском сервере и могут быть недоступны при использовании VPN. Никаким сторонним сервисам и компаниям, включая Яндекс Метрику и Google Аналитику, персональные данные не передаются.</p>
+        <p>Для регистрации и использования Невки, необходимо подтвердить, что любые персональные данные, которые Вы укажете в Вашем профиле, указаны добровольно.</p>
+        <button class="button agree" style="margin-top:7px" id="agreeButton">Согласен</button>
+        <button class="button disagree" style="margin-top:7px" id="disagreeButton">Не согласен</button>
+        <p class="wallPost wide" style="margin-top: 5%; margin-bottom: 5%">Внимание! Сайт использует файлы cookie для хранения данных об авторизации.</p>
+    </div>
     <div id="signup" class="<?php echo $signupClass ?>">
-        <h2 style="">Зарегистрироваться:</h2>
+        <h2>Зарегистрироваться:</h2>
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post" class="<?php echo $emailSuccess ?>">
             Электронная почта: <input type="text" name="newLogin"><br>
             <br>
@@ -169,7 +186,7 @@ $(function(){
         <p class="console"><?php echo $status ?></p>
     </div>
     <div id="resetPassword" class="<?php echo $resetClass ?>">
-        <h2 style="">Сбросить пароль:</h2>
+        <h2>Сбросить пароль:</h2>
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post" class="<?php echo $emailSuccess ?>">
             Электронная почта: <input type="text" name="newLogin"><br>
             <br>
@@ -189,9 +206,11 @@ $(function(){
 </div>
 
 <script>$(function(){
-    $("#signUpButton").click(() => { $("#login").toggleClass("hidden"); $("#signup").toggleClass("hidden"); });
+    $("#signUpButton").click(() => { $("#login").toggleClass("hidden"); $("#agreement").toggleClass("hidden"); $("#main").toggleClass("hidden"); $("#dialogs").toggleClass("left agreement"); });
     $("#resetPasswordButton").click(() => { $("#login").toggleClass("hidden"); $("#resetPassword").toggleClass("hidden"); });
     $("#backToLoginButton").click(() => { $("#login").toggleClass("hidden"); $("#signup").toggleClass("hidden"); });
+    $("#agreeButton").click(() => { $("#agreement").toggleClass("hidden"); $("#signup").toggleClass("hidden"); $("#main").toggleClass("hidden"); $("#dialogs").toggleClass("left agreement"); });
+    $("#disagreeButton").click(() => { $("#login").toggleClass("hidden"); $("#agreement").toggleClass("hidden"); $("#main").toggleClass("hidden"); $("#dialogs").toggleClass("left agreement"); });
     $("#backToLoginFromReset").click(() => { $("#login").toggleClass("hidden"); $("#resetPassword").toggleClass("hidden"); });
 });</script>
 

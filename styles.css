@@ -10,10 +10,6 @@
 
 body {
     background-color: rgb(2, 15, 23);
-    /* background-image: url("wall.png");
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-size: cover; */
     color: rgba(255, 255, 255, .85);
     font-family: Verdana, sans-serif;
     margin: 0;
@@ -552,6 +548,27 @@ textarea:focus {
     padding: 10px 4px 10px 14px;
     margin-bottom: 14px;
     width: max-content
+}
+
+.agreement {
+    width: 90%;
+    margin: auto;
+}
+
+.agree {
+    background-color: #2d8659;
+}
+
+.disagree {
+    background-color: #990000;
+}
+
+.agree:hover {
+    background-color: #206040;
+}
+
+.disagree:hover {
+    background-color: #660000;
 }
 
 @media only screen and (max-width:920px) {
