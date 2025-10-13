@@ -77,7 +77,7 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
                     if ($messageText != "") {
                         $processedText = prepareText($messageText);
                         $pushBody = $processedText;
-                        if (str_starts_with_FIX($pushBody, "NE1[") && str_ends_with_FIX($pushBody, "]")) {
+                        if (str_starts_with_FIX($pushBody, "NE2[") && str_ends_with_FIX($pushBody, "]")) {
                             $pushBody = "[Зашифрованное сообщение]";
                         }
                     } else {
