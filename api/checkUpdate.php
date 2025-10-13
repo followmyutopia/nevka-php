@@ -1,1 +1,1 @@
-<?php echo "{\"latestVersion\": \"1.2.5\"}"; ?>
+<?php echo "{\"latestVersion\": \"1.3.3\", \"expoGo\": \"exp://u.expo.dev/update/9468488a-90cd-4e84-aa78-4c0ab43b2415\"}"; ?>

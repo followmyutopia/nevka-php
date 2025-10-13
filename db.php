@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka Project v1.10 Database inquires
+ * Nevka Project v1.11 Database inquires
  * 2025 Avicus Delacroix
  * 
  * Databases and types (MySQL):
@@ -20,6 +20,15 @@ function validate($data) {
     $data = stripslashes($data);
     $data = htmlspecialchars($data);
     return $data;
+}
+
+// fix for PHP version less than 8
+function str_starts_with_FIX($stringus, $patternus) {
+    return substr($stringus, 0, strlen($patternus)) === $patternus;
+}
+
+function str_ends_with_FIX($stringus, $patternus) {
+    return substr($stringus, -strlen($patternus)) === $patternus;
 }
 
 function getNameById($id) {
@@ -472,7 +481,8 @@ function showChatsTable($token) {
             $lastTextRow = $lastTextResult->fetch_row();
             
             $lastText = $lastTextRow[0];
-            if ($lastText == "") {$lastText = "(изображение)";}
+            if (str_starts_with_FIX($lastText, "NE1[") && str_ends_with_FIX($lastText, "]")) $lastText = "<i>[Зашифрованное сообщение]</i>";
+            else if ($lastText == "") {$lastText = "(изображение)";}
             $lastTextAuthor = $lastTextRow[1];
             $isUnread = $lastTextRow[2];
 
@@ -572,7 +582,8 @@ function getMessages($token,$chatUser) {
                 $getReplyText = "SELECT author, text FROM messages WHERE id ='$replyId' LIMIT 1";
                 $textResult = $conn->query($getReplyText);
                 $textRow = $textResult->fetch_row();
-                if ($textRow[1] == "") $preview = "(изображение)"; 
+                if (str_starts_with_FIX($textRow[1], "NE1[") && str_ends_with_FIX($textRow[1], "]")) $preview = "<i>[Зашифрованное сообщение]</i>";
+                else if ($textRow[1] == "") $preview = "(изображение)"; 
                 else $preview = mb_strimwidth($textRow[1], 0, 115, '...');
                 if ($checkedUser == $textRow[0]) $reply = "Вы: ".$preview;
                 else $reply = $preview;
@@ -582,6 +593,7 @@ function getMessages($token,$chatUser) {
             if ($reply != "") $replyDOM = "<span class=\"reply\"><span class=\"fa fa-reply\" style=\"margin-right: 8px\"></span>".$reply."</span><hr>";
             else $replyDOM = "";
             
+            if (str_starts_with_FIX($row["text"], "NE1[") && str_ends_with_FIX($row["text"], "]")) $row["text"] = "<i>[Зашифрованное сообщение. Для прочтения, используйте мобильное приложение Невки версии не ниже 1.3]</i>";
 
             if ($chatUser == $interlocutor) {
                 if ($row["author"] == $loggedUser) {

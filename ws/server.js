@@ -187,16 +187,16 @@ server.on("connection", async (ws) => {
                                 let preview;
 
                                 if (lastText.text === "") {
-                                    preview = "(изображение)"
+                                    format['lastText'] = "(изображение)"
                                 } else {
-                                    preview = prepareText(lastText.text)
+                                    format['lastText'] = prepareText(lastText.text)
                                 }
 
-                                if (lastText.author === checkedUser) {
-                                    format['lastText'] = "Вы: " + preview;
-                                } else {
-                                    format['lastText'] = preview;
-                                }
+                                // if (lastText.author === checkedUser) {
+                                //     format['lastText'] = "Вы: " + preview;
+                                // } else {
+                                //     format['lastText'] = preview;
+                                // }
 
                                 if (diff <= 300) {
                                     format['online'] = "online";
