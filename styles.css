@@ -30,7 +30,7 @@ header {
     top: 0;
     width: 92%;
     margin: 20px 4%;
-    border: 1px solid rgba(255, 255, 255, .1);
+    border: 1px solid rgba(255, 255, 255, .07);
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2), 0 6px 20px 0 rgba(0, 0, 0, .19)
 }
 
@@ -44,7 +44,7 @@ header span {
 }
 
 header a:hover:not(.active) {
-    background-color: rgba(255, 255, 255, .1);
+    background-color: rgba(255, 255, 255, .07);
     border-radius: 21px
 }
 
@@ -72,13 +72,13 @@ header .active {
 }
 
 .button {
-    background-color: rgba(255, 255, 255, .1);
+    background-color: rgba(255, 255, 255, .07);
     backdrop-filter: blur(7px);
     padding: 14px 16px;
     border-radius: 21px;
     color: rgba(255, 255, 255, .9);
     font-size: medium;
-    border: 1px solid rgba(255, 255, 255, .1);
+    border: 1px solid rgba(255, 255, 255, .07);
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2), 0 6px 20px 0 rgba(0, 0, 0, .19);
     margin: 1px;
     text-decoration: none
@@ -94,23 +94,23 @@ header .active {
 }
 
 input {
-    background-color: rgba(255, 255, 255, .1);
+    background-color: rgba(255, 255, 255, .07);
     backdrop-filter: blur(7px);
     padding: 11px 14px;
     border-radius: 21px;
     color: rgba(255, 255, 255, .9);
     font-size: medium;
-    border: 1px solid rgba(255, 255, 255, .1);
+    border: 1px solid rgba(255, 255, 255, .07);
     margin: 7px 0;
     width: 100%
 }
 
 .fileInput {
-    background-color: rgba(255, 255, 255, .1);
+    background-color: rgba(255, 255, 255, .07);
     backdrop-filter: blur(7px);
     padding: 12px 16px 11px;
     border-radius: 21px;
-    border: 1px solid rgba(255, 255, 255, .1);
+    border: 1px solid rgba(255, 255, 255, .07);
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2), 0 6px 20px 0 rgba(0, 0, 0, .19);
     margin: 1px
 }
@@ -121,7 +121,7 @@ input {
 
 img {
     width: 100%;
-    border: 1px solid rgba(255, 255, 255, .1);
+    border: 1px solid rgba(255, 255, 255, .07);
     border-radius: 21px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2), 0 6px 20px 0 rgba(0, 0, 0, .19)
 }
@@ -205,9 +205,9 @@ img {
 }
 
 textarea {
-    background-color: rgba(255, 255, 255, .1);
+    background-color: rgba(255, 255, 255, .07);
     backdrop-filter: blur(7px);
-    border: 1px solid rgba(255, 255, 255, .1);
+    border: 1px solid rgba(255, 255, 255, .07);
     height: 10vh;
     width: 100%;
     border-radius: 21px;
@@ -245,7 +245,7 @@ tr {
 }
 
 tr:hover {
-    background-color: rgba(255, 255, 255, .1);
+    background-color: rgba(255, 255, 255, .07);
     backdrop-filter: blur(7px);
     border-radius: 21px
 }
@@ -302,9 +302,9 @@ td a {
 }
 
 .message {
-    background-color: rgba(255, 255, 255, .1);
+    background-color: rgba(255, 255, 255, .07);
     backdrop-filter: blur(7px);
-    border: 1px solid rgba(255, 255, 255, .1);
+    border: 1px solid rgba(255, 255, 255, .07);
     border-radius: 21px;
     padding: 8px 8px 26px;
     max-width: 80%;
@@ -391,9 +391,9 @@ hr {
 }
 
 .messagesHeader {
-    background-color: rgba(255, 255, 255, .1);
+    background-color: rgba(255, 255, 255, .07);
     backdrop-filter: blur(7px);
-    border: 1px solid rgba(255, 255, 255, .1);
+    border: 1px solid rgba(255, 255, 255, .07);
     border-radius: 21px;
     padding: 5px 10px;
     text-align: center;
@@ -462,7 +462,7 @@ hr {
 .setTheme {
     width: 10%;
     aspect-ratio: 1/1;
-    border: 1px solid rgba(255, 255, 255, .1);
+    border: 1px solid rgba(255, 255, 255, .07);
     border-radius: 21px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2), 0 6px 20px 0 rgba(0, 0, 0, .19);
     float: left;
@@ -539,11 +539,11 @@ textarea:focus {
 
 #android:hover,
 #ios:hover {
-    background-color: rgba(255, 255, 255, .1)
+    background-color: rgba(255, 255, 255, .07)
 }
 
 .likeButton {
-    border: 1px solid rgba(255, 255, 255, .1);
+    border: 1px solid rgba(255, 255, 255, .07);
     border-radius: 21px;
     padding: 10px 4px 10px 14px;
     margin-bottom: 14px;
