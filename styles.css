@@ -9,7 +9,7 @@
 }
 
 body {
-    background-color: rgb(2, 15, 23);
+    background-color: rgb(3, 27, 39);
     color: rgba(255, 255, 255, .85);
     font-family: Verdana, sans-serif;
     margin: 0;
@@ -22,14 +22,14 @@ a {
 }
 
 header {
-    background-color: rgba(255, 255, 255, .1);
-    backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, .07);
+    backdrop-filter: blur(7px);
     z-index: 2;
-    border-radius: 14px;
+    border-radius: 21px;
     position: fixed;
     top: 0;
-    width: 98%;
-    margin: 10px 1%;
+    width: 92%;
+    margin: 20px 4%;
     border: 1px solid rgba(255, 255, 255, .1);
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2), 0 6px 20px 0 rgba(0, 0, 0, .19)
 }
@@ -45,12 +45,12 @@ header span {
 
 header a:hover:not(.active) {
     background-color: rgba(255, 255, 255, .1);
-    border-radius: 15px
+    border-radius: 21px
 }
 
 header .active {
     background-color: rgba(255, 255, 255, .2);
-    border-radius: 15px
+    border-radius: 21px
 }
 
 #logoutbutton {
@@ -65,17 +65,17 @@ header .active {
 
 .content {
     height: 100vh;
-    width: 98%;
-    padding-top: 60px;
-    margin-left: 1%;
-    margin-right: 1%
+    width: 90%;
+    padding-top: 70px;
+    margin-left: 5%;
+    margin-right: 5%
 }
 
 .button {
     background-color: rgba(255, 255, 255, .1);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(7px);
     padding: 14px 16px;
-    border-radius: 14px;
+    border-radius: 21px;
     color: rgba(255, 255, 255, .9);
     font-size: medium;
     border: 1px solid rgba(255, 255, 255, .1);
@@ -86,18 +86,18 @@ header .active {
 
 .button:hover {
     background-color: rgba(255, 255, 255, .2);
-    border-radius: 12px
+    border-radius: 21px
 }
 
 .rounded {
-    border-radius: 12px
+    border-radius: 21px
 }
 
 input {
     background-color: rgba(255, 255, 255, .1);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(7px);
     padding: 11px 14px;
-    border-radius: 14px;
+    border-radius: 21px;
     color: rgba(255, 255, 255, .9);
     font-size: medium;
     border: 1px solid rgba(255, 255, 255, .1);
@@ -107,9 +107,9 @@ input {
 
 .fileInput {
     background-color: rgba(255, 255, 255, .1);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(7px);
     padding: 12px 16px 11px;
-    border-radius: 14px;
+    border-radius: 21px;
     border: 1px solid rgba(255, 255, 255, .1);
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2), 0 6px 20px 0 rgba(0, 0, 0, .19);
     margin: 1px
@@ -122,7 +122,7 @@ input {
 img {
     width: 100%;
     border: 1px solid rgba(255, 255, 255, .1);
-    border-radius: 14px;
+    border-radius: 21px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2), 0 6px 20px 0 rgba(0, 0, 0, .19)
 }
 
@@ -206,11 +206,11 @@ img {
 
 textarea {
     background-color: rgba(255, 255, 255, .1);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(7px);
     border: 1px solid rgba(255, 255, 255, .1);
     height: 10vh;
     width: 100%;
-    border-radius: 14px;
+    border-radius: 21px;
     color: rgba(255, 255, 255, .9);
     font-size: medium;
     padding: 2% 3%;
@@ -241,13 +241,13 @@ th {
 }
 
 tr {
-    border-radius: 12px
+    border-radius: 21px
 }
 
 tr:hover {
     background-color: rgba(255, 255, 255, .1);
-    backdrop-filter: blur(10px);
-    border-radius: 12px
+    backdrop-filter: blur(7px);
+    border-radius: 21px
 }
 
 td a {
@@ -287,7 +287,7 @@ td a {
     overflow-y: auto;
     margin-bottom: 0;
     padding: 1% 0 0;
-    border-radius: 14px;
+    border-radius: 21px;
     scrollbar-width: none
 }
 
@@ -303,9 +303,9 @@ td a {
 
 .message {
     background-color: rgba(255, 255, 255, .1);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(7px);
     border: 1px solid rgba(255, 255, 255, .1);
-    border-radius: 14px;
+    border-radius: 21px;
     padding: 8px 8px 26px;
     max-width: 80%;
     min-width: 155px;
@@ -324,8 +324,8 @@ td a {
     white-space: nowrap;
     font-size: small;
     position: absolute;
-    bottom: 5px;
-    right: 8px
+    bottom: 7px;
+    right: 10px
 }
 
 .isUnread {
@@ -334,8 +334,8 @@ td a {
     white-space: nowrap;
     font-size: small;
     position: absolute;
-    bottom: 5px;
-    left: 8px
+    bottom: 7px;
+    left: 10px
 }
 
 .me {
@@ -352,7 +352,7 @@ td a {
     width: 70px;
     height: 70px;
     margin: auto;
-    border-radius: 12px
+    border-radius: 21px
 }
 
 #mainlogo {
@@ -383,18 +383,18 @@ hr {
 
 .wallPost {
     background-color: rgba(255, 255, 255, .04);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(7px);
     padding: 1% 3%;
     margin-top: 10px;
-    border-radius: 14px;
+    border-radius: 21px;
     border: 1px solid rgba(255, 255, 255, .2)
 }
 
 .messagesHeader {
     background-color: rgba(255, 255, 255, .1);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(7px);
     border: 1px solid rgba(255, 255, 255, .1);
-    border-radius: 14px;
+    border-radius: 21px;
     padding: 5px 10px;
     text-align: center;
     margin-top: 0;
@@ -463,7 +463,7 @@ hr {
     width: 10%;
     aspect-ratio: 1/1;
     border: 1px solid rgba(255, 255, 255, .1);
-    border-radius: 14px;
+    border-radius: 21px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2), 0 6px 20px 0 rgba(0, 0, 0, .19);
     float: left;
     margin-left: 1%
@@ -544,7 +544,7 @@ textarea:focus {
 
 .likeButton {
     border: 1px solid rgba(255, 255, 255, .1);
-    border-radius: 14px;
+    border-radius: 21px;
     padding: 10px 4px 10px 14px;
     margin-bottom: 14px;
     width: max-content
@@ -571,7 +571,7 @@ textarea:focus {
     background-color: #660000;
 }
 
-@media only screen and (max-width:920px) {
+@media only screen and (max-width:1000px) {
 
     header a,
     header span {
@@ -589,7 +589,7 @@ textarea:focus {
     }
 }
 
-@media only screen and (max-width:800px) {
+@media only screen and (max-width:900px) {
 
     #android,
     #ios {
@@ -631,7 +631,7 @@ textarea:focus {
 
     #mainmenu {
         display: none;
-        border-radius: 14px;
+        border-radius: 21px;
         width: 70%;
         margin: auto
     }

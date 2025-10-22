@@ -481,7 +481,8 @@ function showChatsTable($token) {
             $lastTextRow = $lastTextResult->fetch_row();
             
             $lastText = $lastTextRow[0];
-            if (str_starts_with_FIX($lastText, "NE2[") && str_ends_with_FIX($lastText, "]")) $lastText = "<i>[Зашифрованное сообщение]</i>";
+            if (str_starts_with_FIX($lastText, "NE3[") && str_ends_with_FIX($lastText, "]")) $lastText = "<i>[Зашифрованное сообщение]</i>";
+            else if (str_starts_with_FIX($lastText, "NE2[") && str_ends_with_FIX($lastText, "]")) $lastText = "<i>[Зашифрованное сообщение]</i>";
             else if ($lastText == "") {$lastText = "(изображение)";}
             $lastTextAuthor = $lastTextRow[1];
             $isUnread = $lastTextRow[2];
@@ -582,7 +583,8 @@ function getMessages($token,$chatUser) {
                 $getReplyText = "SELECT author, text FROM messages WHERE id ='$replyId' LIMIT 1";
                 $textResult = $conn->query($getReplyText);
                 $textRow = $textResult->fetch_row();
-                if (str_starts_with_FIX($textRow[1], "NE2[") && str_ends_with_FIX($textRow[1], "]")) $preview = "<i>[Зашифрованное сообщение]</i>";
+                if (str_starts_with_FIX($textRow[1], "NE3[") && str_ends_with_FIX($textRow[1], "]")) $preview = "<i>[Зашифрованное сообщение]</i>";
+                else if (str_starts_with_FIX($textRow[1], "NE2[") && str_ends_with_FIX($textRow[1], "]")) $preview = "<i>[Зашифрованное сообщение]</i>";
                 else if ($textRow[1] == "") $preview = "(изображение)"; 
                 else $preview = mb_strimwidth($textRow[1], 0, 115, '...');
                 if ($checkedUser == $textRow[0]) $reply = "Вы: ".$preview;
@@ -593,7 +595,8 @@ function getMessages($token,$chatUser) {
             if ($reply != "") $replyDOM = "<span class=\"reply\"><span class=\"fa fa-reply\" style=\"margin-right: 8px\"></span>".$reply."</span><hr>";
             else $replyDOM = "";
             
-            if (str_starts_with_FIX($row["text"], "NE2[") && str_ends_with_FIX($row["text"], "]")) $row["text"] = "<i>[Зашифрованное сообщение. Для прочтения, используйте мобильное приложение Невки версии не ниже 1.3]</i>";
+            if (str_starts_with_FIX($row["text"], "NE3[") && str_ends_with_FIX($row["text"], "]")) $row["text"] = "<i>[Зашифрованное сообщение. Для прочтения, используйте мобильное приложение Невки версии не ниже 1.4.2]</i>";
+            if (str_starts_with_FIX($row["text"], "NE2[") && str_ends_with_FIX($row["text"], "]")) $row["text"] = "<i>[Зашифрованное сообщение. Для прочтения, используйте мобильное приложение Невки версии не ниже 1.3.3]</i>";
 
             if ($chatUser == $interlocutor) {
                 if ($row["author"] == $loggedUser) {
