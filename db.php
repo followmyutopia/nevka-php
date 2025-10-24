@@ -206,6 +206,26 @@ function setName($token,$newFirstName,$newLastName) {
     $sql = "UPDATE users SET firstname='$newFirstName', lastname='$newLastName', search='$query' WHERE token='$token'";
 
     if ($conn->query($sql) === TRUE) {
+        $getNameSql = "SELECT login FROM users WHERE token='$token'";
+        $getNameResult = $conn->query($getNameSql);
+        $getNameRow = $getNameResult->fetch_row();
+        $voxUsername = str_replace("@", "-", $getNameRow[0]);
+
+        $params = array(
+            'api_key' => 'PASTE_VOX_API_KEY_HERE',
+            'user_name' => $voxUsername,
+            'application_id' => '11329284',
+            'user_display_name' => $newFirstName.' '.$newLastName,
+            'account_id' => '3831061'
+        );
+
+        $url = "https://api.voximplant.com/platform_api/SetUserInfo/?" . http_build_query($params, '', '&', PHP_QUERY_RFC3986);
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json'));
+        $requestResult = curl_exec($ch);
+        curl_close($ch);
+
         return "Имя успешно установлено";
     } else {
         return "Ошибка базы данных: невозможно обновить имя. Код ошибки для поддержки: 110";
@@ -391,6 +411,23 @@ function signUp($newLogin,$hashedPassword,$apiKey) {
             VALUES ('$newLogin', '$hashedPassword', '$newToken', '$defaultImage')";
 
             if ($conn->query($sql) === TRUE) {
+                $voxUsername = str_replace("@", "-", $newLogin);
+                $params = array(
+                    'api_key' => 'PASTE_VOX_API_KEY_HERE',
+                    'application_id' => '11329284',
+                    'user_display_name' => 'Новый пользователь',
+                    'user_name' => $voxUsername,
+                    'user_password' => 'PASTE_VOX_PASSWORD_HERE',
+                    'account_id' => '3831061'
+                );
+
+                $url = "https://api.voximplant.com/platform_api/AddUser/?" . http_build_query($params, '', '&', PHP_QUERY_RFC3986);
+                $ch = curl_init($url);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json'));
+                $result = curl_exec($ch);
+                curl_close($ch);
+
                 return "Новый пользователь успешно создан!";
             } else {
                 return "Ошибка создания пользователя! Код ошибки для поддержки: 125<script>console.log($sql $conn->error)</script>";
