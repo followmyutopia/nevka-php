@@ -62,15 +62,15 @@ try {
         $response = [
             'result' => 'success',
             'id' => $row['id'],
-            'firstname' => $row['firstname'],
-            'lastname' => $row['lastname'],
-            'status' => $row['status'],
-            'city' => $row['city'],
-            'bio' => $row['bio'],
+            'firstname' => $row['firstname'] ?? '',
+            'lastname' => $row['lastname'] ?? '',
+            'status' => $row['status'] ?? '',
+            'city' => $row['city'] ?? '',
+            'bio' => $row['bio'] ?? '',
             'timestamp' => $row['timestamp'],
-            'avatar' => $row['avatar'],
+            'avatar' => $row['avatar'] ?? '',
             'online' => $online,
-            'push_token' => $row['expo_push_token'],
+            'push_token' => $row['expo_push_token'] ?? '',
             'vox_username' => str_replace("@", "-", $row['login'])
         ];
         
