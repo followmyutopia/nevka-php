@@ -1,110 +1,63 @@
-<?php
-/* 
- * Nevka API 2.0
- * Avicus Delacroix
-*/
+<?php include '../lib/ImageResize.php';
 
-include '../lib/ImageResize.php';
 use \Gumlet\ImageResize;
 
-if ($_POST['api-key'] !== "qonxod-Kicmad-4puvhy") {
-    http_response_code(401);
-    exit(json_encode(['result' => 'failure', 'error' => 'Invalid API key']));
-}
-
-date_default_timezone_set("Europe/Moscow");
-
-function validate($data) {
-    return htmlspecialchars(stripslashes(trim($data)));
-}
-
-if (!isset($_POST['query'])) {
-    http_response_code(400);
-    exit(json_encode(['result' => 'failure', 'error' => 'Query обязателен']));
-}
-
-$query = validate($_POST['query']);
-$safe = isset($_POST['safe']) ? validate($_POST['safe']) === 'true' : false;
-
-if ($safe) {
-    include 'safeFilter.php';
-}
-
-include '../credentials.php';
-
-try {
-    $pdo = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    
-    $whereSafe = '';
-    $params = ["%$query%", "%$query%", "%$query%"];
-    
-    if ($safe) {
-        $whereSafe = "AND (NOT search LIKE ?) AND (NOT search LIKE ?) 
-                      AND (NOT search LIKE ?) AND (NOT search LIKE ?)";
-        $params = array_merge($params, ["%$trigger1%", "%$trigger2%", "%$trigger3%", "%$trigger4%"]);
+if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
+    date_default_timezone_set("Europe/Moscow");
+    $query = "";
+    function validate($data)
+    {
+        $data = trim($data);
+        $data = stripslashes($data);
+        $data = htmlspecialchars($data);
+        return $data;
     }
-    
-    $sql = "SELECT id, avatar, firstname, lastname, timestamp 
-            FROM users 
-            WHERE (firstname LIKE ? OR lastname LIKE ? OR search LIKE ?) 
-            AND (NOT is_banned OR is_banned IS NULL) 
-            $whereSafe 
-            ORDER BY timestamp DESC LIMIT 500";
-            
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute($params);
-    
-    $people = [];
-    $now = new DateTime();
-    
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $difference = time() - $row['timestamp'];
-        
-        if ($difference <= 300) { // 5 minutes
-            $online = "online";
-        } elseif ($difference < 3600) { // 1 hour
-            $online = floor($difference / 60) . " минут назад";
+    if (isset($_POST['query'])) {
+        $query = validate($_POST['query']);
+        if (isset($_POST['safe'])) {
+            $safe = validate($_POST['safe']);
+            include 'safeFilter.php';
         } else {
-            $online = date("d.m в h:i a", $row['timestamp']);
+            $safe = "";
         }
-        
-        try {
-            $image = new ImageResize($row['avatar']);
-            $image->quality_jpg = 90;
-            $image->crop(100, 100);
-            $avatar = 'data:image/jpeg;base64,' . base64_encode($image);
-        } catch (Exception $e) {
-            $avatar = ''; // Default avatar or error handling
+        include '../credentials.php';
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        if ($conn->connect_error) {
+            echo "{\"result\":\"failure\",\"error\":\"Нет доступа к базе данных\"}";
         }
-        
-        $people[] = [
-            'id' => $row['id'],
-            'firstname' => $row['firstname'],
-            'lastname' => $row['lastname'],
-            'timestamp' => $row['timestamp'],
-            'online' => $online,
-            'avatar' => $avatar
-        ];
-    }
-    
-    if (!empty($people)) {
-        echo json_encode([
-            'result' => 'success',
-            'people' => $people
-        ]);
+        if ($safe == "true") {
+            $sql = "SELECT id, avatar, firstname, lastname, timestamp, search FROM users WHERE (firstname LIKE '%$query%' OR lastname LIKE '%$query%' OR search LIKE '%$query%') AND (NOT is_banned OR is_banned IS NULL) AND (NOT search LIKE '%$trigger1%') AND (NOT search LIKE '%$trigger2%') AND (NOT search LIKE '%$trigger3%') AND (NOT search LIKE '%$trigger4%') ORDER BY timestamp DESC LIMIT 500";
+        } else {
+            $sql = "SELECT id, avatar, firstname, lastname, timestamp, search FROM users WHERE (firstname LIKE '%$query%' OR lastname LIKE '%$query%' OR search LIKE '%$query%') AND (NOT is_banned OR is_banned IS NULL) ORDER BY timestamp DESC LIMIT 500";
+        }
+        $result = $conn->query($sql);
+        if ($result->num_rows > 0) {
+            echo "{\"result\": \"success\", \"people\": [";
+            while ($row = $result->fetch_assoc()) {
+                $formattedTime = date("d.m.Y в h:i a", $row['timestamp']);
+                $lastOnline = date_create_from_format("d.m.Y в h:i a", $formattedTime);
+                $now = new DateTime();
+                $online = "";
+                $difference = ($lastOnline->diff($now)->days * 1440) + ($lastOnline->diff($now)->h * 60) + $lastOnline->diff($now)->i;
+                if ($difference <= 5) {
+                    $online = "online";
+                } else if ($difference < 60) {
+                    $online = $lastOnline->diff($now)->i . " минут назад";
+                } else {
+                    $online = date("d.m в h:i a", $row['timestamp']);
+                }
+                $image = new ImageResize($row['avatar']);
+                $image->quality_jpg = 90;
+                $image->crop(100, 100);
+                $blob = 'data:image/jpeg;base64,' . base64_encode($image);
+                echo "{\"id\": \"" . $row['id'] . "\", \"firstname\": \"" . $row['firstname'] . "\", \"lastname\": \"" . $row['lastname'] . "\", \"timestamp\": \"" . $row['timestamp'] . "\", \"online\": \"" . $online . "\", \"avatar\": \"" . $blob . "\"}, ";
+            }
+            echo "{\"id\": \"\", \"firstname\": \"\", \"lastname\": \"\", \"timestamp\": \"\", \"online\": \"\", \"avatar\": \"\"}]}";
+        } else {
+            echo "{\"result\":\"empty\",\"error\":\"Никого не найдено\"}";
+        }
+        $conn->close();
     } else {
-        http_response_code(404);
-        echo json_encode([
-            'result' => 'empty',
-            'error' => 'Никого не найдено'
-        ]);
+        echo "{\"result\":\"failure\",\"error\":\"Query обязателен\"}";
     }
-    
-} catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode([
-        'result' => 'failure',
-        'error' => 'Нет доступа к базе данных'
-    ]);
 }
