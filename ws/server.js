@@ -1,7 +1,22 @@
+/* 
+ * Nevka WebSocket Server 2.0
+ * Avicus Delacroix
+*/
+
 import mysql from 'mysql2/promise';
 import moment from 'moment';
 import { WebSocketServer } from 'ws';
 import { safeFilterArray, noAvatar } from './variables.js';
+
+const pool = mysql.createPool({
+    host: 'localhost',
+    user: 'nevka',
+    password: "DB_PASSWORD_HERE", // consider moving to process.env
+    database: 'nevka',
+    waitForConnections: true,
+    connectionLimit: 300,
+    queueLimit: 0
+});
 
 const server = new WebSocketServer({ port: 7190 });
 
@@ -22,19 +37,12 @@ const prepareText = (text) => {
 
 server.on("connection", async (ws) => {
     let connected = true;
-
-    // current IP: 217.107.219.234
-    const connection = await mysql.createConnection({
-        host: 'localhost',
-        user: 'nevka',
-        password: "DB_PASSWORD_HERE",
-        database: 'nevka',
-    });
+    const intervals = [];
 
     ws.on("close", async () => {
-        await connection.end();
         connected = false;
-    })
+        intervals.forEach(id => clearInterval(id));
+    });
 
     ws.on("message", async (message) => {
         try {
@@ -42,201 +50,207 @@ server.on("connection", async (ws) => {
 
             if (data.token && data.subscribeToChat) {
                 // authorize for receiving messages
-
-                const [auth] = await connection.execute(
+                const [auth] = await pool.execute(
                     'SELECT id FROM `users` WHERE `token` = ?', [data.token]
                 );
 
-                if (auth.length > 0) {
-                    const checkedUser = auth[0].id;
-
-                    let query;
-
-                    if (checkedUser < data.subscribeToChat) {
-                        query = "M" + checkedUser + "M" + data.subscribeToChat + "M";
-                    } else {
-                        query = "M" + data.subscribeToChat + "M" + checkedUser + "M";
-                    }
-
-                    let oldJson;
-
-                    setInterval(async () => {
-                        if (connected) {
-                            const [msg] = await connection.execute(
-                                'SELECT * FROM (SELECT id, query, author, text, image, timestamp, unread, reply FROM messages WHERE query = ? ORDER BY id DESC LIMIT 100) X ORDER BY id ASC;', [query]
-                            );
-
-                            const getReplyText = async (replyId) => {
-                                const [reply] = await connection.execute(
-                                    'SELECT author, text FROM messages WHERE id = ? LIMIT 1', [replyId]
-                                );
-
-                                let preview;
-
-                                if (reply[0].text === "") {
-                                    preview = "(изображение)";
-                                } else {
-                                    preview = reply[0].text;
-                                }
-
-                                if (reply[0].author === checkedUser) {
-                                    return "Вы: " + preview;
-                                } else {
-                                    return preview;
-                                }
-                            }
-
-                            let mobileAppFormat = await Promise.all(msg.map(async item => {
-                                let format = {
-                                    id: String(item.id),
-                                    me: undefined,
-                                    text: prepareText(item.text),
-                                    image: item.image.toString(),
-                                    timestamp: String(item.timestamp),
-                                    formattedTime: undefined,
-                                    isUnread: String(item.unread),
-                                    reply: undefined
-                                };
-
-                                if (item.author === checkedUser) {
-                                    format['me'] = "true";
-                                } else {
-                                    format['me'] = "false";
-                                }
-
-                                if (item.reply === null) {
-                                    format['reply'] = "";
-                                } else {
-                                    format['reply'] = prepareText(await getReplyText(item.reply));
-                                }
-
-                                format['formattedTime'] = moment.unix(item.timestamp).format("D.MM в h:mm a");
-
-                                return format;
-                            }));
-
-                            const json = JSON.stringify(mobileAppFormat);
-
-                            if (json !== oldJson) {
-                                console.log("Nevka WSS: Sending chat: " + data.subscribeToChat + ", to: " + checkedUser);
-                                ws.send(json);
-                                oldJson = json;
-                                await connection.execute(
-                                    "UPDATE messages SET unread='0' WHERE query = ? AND author = ?", [query, data.subscribeToChat]
-                                );
-                            }
-                        }
-                    }, 333);
-                } else {
+                if (auth.length === 0) {
                     ws.send("Token is incorrect");
+                    return;
                 }
+
+                const checkedUser = auth[0].id;
+
+                let query;
+                if (checkedUser < data.subscribeToChat) {
+                    query = "M" + checkedUser + "M" + data.subscribeToChat + "M";
+                } else {
+                    query = "M" + data.subscribeToChat + "M" + checkedUser + "M";
+                }
+
+                let oldJson;
+
+                const poll = async () => {
+                    if (!connected) return;
+                    try {
+                        const [msg] = await pool.execute(
+                            'SELECT id, query, author, text, image, timestamp, unread, reply FROM messages WHERE query = ? ORDER BY id DESC LIMIT 100', [query]
+                        );
+
+                        // restore ascending order as before
+                        msg.reverse();
+
+                        // collect reply ids and batch fetch
+                        const replyIds = [...new Set(msg.filter(m => m.reply !== null).map(m => m.reply))];
+                        let repliesMap = {};
+                        if (replyIds.length > 0) {
+                            const [replyRows] = await pool.execute(
+                                `SELECT id, author, text FROM messages WHERE id IN (${replyIds.map(() => '?').join(',')})`, replyIds
+                            );
+                            replyRows.forEach(r => {
+                                let preview = (r.text === "") ? "(изображение)" : r.text;
+                                repliesMap[r.id] = { author: r.author, preview };
+                            });
+                        }
+
+                        const mobileAppFormat = msg.map(item => {
+                            const isMe = item.author === checkedUser;
+                            const reply = item.reply === null ? "" : (() => {
+                                const r = repliesMap[item.reply];
+                                if (!r) return "";
+                                return (r.author === checkedUser) ? ("Вы: " + r.preview) : r.preview;
+                            })();
+
+                            return {
+                                id: String(item.id),
+                                me: isMe ? "true" : "false",
+                                text: prepareText(item.text),
+                                image: item.image.toString(),
+                                timestamp: String(item.timestamp),
+                                formattedTime: moment.unix(item.timestamp).format("D.MM в h:mm a"),
+                                isUnread: String(item.unread),
+                                reply
+                            };
+                        });
+
+                        const json = JSON.stringify(mobileAppFormat);
+
+                        if (json !== oldJson) {
+                            console.log("Nevka WSS: Sending chat: " + data.subscribeToChat + ", to: " + checkedUser);
+                            ws.send(json);
+                            oldJson = json;
+                            await pool.execute(
+                                "UPDATE messages SET unread='0' WHERE query = ? AND author = ?", [query, data.subscribeToChat]
+                            );
+                        }
+                    } catch (err) {
+                        // log and continue polling; avoid crashing interval
+                        console.error("Poll error (chat):", err);
+                    }
+                };
+
+                // immediate first poll, then interval
+                await poll();
+                intervals.push(setInterval(poll, 333));
             } else if (data.token && data.subscribeToChatList) {
                 // authorize for receiving chat list
-
-                const [auth] = await connection.execute(
+                const [auth] = await pool.execute(
                     'SELECT id FROM `users` WHERE `token` = ?', [data.token]
                 );
 
-                if (auth.length > 0) {
-                    const checkedUser = auth[0].id;
-
-                    const signature = "M" + checkedUser + "M";
-                    let oldJson;
-
-                    setInterval(async () => {
-                        if (connected) {
-                            const [chats] = await connection.execute(
-                                'SELECT query, MAX(id) AS maxid FROM messages WHERE query LIKE ? GROUP BY query ORDER BY MAX(id) DESC LIMIT 75', ["%" + signature + "%"]
-                            );
-
-                            const getInterlocutorData = async (interlocutor) => {
-                                const [data] = await connection.execute(
-                                    'SELECT id, avatar, firstname, lastname, timestamp FROM users WHERE id = ? LIMIT 1', [interlocutor]
-                                );
-
-                                return data[0];
-                            }
-
-                            const getLastText = async (textId) => {
-                                const [data] = await connection.execute(
-                                    'SELECT text, author, unread FROM messages WHERE id = ? LIMIT 1', [textId]
-                                );
-
-                                return data[0];
-                            }
-
-                            let mobileAppFormat = await Promise.all(chats.map(async item => {
-                                const interlocutor = item.query.replace(signature, "").replace("M", "");
-                                const interlocutorData = await getInterlocutorData(interlocutor);
-                                const lastText = await getLastText(item.maxid);
-
-                                const now = Math.floor(Date.now() / 1000);
-                                const diff = now - interlocutorData.timestamp; // difference IN SECONDS
-
-                                let format = {
-                                    id: interlocutor,
-                                    firstname: interlocutorData.firstname,
-                                    lastname: interlocutorData.lastname,
-                                    lastText: undefined,
-                                    isUnread: lastText.unread,
-                                    avatar: interlocutorData.avatar.toString(),
-                                    online: undefined,
-                                    lastTextAuthor: lastText.author
-                                };
-
-                                let preview;
-
-                                if (lastText.text === "") {
-                                    format['lastText'] = "(изображение)"
-                                } else {
-                                    format['lastText'] = prepareText(lastText.text)
-                                }
-
-                                // if (lastText.author === checkedUser) {
-                                //     format['lastText'] = "Вы: " + preview;
-                                // } else {
-                                //     format['lastText'] = preview;
-                                // }
-
-                                if (diff <= 300) {
-                                    format['online'] = "online";
-                                } else if (diff <= 3600) {
-                                    const minutes = Math.floor(diff / 60);
-                                    format['online'] = minutes + " минут";
-                                } else if (diff <= 86400) {
-                                    format['online'] = moment.unix(interlocutorData.timestamp).format("h:mm a");
-                                } else {
-                                    format['online'] = moment.unix(interlocutorData.timestamp).format("D.MM");
-                                }
-
-                                if (checkedUser === 1) {
-                                    safeFilterArray.forEach(item => {
-                                        if (interlocutorData.firstname.toLowerCase().includes(item.toLowerCase())) {
-                                            format['firstname'] = "***";
-                                            format['avatar'] = noAvatar;
-                                        }
-                                        if (interlocutorData.lastname.toLowerCase().includes(item.toLowerCase())) {
-                                            format['lastname'] = "***";
-                                            format['avatar'] = noAvatar;
-                                        }
-                                    });
-                                }
-
-                                return format;
-                            }));
-
-                            const json = JSON.stringify(mobileAppFormat);
-
-                            if (json !== oldJson) {
-                                console.log("Nevka WSS: Sending chat list to: " + checkedUser);
-                                ws.send(json);
-                                oldJson = json;
-                            }
-                        }
-                    }, 1000);
-                } else {
+                if (auth.length === 0) {
                     ws.send("Token is incorrect");
+                    return;
                 }
+
+                const checkedUser = auth[0].id;
+                const signature = "M" + checkedUser + "M";
+                let oldJson;
+
+                const pollList = async () => {
+                    if (!connected) return;
+                    try {
+                        const [chats] = await pool.execute(
+                            'SELECT query, MAX(id) AS maxid FROM messages WHERE query LIKE ? GROUP BY query ORDER BY MAX(id) DESC LIMIT 75', ["%" + signature + "%"]
+                        );
+
+                        if (!chats.length) {
+                            const jsonEmpty = JSON.stringify([]);
+                            if (jsonEmpty !== oldJson) {
+                                ws.send(jsonEmpty);
+                                oldJson = jsonEmpty;
+                            }
+                            return;
+                        }
+
+                        // extract interlocutor ids and max message ids
+                        const interlocutors = [];
+                        const maxIds = [];
+                        for (const item of chats) {
+                            const interlocutor = item.query.replace(signature, "").replace("M", "");
+                            interlocutors.push(interlocutor);
+                            maxIds.push(item.maxid);
+                        }
+
+                        // batch fetch interlocutor data
+                        const [usersRows] = await pool.execute(
+                            `SELECT id, avatar, firstname, lastname, timestamp FROM users WHERE id IN (${interlocutors.map(() => '?').join(',')})`, interlocutors
+                        );
+                        const usersMap = {};
+                        usersRows.forEach(u => usersMap[String(u.id)] = u);
+
+                        // batch fetch last texts
+                        const [lastTextRows] = await pool.execute(
+                            `SELECT id, text, author, unread FROM messages WHERE id IN (${maxIds.map(() => '?').join(',')})`, maxIds
+                        );
+                        const lastMap = {};
+                        lastTextRows.forEach(l => lastMap[String(l.id)] = l);
+
+                        const now = Math.floor(Date.now() / 1000);
+
+                        const mobileAppFormat = chats.map(item => {
+                            const interlocutor = item.query.replace(signature, "").replace("M", "");
+                            const interlocutorData = usersMap[interlocutor] || { firstname: "", lastname: "", avatar: noAvatar, timestamp: 0 };
+                            const lastText = lastMap[String(item.maxid)] || { text: "", author: 0, unread: 0 };
+
+                            const diff = now - interlocutorData.timestamp;
+
+                            let online;
+                            if (diff <= 300) {
+                                online = "online";
+                            } else if (diff <= 3600) {
+                                const minutes = Math.floor(diff / 60);
+                                online = minutes + " минут";
+                            } else if (diff <= 86400) {
+                                online = moment.unix(interlocutorData.timestamp).format("h:mm a");
+                            } else {
+                                online = moment.unix(interlocutorData.timestamp).format("D.MM");
+                            }
+
+                            let lastTextPreview = lastText.text === "" ? "(изображение)" : prepareText(lastText.text);
+
+                            let firstname = interlocutorData.firstname;
+                            let lastname = interlocutorData.lastname;
+                            let avatar = interlocutorData.avatar.toString();
+
+                            if (checkedUser === 1) {
+                                safeFilterArray.forEach(itemFilter => {
+                                    if (firstname.toLowerCase().includes(itemFilter.toLowerCase())) {
+                                        firstname = "***";
+                                        avatar = noAvatar;
+                                    }
+                                    if (lastname.toLowerCase().includes(itemFilter.toLowerCase())) {
+                                        lastname = "***";
+                                        avatar = noAvatar;
+                                    }
+                                });
+                            }
+
+                            return {
+                                id: interlocutor,
+                                firstname,
+                                lastname,
+                                lastText: lastTextPreview,
+                                isUnread: lastText.unread,
+                                avatar,
+                                online,
+                                lastTextAuthor: lastText.author
+                            };
+                        });
+
+                        const json = JSON.stringify(mobileAppFormat);
+                        if (json !== oldJson) {
+                            console.log("Nevka WSS: Sending chat list to: " + checkedUser);
+                            ws.send(json);
+                            oldJson = json;
+                        }
+                    } catch (err) {
+                        console.error("Poll error (chat list):", err);
+                    }
+                };
+
+                await pollList();
+                intervals.push(setInterval(pollList, 1000));
             } else {
                 ws.send("Required parameters are not specified");
             }
