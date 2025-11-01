@@ -16,7 +16,7 @@
 
                     if (notificationCounter != data.counter) {
                         data.notifications.forEach((item) => {
-                            if ((item.message.startsWith("NE2[") || item.message.startsWith("NE3[")) && item.message.endsWith("]")) {
+                            if ((item.message.startsWith("NE2[") || item.message.startsWith("NE3[") || item.message.startsWith("NE4[")) && item.message.endsWith("]")) {
                                 item.message = "Зашифрованное сообщение. Прочитайте на мобильном!";
                             }
                             var notification = new Notification(item.author, {

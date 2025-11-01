@@ -5,6 +5,7 @@
 */
 
 include '../lib/ImageResize.php';
+
 use \Gumlet\ImageResize;
 
 if (!isset($_POST['api-key']) || $_POST['api-key'] !== "qonxod-Kicmad-4puvhy") {
@@ -16,15 +17,18 @@ if (!isset($_POST['api-key']) || $_POST['api-key'] !== "qonxod-Kicmad-4puvhy") {
 
 date_default_timezone_set("Europe/Moscow");
 
-function validate(string $data): string {
+function validate(string $data): string
+{
     return htmlspecialchars(stripslashes(trim($data)));
 }
 
-function starts_with(string $haystack, string $needle): bool {
+function starts_with(string $haystack, string $needle): bool
+{
     return $needle === "" || strpos($haystack, $needle) === 0;
 }
 
-function ends_with(string $haystack, string $needle): bool {
+function ends_with(string $haystack, string $needle): bool
+{
     if ($needle === "") return true;
     return substr($haystack, -strlen($needle)) === $needle;
 }
@@ -114,7 +118,7 @@ try {
     if ($messageText !== "") {
         $processedText = $messageText;
         // If message appears encrypted pattern
-        if (starts_with($processedText, "NE3[") && ends_with($processedText, "]")) {
+        if (preg_match('/^NE[1-9]\[.*\]$/', $processedText)) {
             $pushBody = "[Зашифрованное сообщение]";
         } else {
             $pushBody = $processedText;
@@ -140,7 +144,6 @@ try {
     }
 
     echo json_encode(['result' => 'success']);
-
 } catch (Exception $e) {
     if (isset($pdo) && $pdo->inTransaction()) {
         $pdo->rollBack();
@@ -148,4 +151,3 @@ try {
     http_response_code(500);
     echo json_encode(['result' => 'failure', 'error' => 'Нет доступа к базе данных']);
 }
-?>
