@@ -1,4 +1,7 @@
-<?php include '../lib/ImageResize.php';
+<?php
+error_reporting(0);
+
+include '../lib/ImageResize.php';
 use \Gumlet\ImageResize;
 if (!function_exists('str_contains')) {
     function str_contains(string $haystack, string $needle): bool {
