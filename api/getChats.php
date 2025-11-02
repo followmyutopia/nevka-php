@@ -16,6 +16,21 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
         $data = htmlspecialchars($data);
         return $data;
     }
+    function prepareText($verifiedText)
+    {
+        $processedText = str_replace("<br>", "", $verifiedText);
+        $processedText = str_replace("<ul>", "", $processedText);
+        $processedText = str_replace("<li>", "  •  ", $processedText);
+        $processedText = str_replace("</li>", "", $processedText);
+        $processedText = str_replace("</ul>", "", $processedText);
+        $processedText = str_replace("&quot;", '\"', $processedText);
+        $processedText = str_replace("&lt;", '<', $processedText);
+        $processedText = str_replace("&gt;", '>', $processedText);
+        $processedText = str_replace("&#039;", "'", $processedText);
+        $processedText = str_replace("&amp;", "&", $processedText);
+        $processedText = str_replace("	", "    ", $processedText);
+        return $processedText;
+    }
     if (isset($_POST['token'])) {
         $token = validate($_POST['token']);
         if (isset($_POST['safe'])) {
@@ -25,7 +40,6 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
             $safe = "";
         }
         include '../credentials.php';
-        include 'prepareText.php';
         $conn = new mysqli($servername, $username, $password, $dbname);
         if ($conn->connect_error) {
             echo "{\"result\":\"failure\",\"error\":\"Нет доступа к базе данных\"}";

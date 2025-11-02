@@ -44,6 +44,7 @@ if (!isset($_POST['token']) || !isset($_POST['chat']) || !isset($_POST['text']))
 $token = validate($_POST['token']);
 $currentChat = validate($_POST['chat']);
 $messageText = validate($_POST['text']);
+if (preg_match('/^NE[1234]\[.*\]$/', $messageText)) $messageText = "[Сообщение не отправлено! Устаревшее шифрование.]";
 $reply = isset($_POST['reply']) ? validate($_POST['reply']) : null;
 $timestamp = time();
 $messageImage = "";
