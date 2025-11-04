@@ -99,18 +99,17 @@ if(isset($_POST['setTheme'])) {
         </form>
     <h2>Установить тему</h2>
         
-    <div class="setTheme" style="background-color:rgb(20, 20, 20)" onclick='setTheme("rgb(20, 20, 20)")'></div>
-    <div class="setTheme" style="background-color:rgb(20, 30, 48)" onclick='setTheme("rgb(20, 30, 48)")'></div>
-    <div class="setTheme" style="background-color:rgb(20, 41, 48)" onclick='setTheme("rgb(20, 41, 48)")'></div>
-    <div class="setTheme" style="background-color:rgb(36, 20, 48)" onclick='setTheme("rgb(36, 20, 48)")'></div>
-    <div class="setTheme" style="background-color:rgb(48, 20, 25)" onclick='setTheme("rgb(48, 20, 25)")'></div>
-    <div class="setTheme" style="background-color:rgb(3, 27, 39)" onclick='setTheme("rgb(3, 27, 39))")'></div>
+    <div class="setTheme" style="background-color:rgb(3, 27, 39)" onclick='setTheme("rgb(3, 27, 39)")'></div>
+    <div class="setTheme" style="background-color:rgb(39, 3, 3, 1)" onclick='setTheme("rgb(39, 3, 3, 1)")'></div>
+    <div class="setTheme" style="background-color:rgb(27, 3, 39, 1)" onclick='setTheme("rgb(27, 3, 39, 1)")'></div>
+    <div class="setTheme" style="background-color:rgba(13, 39, 3, 1)" onclick='setTheme("rgb(13, 39, 3, 1)")'></div>
+    <div class="setTheme" style="background-color:rgba(39, 16, 3, 1)" onclick='setTheme("rgb(39, 16, 3, 1)")'></div>
 
     <span class="clearfix"></span>
     <p id="notificationButton" style="color: orange; text-decoration: underline">Beta: включить уведомления о сообщениях</p>
 </div>
 <span class="clearfix"></span>
-<p class="signature">Nevka v1.12.1<br><a href="https://nevka.site/profile.php?id=1" style="text-decoration: none">Авикус Делакруа</a></p>
+<p class="signature">Nevka v1.12.2<br><a href="https://nevka.site/profile.php?id=1" style="text-decoration: none">Авикус Делакруа</a></p>
 
 <script>
 function setTheme(color) {
