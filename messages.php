@@ -118,7 +118,7 @@ $(function(){
             if (messages != buffer) $("#chatWindow").html(messages).scrollTop($('#chatWindow')[0].scrollHeight);
             buffer = messages;
         });
-    },333);
+    },500);
     window.setInterval(function(){
         $.post("updateAsync.php", { type: 3 }, function(data){
             if (data != $("#chatsTable").html()) {
