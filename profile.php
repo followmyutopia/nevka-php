@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka Project v1.11
+ * Nevka Project v1.12
  * 2025 Avicus Delacroix
  */
 
@@ -26,7 +26,7 @@ else {
 
 $userData = getUserData($showUser);
 
-if (isset($userData[0])) { $showAvatar = "<img src=".$userData[0].">";}
+if (isset($userData[0])) { $showAvatar = "<img class='avatar' src=".$userData[0].">";}
 else { $showAvatar = "<p style='text-align: center'>Аватар не установлен<br>Пожалуйста, установите аватар.<br><br>Аватар может быть только в формате JPG/JPEG и с соотношением сторон 1:1. При установке НЕ квадратных фото они будут обрезаны по центру.<br><br></p>"; }
 
 if (isset($userData[1]) && isset($userData[2])) { $showName = $userData[1]." ".$userData[2]; }
@@ -115,10 +115,10 @@ if(isset($_POST['checkDeletePermission'])) { $wallStatus = deleteWallEntry($_COO
     <?php echo $showAvatar ?>
     <form class="<?php echo $personalElement ?>" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>"
         method="post" enctype="multipart/form-data">
-        <input class="fileInput wide" type="file" name="fileToUpload" id="fileToUpload">
-        <button class="button wide" type="submit" name="setAvatar">Сменить аватар</button>
+        <input class="fileInput notWide" type="file" name="fileToUpload" id="fileToUpload">
+        <button class="button notWide" type="submit" name="setAvatar">Сменить аватар</button>
     </form>
-    <button class="a button wide <?php echo $publicElement ?>" data-href="messages.php?id=<?php echo $showUser ?>">Написать сообщение</button>
+    <button class="a button notWide <?php echo $publicElement ?>" data-href="messages.php?id=<?php echo $showUser ?>">Написать сообщение</button>
     <p class="console"><?php echo $status ?></p>
 </div>
 

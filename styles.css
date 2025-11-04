@@ -11,7 +11,8 @@
 body {
     background-color: rgb(3, 27, 39);
     color: rgba(255, 255, 255, .85);
-    font-family: Verdana, sans-serif;
+    font-family: "Montserrat", sans-serif;
+    font-weight: lighter;
     margin: 0;
     padding: 0;
     height: 100vh
@@ -21,17 +22,39 @@ a {
     color: rgba(255, 255, 255, .9)
 }
 
+.top {
+    position: fixed;
+    top: 0;
+    left: 4%;
+    right: 4%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    z-index: 2;
+}
+
+.logogroup {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0);
+    backdrop-filter: blur(7px);
+    border-radius: 25px;
+    padding: 5px;
+    margin-top: 16px;
+}
+
 header {
     background-color: rgba(255, 255, 255, .07);
     backdrop-filter: blur(7px);
-    z-index: 2;
-    border-radius: 21px;
-    position: fixed;
-    top: 0;
-    width: 92%;
-    margin: 20px 4%;
+    border-radius: 25px;
+
+    width: auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
+
     border: 1px solid rgba(255, 255, 255, .07);
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2), 0 6px 20px 0 rgba(0, 0, 0, .19)
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2), 0 6px 20px 0 rgba(0, 0, 0, .19);
 }
 
 header a,
@@ -39,18 +62,18 @@ header span {
     float: left;
     display: block;
     text-align: center;
-    padding: 14px 16px;
+    padding: 13px 14px;
     text-decoration: none
 }
 
 header a:hover:not(.active) {
     background-color: rgba(255, 255, 255, .07);
-    border-radius: 21px
+    border-radius: 25px
 }
 
 header .active {
     background-color: rgba(255, 255, 255, .2);
-    border-radius: 21px
+    border-radius: 25px
 }
 
 #logoutbutton {
@@ -74,8 +97,8 @@ header .active {
 .button {
     background-color: rgba(255, 255, 255, .07);
     backdrop-filter: blur(7px);
-    padding: 14px 16px;
-    border-radius: 21px;
+    padding: 13px 14px;
+    border-radius: 25px;
     color: rgba(255, 255, 255, .9);
     font-size: medium;
     border: 1px solid rgba(255, 255, 255, .07);
@@ -86,18 +109,18 @@ header .active {
 
 .button:hover {
     background-color: rgba(255, 255, 255, .2);
-    border-radius: 21px
+    border-radius: 25px
 }
 
 .rounded {
-    border-radius: 21px
+    border-radius: 25px
 }
 
 input {
     background-color: rgba(255, 255, 255, .07);
     backdrop-filter: blur(7px);
     padding: 11px 14px;
-    border-radius: 21px;
+    border-radius: 25px;
     color: rgba(255, 255, 255, .9);
     font-size: medium;
     border: 1px solid rgba(255, 255, 255, .07);
@@ -109,7 +132,7 @@ input {
     background-color: rgba(255, 255, 255, .07);
     backdrop-filter: blur(7px);
     padding: 12px 16px 11px;
-    border-radius: 21px;
+    border-radius: 25px;
     border: 1px solid rgba(255, 255, 255, .07);
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2), 0 6px 20px 0 rgba(0, 0, 0, .19);
     margin: 1px
@@ -122,8 +145,21 @@ input {
 img {
     width: 100%;
     border: 1px solid rgba(255, 255, 255, .07);
-    border-radius: 21px;
+    border-radius: 25px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2), 0 6px 20px 0 rgba(0, 0, 0, .19)
+}
+
+.nevkaLogo {
+    border: none;
+    border-radius: none;
+    box-shadow: none;
+    width: 45px;
+    height: 45px;
+    align-self:center;
+}
+
+.avatar {
+    border-radius: 25%;
 }
 
 .postImage {
@@ -142,7 +178,7 @@ img {
     float: left;
     padding: 1% 1% 0;
     margin-right: 1%;
-    margin-bottom: 0
+    margin-bottom: 0;
 }
 
 .right {
@@ -180,7 +216,7 @@ img {
 }
 
 .console {
-    padding: 14px 16px;
+    padding: 13px 14px;
     text-align: center;
     color: #778899
 }
@@ -205,12 +241,12 @@ img {
 }
 
 textarea {
-    background-color: rgba(255, 255, 255, .07);
+    background-color: rgba(255, 255, 255, .04);
     backdrop-filter: blur(7px);
     border: 1px solid rgba(255, 255, 255, .07);
     height: 10vh;
     width: 100%;
-    border-radius: 21px;
+    border-radius: 25px;
     color: rgba(255, 255, 255, .9);
     font-size: medium;
     padding: 2% 3%;
@@ -241,13 +277,13 @@ th {
 }
 
 tr {
-    border-radius: 21px
+    border-radius: 25px
 }
 
 tr:hover {
     background-color: rgba(255, 255, 255, .07);
     backdrop-filter: blur(7px);
-    border-radius: 21px
+    border-radius: 25px
 }
 
 td a {
@@ -287,7 +323,7 @@ td a {
     overflow-y: auto;
     margin-bottom: 0;
     padding: 1% 0 0;
-    border-radius: 21px;
+    border-radius: 25px;
     scrollbar-width: none
 }
 
@@ -305,8 +341,8 @@ td a {
     background-color: rgba(255, 255, 255, .07);
     backdrop-filter: blur(7px);
     border: 1px solid rgba(255, 255, 255, .07);
-    border-radius: 21px;
-    padding: 8px 8px 26px;
+    border-radius: 25px;
+    padding: 9px 12px 26px;
     max-width: 80%;
     min-width: 155px;
     height: fit-content;
@@ -352,13 +388,14 @@ td a {
     width: 70px;
     height: 70px;
     margin: auto;
-    border-radius: 21px
+    border-radius: 25px
 }
 
 #mainlogo {
-    font-weight: bolder;
-    color: rgba(255, 255, 255, .7);
-    text-shadow: 2px 8px 6px rgba(0, 0, 0, .2), 0 -5px 35px rgba(255, 255, 255, .3);
+    font-weight: lighter;
+    font-size: large;
+    color: rgba(255, 255, 255,0.85);
+    text-shadow: 0px 0px 11px rgba(255, 255, 255, 0.75);
     margin-left: 5px
 }
 
@@ -386,19 +423,21 @@ hr {
     backdrop-filter: blur(7px);
     padding: 1% 3%;
     margin-top: 10px;
-    border-radius: 21px;
+    border-radius: 25px;
     border: 1px solid rgba(255, 255, 255, .2)
 }
 
 .messagesHeader {
-    background-color: rgba(255, 255, 255, .07);
+    background-color: rgba(255, 255, 255, .04);
     backdrop-filter: blur(7px);
     border: 1px solid rgba(255, 255, 255, .07);
-    border-radius: 21px;
+    border-radius: 25px;
     padding: 5px 10px;
     text-align: center;
     margin-top: 0;
-    margin-bottom: 0
+    margin-bottom: 0;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .messagesHeader a {
@@ -422,6 +461,12 @@ hr {
 
 .wide {
     width: 100%
+}
+
+.notWide {
+    width: 70%;
+    margin-left: 15%;
+    margin-right: 15%;
 }
 
 #msgBack {
@@ -463,7 +508,7 @@ hr {
     width: 10%;
     aspect-ratio: 1/1;
     border: 1px solid rgba(255, 255, 255, .07);
-    border-radius: 21px;
+    border-radius: 25px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2), 0 6px 20px 0 rgba(0, 0, 0, .19);
     float: left;
     margin-left: 1%
@@ -505,7 +550,7 @@ textarea:focus {
 }
 
 .activechat {
-    background: linear-gradient(to right, rgba(255, 255, 255, .15), rgba(255, 255, 255, 0))
+    background: linear-gradient(to right, rgba(255, 255, 255, .10), rgba(255, 255, 255, 0))
 }
 
 .reply {
@@ -524,16 +569,22 @@ textarea:focus {
 #android {
     padding: 1px;
     float: right;
-    margin-top: -.5px;
+    margin-top: 15.5px;
     margin-bottom: .5px;
+    padding: 10px 15px;
+    border-radius: 25px;
+    font-size: 28px;
     color: rgba(255, 255, 255, .7)
 }
 
 #ios {
     padding: 1px;
     float: right;
-    margin-top: 1px;
+    margin-top: 17px;
     margin-bottom: -1px;
+    padding: 10px 15px;
+    border-radius: 25px;
+    font-size: 28px;
     color: rgba(255, 255, 255, .7)
 }
 
@@ -544,7 +595,7 @@ textarea:focus {
 
 .likeButton {
     border: 1px solid rgba(255, 255, 255, .07);
-    border-radius: 21px;
+    border-radius: 25px;
     padding: 10px 4px 10px 14px;
     margin-bottom: 14px;
     width: max-content
@@ -577,25 +628,15 @@ textarea:focus {
     header span {
         padding: 14px 12px
     }
-
-    #android,
-    #ios,
-    #logoutbutton {
-        margin-left: -10px
-    }
-
-    #mainlogo {
-        margin-left: 0
-    }
 }
 
-@media only screen and (max-width:900px) {
+@media only screen and (max-width:1000px) {
 
-    #android,
+    /* #android,
     #ios {
         margin-left: 0;
         width: 10%
-    }
+    } */
 
     .mobile-expand {
         width: 100%
@@ -625,26 +666,27 @@ textarea:focus {
 
     .solid {
         background-color: rgba(35, 35, 35, .9);
-        position: fixed;
+        /* position: fixed; */
         z-index: 1
     }
 
     #mainmenu {
         display: none;
-        border-radius: 21px;
-        width: 70%;
-        margin: auto
+        border-radius: 25px;
+        width: 150px;
+        margin: auto;
     }
 
     #togglemenu {
         display: block;
         align-self: center;
-        float: right
+        margin: auto;
+        width: 150px;
     }
 
     #mainlogo {
         float: left;
-        font-weight: 700
+        /* font-weight: 700 */
     }
 
     header .active {
@@ -721,10 +763,5 @@ textarea:focus {
     .content {
         width: 1200px;
         margin: auto
-    }
-
-    header {
-        width: 96%;
-        margin: 10px 2%
     }
 }

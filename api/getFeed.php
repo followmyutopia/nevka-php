@@ -13,13 +13,18 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
     }
     if (isset($_POST['page'])) {
         $page = validate($_POST['page']);
+        if (isset($_POST['query'])) {
+            $query = validate($_POST['query']);
+        } else {
+            $query = "";
+        }
         include '../credentials.php';
         include 'prepareText.php';
         $conn = new mysqli($servername, $username, $password, $dbname);
         if ($conn->connect_error) {
             echo "{\"result\":\"failure\",\"error\":\"Нет доступа к базе данных\"}";
         }
-        $sql = "SELECT id, text, image, timestamp, likes, user FROM walls ORDER BY id DESC LIMIT " . ($page * 10);
+        $sql = "SELECT id, text, image, timestamp, likes, user FROM walls WHERE text LIKE '%$query%' ORDER BY id DESC LIMIT " . ($page * 10);
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
             echo "{\"result\": \"success\", \"feed\": [";
