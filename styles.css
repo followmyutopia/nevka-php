@@ -683,7 +683,7 @@ textarea:focus {
         display: block;
         align-self: center;
         margin: auto;
-        width: 150px;
+        /* width: 150px; */
     }
 
     #mainlogo {

@@ -11,7 +11,7 @@ import { safeFilterArray, noAvatar } from './variables.js';
 const pool = mysql.createPool({
     host: 'localhost',
     user: 'nevka',
-    password: "DB_PASSWORD_HERE", // consider moving to process.env
+    password: "DB_PASSWORD_HERE",
     database: 'nevka',
     waitForConnections: true,
     connectionLimit: 300,
