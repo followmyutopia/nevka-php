@@ -624,6 +624,52 @@ textarea:focus {
     background-color: #660000;
 }
 
+.call {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(7px);
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+#answer {
+    height: 100px;
+    width: 100px;
+    background-color: rgb(0, 150, 0);
+    border-radius: 50px;
+    border: 2px solid rgba(255, 255, 255, .5);
+    margin: 30px;
+    font-size: 50px;
+    color: white;
+}
+
+#decline, #hangup {
+    height: 100px;
+    width: 100px;
+    background-color: rgb(150, 0, 0);
+    border-radius: 50px;
+    border: 2px solid rgba(255, 255, 255, .5);
+    margin: 30px;
+    font-size: 50px;
+    color: white;
+}
+
+#answer:hover {
+    background-color: rgb(0, 110, 0)
+}
+
+#decline:hover, #hangup:hover {
+    background-color: rgb(110, 0, 0)
+}
+
 @media only screen and (max-width:1000px) {
 
     header a,

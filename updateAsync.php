@@ -28,6 +28,9 @@ if(isset($_COOKIE["user_token"])) {
         $user = validate($_POST['currentChat']);
         likePost($_COOKIE["user_token"],$user);
     }
+    else if ($type == 5) {
+        getVoxCredentials($_COOKIE["user_token"]);
+    }
     else { logout(); }
 }
 ?>

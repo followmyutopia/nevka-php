@@ -908,7 +908,7 @@ function newMessageAvailable($token) {
     $signature = "M".$checkedUser."M";
 
     $conn = new mysqli($servername, $username, $password, $dbname);
-    if ($conn->connect_error) { die("Ошибка подключения: не получается показать таблицу чатов. Код ошибки для поддержки: ???");}
+    if ($conn->connect_error) { die("Ошибка подключения: не получается показать таблицу чатов. Код ошибки для поддержки: 149");}
 
     $sql = "SELECT query, MAX(id) FROM messages WHERE query LIKE '%$signature%' GROUP BY query ORDER BY MAX(id) DESC LIMIT 75";
     $result = $conn->query($sql);
@@ -1025,7 +1025,7 @@ function likePost($token, $postId) {
     $status = "not_processed";
 
     $conn = new mysqli($servername, $username, $password, $dbname);
-    if ($conn->connect_error) { die("Ошибка подключения: не получается проверить наличие пользователя. Код ошибки для поддержки: ???");}
+    if ($conn->connect_error) { die("Ошибка подключения: не получается лайкнуть пост. Код ошибки для поддержки: 150");}
 
     $sql = "SELECT likes FROM walls WHERE id='$checkedId' LIMIT 1";
     $result = $conn->query($sql);
@@ -1054,5 +1054,28 @@ function likePost($token, $postId) {
             echo $status;
         }
     }
+}
+
+function getVoxCredentials($token) {
+    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+
+    $checkedToken = validate($token);
+
+    $conn = new mysqli($servername, $username, $password, $dbname);
+    if ($conn->connect_error) { die("Ошибка подключения: не получается получить данные. Код ошибки для поддержки: 151");}
+
+    $sql = "SELECT login FROM users WHERE token='$checkedToken' LIMIT 1";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_row();
+        $voxUsername = str_replace("@", "-", $row[0])."@nevka.avicus.n4.voximplant.com";
+        $data = [$voxUsername, "PASTE_VOX_PASSWORD_HERE"];
+        echo json_encode($data);
+    } else {
+        return "";
+    }
+
+    $conn->close();
 }
 ?>
