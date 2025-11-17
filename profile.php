@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka Project v1.12
+ * Nevka Project v1.13
  * 2025 Avicus Delacroix
  */
 
@@ -119,6 +119,7 @@ if(isset($_POST['checkDeletePermission'])) { $wallStatus = deleteWallEntry($_COO
         <button class="button notWide" type="submit" name="setAvatar">Сменить аватар</button>
     </form>
     <button class="a button notWide <?php echo $publicElement ?>" data-href="messages.php?id=<?php echo $showUser ?>">Написать сообщение</button>
+    <button class="button notWide <?php echo $publicElement ?>" id="callUser" data-name="<?php echo $showName ?>" data-vox="<?php echo $userData[7] ?>">Позвонить</button>
     <p class="console"><?php echo $status ?></p>
 </div>
 

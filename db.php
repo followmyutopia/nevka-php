@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka Project v1.12 Database inquires
+ * Nevka Project v1.13 Database inquires
  * 2025 Avicus Delacroix
  * 
  * Databases and types (MySQL):
@@ -160,7 +160,7 @@ function getUserData($userId) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается получить данные пользователя. Код ошибки для поддержки: 106");}
 
-    $sql = "SELECT avatar, firstname, lastname, status, city, bio, timestamp FROM users WHERE id='$userId' LIMIT 1";
+    $sql = "SELECT avatar, firstname, lastname, status, city, bio, timestamp, login FROM users WHERE id='$userId' LIMIT 1";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -169,6 +169,8 @@ function getUserData($userId) {
         // this is done for removing support for storing string dates in the database
         $formattedTime = date("d.m.Y в h:i a", $row[6]);
         $row[6] = $formattedTime;
+        $voxUsername = str_replace("@", "-", $row[7])."@nevka.avicus.n4.voximplant.com";
+        $row[7] = $voxUsername;
 
         return $row;
     } else {

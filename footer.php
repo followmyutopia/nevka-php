@@ -1,4 +1,4 @@
-<div class="call" id="incomingcall" style="display: none;">
+<div class="call" id="callwindow" style="display: none;">
     <h1 id="bigtext" style="font-size: 40px; margin-bottom: 0px"></h1>
     <p id="smalltext" style="font-size: 25px;"></p>
     <div id="newcallbuttons" style="display: none;">
@@ -43,7 +43,7 @@
                     document.getElementById("smalltext").innerHTML = "Вам звонит " + e.call.settings.displayName;
                     document.getElementById("newcallbuttons").style.display = "block";
                     document.getElementById("callbuttons").style.display = "none";
-                    document.getElementById("incomingcall").style.display = "flex";
+                    document.getElementById("callwindow").style.display = "flex";
                     document.body.style.overflow = "hidden";
 
                     document.getElementById("answer").onclick = () => {
@@ -56,13 +56,13 @@
 
                     document.getElementById("decline").onclick = () => {
                         e.call.decline();
-                        document.getElementById("incomingcall").style.display = "none";
+                        document.getElementById("callwindow").style.display = "none";
                         document.body.style.overflow = "";
                     };
 
                     document.getElementById("hangup").onclick = () => {
                         e.call.hangup();
-                        document.getElementById("incomingcall").style.display = "none";
+                        document.getElementById("callwindow").style.display = "none";
                         document.body.style.overflow = "";
                     };
 
@@ -72,11 +72,62 @@
                     });
 
                     e.call.addEventListener(VoxImplant.CallEvents.Disconnected, () => {
-                        document.getElementById("incomingcall").style.display = "none";
+                        document.getElementById("callwindow").style.display = "none";
+                        document.body.style.overflow = "";
+                        callActive = false;
+                    });
+
+                    e.call.addEventListener(VoxImplant.CallEvents.Failed, () => {
+                        document.getElementById("callwindow").style.display = "none";
                         document.body.style.overflow = "";
                         callActive = false;
                     });
                 });
+
+                if (document.getElementById("callUser")) {
+                    document.getElementById("callUser").onclick = () => {
+                        document.getElementById("bigtext").innerHTML = "Выполняется вызов...";
+                        document.getElementById("smalltext").innerHTML = document.getElementById("callUser").dataset.name;
+                        document.getElementById("newcallbuttons").style.display = "none";
+                        document.getElementById("callbuttons").style.display = "block";
+                        document.getElementById("callwindow").style.display = "flex";
+                        document.body.style.overflow = "hidden";
+                        
+                        const call = sdk.call({ number: document.getElementById("callUser").dataset.vox });
+
+                        document.getElementById("hangup").onclick = () => {
+                            call.hangup();
+                            document.getElementById("callwindow").style.display = "none";
+                            document.body.style.overflow = "";
+                        };
+
+                        call.addEventListener(VoxImplant.CallEvents.Connected, () => {
+                            document.getElementById("bigtext").innerHTML = document.getElementById("callUser").dataset.name;
+                            document.getElementById("smalltext").innerHTML = "0:00";
+                            callTime = 0;
+                            callActive = true;
+                        });
+
+                        call.addEventListener(VoxImplant.CallEvents.Disconnected, () => {
+                            document.getElementById("callwindow").style.display = "none";
+                            document.body.style.overflow = "";
+                            callActive = false;
+                        });
+
+                        call.addEventListener(VoxImplant.CallEvents.Failed, (e) => {
+                            document.getElementById("bigtext").innerHTML = document.getElementById("callUser").dataset.name;
+                            if (e.code === 404) document.getElementById("smalltext").innerHTML = "Пользователь не существует!";
+                            else if (e.code === 403) document.getElementById("smalltext").innerHTML = "Нет доступа к микрофону!";
+                            else if (e.code === 480) document.getElementById("smalltext").innerHTML = "Пользователь не в сети!";
+                            else if (e.code === 603) document.getElementById("smalltext").innerHTML = "Пользователь отклонил звонок!";
+                            else {
+                                document.getElementById("callwindow").style.display = "none";
+                                document.body.style.overflow = "";
+                                callActive = false;
+                            }
+                        });
+                    };
+                }
             });
 
             var notificationCounter = 0;
