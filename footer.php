@@ -39,49 +39,51 @@
                 }
 
                 sdk.on(VoxImplant.Events.IncomingCall, (e) => {
-                    document.getElementById("bigtext").innerHTML = "Входящий вызов...";
-                    document.getElementById("smalltext").innerHTML = "Вам звонит " + e.call.settings.displayName;
-                    document.getElementById("newcallbuttons").style.display = "block";
-                    document.getElementById("callbuttons").style.display = "none";
-                    document.getElementById("callwindow").style.display = "flex";
-                    document.body.style.overflow = "hidden";
+                    if (!callActive) {
+                        document.getElementById("bigtext").innerHTML = "Входящий вызов...";
+                        document.getElementById("smalltext").innerHTML = "Вам звонит " + e.call.settings.displayName;
+                        document.getElementById("newcallbuttons").style.display = "block";
+                        document.getElementById("callbuttons").style.display = "none";
+                        document.getElementById("callwindow").style.display = "flex";
+                        document.body.style.overflow = "hidden";
 
-                    document.getElementById("answer").onclick = () => {
-                        e.call.answer();
-                        document.getElementById("bigtext").innerHTML = e.call.settings.displayName;
-                        document.getElementById("smalltext").innerHTML = "0:00";
-                        document.getElementById("newcallbuttons").style.display = "none";
-                        document.getElementById("callbuttons").style.display = "block";
-                    };
+                        document.getElementById("answer").onclick = () => {
+                            e.call.answer();
+                            document.getElementById("bigtext").innerHTML = e.call.settings.displayName;
+                            document.getElementById("smalltext").innerHTML = "0:00";
+                            document.getElementById("newcallbuttons").style.display = "none";
+                            document.getElementById("callbuttons").style.display = "block";
+                        };
 
-                    document.getElementById("decline").onclick = () => {
-                        e.call.decline();
-                        document.getElementById("callwindow").style.display = "none";
-                        document.body.style.overflow = "";
-                    };
+                        document.getElementById("decline").onclick = () => {
+                            e.call.decline();
+                            document.getElementById("callwindow").style.display = "none";
+                            document.body.style.overflow = "";
+                        };
 
-                    document.getElementById("hangup").onclick = () => {
-                        e.call.hangup();
-                        document.getElementById("callwindow").style.display = "none";
-                        document.body.style.overflow = "";
-                    };
+                        document.getElementById("hangup").onclick = () => {
+                            e.call.hangup();
+                            document.getElementById("callwindow").style.display = "none";
+                            document.body.style.overflow = "";
+                        };
 
-                    e.call.addEventListener(VoxImplant.CallEvents.Connected, () => {
-                        callTime = 0;
-                        callActive = true;
-                    });
+                        e.call.addEventListener(VoxImplant.CallEvents.Connected, () => {
+                            callTime = 0;
+                            callActive = true;
+                        });
 
-                    e.call.addEventListener(VoxImplant.CallEvents.Disconnected, () => {
-                        document.getElementById("callwindow").style.display = "none";
-                        document.body.style.overflow = "";
-                        callActive = false;
-                    });
+                        e.call.addEventListener(VoxImplant.CallEvents.Disconnected, () => {
+                            document.getElementById("callwindow").style.display = "none";
+                            document.body.style.overflow = "";
+                            callActive = false;
+                        });
 
-                    e.call.addEventListener(VoxImplant.CallEvents.Failed, () => {
-                        document.getElementById("callwindow").style.display = "none";
-                        document.body.style.overflow = "";
-                        callActive = false;
-                    });
+                        e.call.addEventListener(VoxImplant.CallEvents.Failed, () => {
+                            document.getElementById("callwindow").style.display = "none";
+                            document.body.style.overflow = "";
+                            callActive = false;
+                        });
+                    }
                 });
 
                 if (document.getElementById("callUser")) {

@@ -121,7 +121,7 @@
                 else if (e.code === 403) document.getElementById("status").innerHTML = "Нет доступа к микрофону!";
                 else if (e.code === 480) document.getElementById("status").innerHTML = "Пользователь не в сети!";
                 else if (e.code === 603) document.getElementById("status").innerHTML = "Пользователь отклонил звонок!";
-                else location.reload();
+                else console.log(e);
             });
         };
 
