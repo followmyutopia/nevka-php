@@ -79,24 +79,51 @@
 
             e.call.addEventListener(VoxImplant.CallEvents.Connected, () => {
                 window.ReactNativeWebView.postMessage(JSON.stringify({
-                    type: 'incomingCallConnected'
+                    type: 'CallConnected'
                 }));
             });
 
             e.call.addEventListener(VoxImplant.CallEvents.Disconnected, () => {
                 window.ReactNativeWebView.postMessage(JSON.stringify({
-                    type: 'incomingCallDisconnected'
+                    type: 'CallDisconnected'
                 }));
                 currentCall = null;
             });
 
-            e.call.addEventListener(VoxImplant.CallEvents.Failed, () => {
+            e.call.addEventListener(VoxImplant.CallEvents.Failed, (i) => {
                 window.ReactNativeWebView.postMessage(JSON.stringify({
-                    type: 'incomingCallFailed'
+                    type: 'CallFailed'
                 }));
+                console.log("Voximplant: call failed: " + i);
                 currentCall = null;
             });
         });
+
+        window.startCall = function (username) {
+            console.log("Voximplant: calling " + username);
+            const call = sdk.call({ number: username });
+            currentCall = call;
+
+            call.addEventListener(VoxImplant.CallEvents.Connected, () => {
+                window.ReactNativeWebView.postMessage(JSON.stringify({
+                    type: 'CallConnected'
+                }));
+            });
+
+            call.addEventListener(VoxImplant.CallEvents.Disconnected, () => {
+                window.ReactNativeWebView.postMessage(JSON.stringify({
+                    type: 'CallDisconnected'
+                }));
+                currentCall = null;
+            });
+
+            call.addEventListener(VoxImplant.CallEvents.Failed, () => {
+                window.ReactNativeWebView.postMessage(JSON.stringify({
+                    type: 'CallFailed'
+                }));
+                currentCall = null;
+            });
+        };
 
         window.answerCall = function () {
             if (currentCall) {
@@ -117,15 +144,6 @@
                 currentCall = null;
             }
         };
-
-
-
-
-
-
-
-
-
     </script>
 </body>
 
