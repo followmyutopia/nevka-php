@@ -1,16 +1,7 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Voximplant</title>
-    <script type="text/javascript" src="https://unpkg.com/voximplant-websdk@4.7.7-2788"></script>
-</head>
-
+<!DOCTYPE html><html>
+<head><meta charset="utf-8"><script type="text/javascript" src="https://unpkg.com/voximplant-websdk@4.7.7-2788"></script></head>
 <body>
     <script>
-        // Forward all console messages to React Native
         (function () {
             const oldLog = console.log;
             console.log = function (...args) {
@@ -40,8 +31,6 @@
             };
         })();
 
-        console.log("Voximplant: WebView loaded.");
-
         let currentCall = null;
         const sdk = VoxImplant.getInstance();
 
@@ -59,16 +48,15 @@
         window.login = async (username, password) => {
             try {
                 await sdk.connect();
-                console.log("Voximplant: connected.");
                 await sdk.login(username, password);
                 console.log("Voximplant: logged in.");
             } catch (e) {
-                console.log("Voximplant: login error: ", e);
+                if (e.code === 491) console.log("Voximplant: already logged in.");
+                else console.log("Voximplant: login error: ", e);
             }
         };
 
         sdk.on(VoxImplant.Events.IncomingCall, (e) => {
-            console.log("Voximplant: Incoming call from " + e.call.settings.displayName);
             currentCall = e.call;
 
             window.ReactNativeWebView.postMessage(JSON.stringify({
@@ -77,20 +65,20 @@
                 username: e.call.settings.number.split("@")[0].slice(4)
             }));
 
-            e.call.addEventListener(VoxImplant.CallEvents.Connected, () => {
+            e.call.on(VoxImplant.CallEvents.Connected, () => {
                 window.ReactNativeWebView.postMessage(JSON.stringify({
                     type: 'CallConnected'
                 }));
             });
 
-            e.call.addEventListener(VoxImplant.CallEvents.Disconnected, () => {
+            e.call.on(VoxImplant.CallEvents.Disconnected, () => {
                 window.ReactNativeWebView.postMessage(JSON.stringify({
                     type: 'CallDisconnected'
                 }));
                 currentCall = null;
             });
 
-            e.call.addEventListener(VoxImplant.CallEvents.Failed, (i) => {
+            e.call.on(VoxImplant.CallEvents.Failed, (i) => {
                 window.ReactNativeWebView.postMessage(JSON.stringify({
                     type: 'CallFailed'
                 }));
@@ -104,72 +92,61 @@
             const call = sdk.call({ number: username });
             currentCall = call;
 
-            call.addEventListener(VoxImplant.CallEvents.Connected, () => {
+            call.on(VoxImplant.CallEvents.Connected, () => {
                 window.ReactNativeWebView.postMessage(JSON.stringify({
                     type: 'CallConnected'
                 }));
             });
 
-            call.addEventListener(VoxImplant.CallEvents.Disconnected, () => {
+            call.on(VoxImplant.CallEvents.Disconnected, () => {
                 window.ReactNativeWebView.postMessage(JSON.stringify({
                     type: 'CallDisconnected'
                 }));
                 currentCall = null;
             });
 
-            call.addEventListener(VoxImplant.CallEvents.Failed, (e) => {
+            call.on(VoxImplant.CallEvents.Failed, (e) => {
+                console.log("Voximplant: call failed with error code " + e.code + " reason " + e.reason);
                 if (e.code === 403) {
                     window.ReactNativeWebView.postMessage(JSON.stringify({
                         type: 'CallError',
                         message: 'Нет доступа к микрофону!'
                     }));
-                }
-                else if (e.code === 480) {
+                } else if (e.code === 480) {
                     window.ReactNativeWebView.postMessage(JSON.stringify({
                         type: 'CallError',
                         message: 'Пользователь не в сети!'
                     }));
-                }
-                else if (e.code === 603) {
+                } else if (e.code === 603) {
                     window.ReactNativeWebView.postMessage(JSON.stringify({
                         type: 'CallError',
                         message: 'Пользователь отклонил звонок!'
                     }));
-                }
-                else {
+                } else {
                     window.ReactNativeWebView.postMessage(JSON.stringify({
-                        type: 'CallFailed'
+                        type: 'CallFailed',
+                        error: e.code
                     }));
                 }
             });
         };
 
         window.answerCall = function () {
-            if (currentCall) {
-                currentCall.answer();
-            }
+            currentCall.answer();
+            console.log("Voximplant: call answered.");
         };
 
         window.declineCall = function () {
-            if (currentCall) {
-                currentCall.decline();
-                currentCall = null;
-            }
+            currentCall.decline();
+            currentCall = null;
+            console.log("Voximplant: call declined.");
         };
 
         window.hangupCall = function () {
-            if (currentCall) {
-                currentCall.hangup();
-                currentCall = null;
-            }
+            currentCall.hangup();
+            currentCall = null;
+            console.log("Voximplant: call hung up.");
         };
-
-        sdk.on(VoxImplant.Events.Disconnected, () => {
-            window.ReactNativeWebView.postMessage(JSON.stringify({
-                type: 'SdkDisconnected'
-            }));
-        });
     </script>
 </body>
-
 </html>

@@ -83,9 +83,9 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
                 } else if ($difference < 60) {
                     $online = $lastOnline->diff($now)->i . " минут";
                 } else if ($difference < 1440) {
-                    $online = date("h:i a", $secondRow[4]);
+                    $online = date("g:i a", $secondRow[4]);
                 } else {
-                    $online = date("d.m.Y", $secondRow[4]);
+                    $online = date("j.m", $secondRow[4]);
                 }
                 $image = new ImageResize($secondRow[1]);
                 $image->quality_jpg = 90;
