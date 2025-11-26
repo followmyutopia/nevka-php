@@ -30,7 +30,7 @@
                 }, 1000);
 
                 try {
-                    await sdk.init();
+                    await sdk.init({ showWarnings: false });
                     await sdk.connect();
                     await sdk.login(data[0], data[1]);
                     console.log("Calls: Voximplant logged in");

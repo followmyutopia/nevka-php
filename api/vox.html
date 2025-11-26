@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Voximplant</title>
+    <script type="text/javascript" src="https://unpkg.com/voximplant-websdk@4.7.7-2788"></script>
+</head>
+
+<body>
+    <script>
+        // Forward all console messages to React Native
+        (function () {
+            const oldLog = console.log;
+            console.log = function (...args) {
+                window.ReactNativeWebView.postMessage(JSON.stringify({
+                    type: 'console',
+                    log: args
+                }));
+                oldLog.apply(console, args);
+            };
+
+            const oldWarn = console.warn;
+            console.warn = function (...args) {
+                window.ReactNativeWebView.postMessage(JSON.stringify({
+                    type: 'warn',
+                    log: args
+                }));
+                oldWarn.apply(console, args);
+            };
+
+            const oldError = console.error;
+            console.error = function (...args) {
+                window.ReactNativeWebView.postMessage(JSON.stringify({
+                    type: 'error',
+                    log: args
+                }));
+                oldError.apply(console, args);
+            };
+        })();
+
+        console.log("Voximplant: WebView loaded.");
+
+        let currentCall = null;
+        const sdk = VoxImplant.getInstance();
+
+        const init = async () => {
+            try {
+                await sdk.init({ showWarnings: false });
+                console.log("Voximplant: SDK initialized.");
+            } catch (e) {
+                console.log("Voximplant: initialization error:", e);
+            }
+        };
+
+        init();
+
+        window.login = async (username, password) => {
+            try {
+                await sdk.connect();
+                console.log("Voximplant: connected.");
+                await sdk.login(username, password);
+                console.log("Voximplant: logged in.");
+            } catch (e) {
+                console.log("Voximplant: login error: ", e);
+            }
+        };
+
+        sdk.on(VoxImplant.Events.IncomingCall, (e) => {
+            console.log("Voximplant: Incoming call from " + e.call.settings.displayName);
+            currentCall = e.call;
+
+            window.ReactNativeWebView.postMessage(JSON.stringify({
+                type: 'incomingCall',
+                from: e.call.settings.displayName,
+                username: e.call.settings.number.split("@")[0].slice(4)
+            }));
+
+            e.call.addEventListener(VoxImplant.CallEvents.Connected, () => {
+                window.ReactNativeWebView.postMessage(JSON.stringify({
+                    type: 'incomingCallConnected'
+                }));
+            });
+
+            e.call.addEventListener(VoxImplant.CallEvents.Disconnected, () => {
+                window.ReactNativeWebView.postMessage(JSON.stringify({
+                    type: 'incomingCallDisconnected'
+                }));
+                currentCall = null;
+            });
+
+            e.call.addEventListener(VoxImplant.CallEvents.Failed, () => {
+                window.ReactNativeWebView.postMessage(JSON.stringify({
+                    type: 'incomingCallFailed'
+                }));
+                currentCall = null;
+            });
+        });
+
+        window.answerCall = function () {
+            if (currentCall) {
+                currentCall.answer();
+            }
+        };
+
+        window.declineCall = function () {
+            if (currentCall) {
+                currentCall.decline();
+                currentCall = null;
+            }
+        };
+
+        window.hangupCall = function () {
+            if (currentCall) {
+                currentCall.hangup();
+                currentCall = null;
+            }
+        };
+
+
+
+
+
+
+
+
+
+    </script>
+</body>
+
+</html>

@@ -19,7 +19,7 @@
         }
         $sql = "UPDATE users SET timestamp='$timestamp' WHERE token='$token'";
         if ($conn->query($sql) === TRUE) {
-            $sql = "SELECT firstname, lastname, status, city, bio, timestamp, avatar, id, expo_push_token FROM users WHERE id='$userId' LIMIT 1";
+            $sql = "SELECT firstname, lastname, status, city, bio, timestamp, avatar, id, expo_push_token, login FROM users WHERE id='$userId' LIMIT 1";
             $result = $conn->query($sql);
             if ($result->num_rows > 0) {
                 $row = $result->fetch_row();
@@ -35,7 +35,8 @@
                 } else {
                     $online = $formattedTime;
                 }
-                echo "{\"result\": \"success\", \"id\": \"" . $row[7] . "\", \"firstname\": \"" . $row[0] . "\", \"lastname\": \"" . $row[1] . "\", \"status\": \"" . $row[2] . "\", \"city\": \"" . $row[3] . "\", \"bio\": \"" . $row[4] . "\", \"timestamp\": \"" . $row[5] . "\", \"avatar\": \"" . $row[6] . "\", \"online\": \"" . $online . "\", \"push_token\": \"" . $row[8] . "\"}";
+                $voxUsername = str_replace("@", "-", $row[9]);
+                echo "{\"result\": \"success\", \"id\": \"" . $row[7] . "\", \"firstname\": \"" . $row[0] . "\", \"lastname\": \"" . $row[1] . "\", \"status\": \"" . $row[2] . "\", \"city\": \"" . $row[3] . "\", \"bio\": \"" . $row[4] . "\", \"timestamp\": \"" . $row[5] . "\", \"avatar\": \"" . $row[6] . "\", \"online\": \"" . $online . "\", \"push_token\": \"" . $row[8] . "\", \"vox_username\": \"" . $voxUsername . "\"}";
             } else {
                 echo "{\"result\":\"failure\",\"error\":\"Пользователь не найден\"}";
             }

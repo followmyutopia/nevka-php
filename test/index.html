@@ -68,7 +68,7 @@
         const login = async () => {
             try {
                 document.getElementById("status").innerHTML = "Запуск SDK...";
-                await sdk.init();
+                await sdk.init({ showWarnings: false });
                 document.getElementById("status").innerHTML = "Подключение к серверу...";
                 await sdk.connect();
                 document.getElementById("status").innerHTML = "Проверка пароля...";
@@ -129,6 +129,9 @@
             document.getElementById("status").innerHTML = "Вам звонит " + e.call.settings.displayName;
             document.getElementById("callform").style.display = "none";
             document.getElementById("incoming").style.display = "block";
+
+            let voxUsername = e.call.settings.number.split("@")[0].slice(4);
+            console.log("Входящий звонок от пользователя: " + voxUsername);
 
             document.getElementById("answer").onclick = () => {
                 e.call.answer();
