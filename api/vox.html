@@ -117,11 +117,30 @@
                 currentCall = null;
             });
 
-            call.addEventListener(VoxImplant.CallEvents.Failed, () => {
-                window.ReactNativeWebView.postMessage(JSON.stringify({
-                    type: 'CallFailed'
-                }));
-                currentCall = null;
+            call.addEventListener(VoxImplant.CallEvents.Failed, (e) => {
+                if (e.code === 403) {
+                    window.ReactNativeWebView.postMessage(JSON.stringify({
+                        type: 'CallError',
+                        message: 'Нет доступа к микрофону!'
+                    }));
+                }
+                else if (e.code === 480) {
+                    window.ReactNativeWebView.postMessage(JSON.stringify({
+                        type: 'CallError',
+                        message: 'Пользователь не в сети!'
+                    }));
+                }
+                else if (e.code === 603) {
+                    window.ReactNativeWebView.postMessage(JSON.stringify({
+                        type: 'CallError',
+                        message: 'Пользователь отклонил звонок!'
+                    }));
+                }
+                else {
+                    window.ReactNativeWebView.postMessage(JSON.stringify({
+                        type: 'CallFailed'
+                    }));
+                }
             });
         };
 
@@ -144,6 +163,12 @@
                 currentCall = null;
             }
         };
+
+        sdk.on(VoxImplant.Events.Disconnected, () => {
+            window.ReactNativeWebView.postMessage(JSON.stringify({
+                type: 'SdkDisconnected'
+            }));
+        });
     </script>
 </body>
 
