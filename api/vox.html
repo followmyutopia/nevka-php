@@ -122,6 +122,10 @@
                         type: 'CallError',
                         message: 'Пользователь отклонил звонок!'
                     }));
+                } else if (e.reason === "1003") {
+                    window.ReactNativeWebView.postMessage(JSON.stringify({
+                        type: 'ConnectionError'
+                    }));
                 } else {
                     window.ReactNativeWebView.postMessage(JSON.stringify({
                         type: 'CallFailed',
