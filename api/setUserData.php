@@ -35,7 +35,7 @@
                     'api_key' => 'PASTE_VOX_API_KEY_HERE',
                     'user_name' => $voxUsername,
                     'application_id' => '11329284',
-                    'user_display_name' => $newFirstName.' '.$newLastName,
+                    'user_display_name' => $newFirstName . ' ' . $newLastName,
                     'account_id' => '3831061'
                 );
 
