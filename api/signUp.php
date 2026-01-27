@@ -12,7 +12,7 @@
         $login = validate($_POST['email']);
         $password = validate($_POST['password']);
         $passwordHash = sha1($password);
-        $newToken = "NevkaToken2.0[" . $login . "-" . $passwordHash . "]";
+        $newToken = "NevkaToken2.2[" . $login . "-" . $passwordHash . "]";
         include '../credentials.php';
         $conn = new mysqli($servername, $username, $password, $dbname);
         if ($conn->connect_error) {

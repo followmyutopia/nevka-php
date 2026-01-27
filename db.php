@@ -32,7 +32,7 @@ function str_ends_with_FIX($stringus, $patternus) {
 }
 
 function getNameById($id) {
-    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+    include 'credentials.php';
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается получить имя пользователя. Код ошибки для поддержки: 133");}
@@ -51,7 +51,7 @@ function getNameById($id) {
 }
 
 function getIdByToken($token) {
-    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+    include 'credentials.php';
 
     $checkedToken = validate($token);
 
@@ -72,12 +72,13 @@ function getIdByToken($token) {
 }
 
 function login($login,$hashedPassword) {
-    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+    include 'credentials.php';
+    $checkedLogin = validate($login);
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается залогиниться. Код ошибки для поддержки: 102");}
 
-    $sql = "SELECT id, login, password, token, is_banned FROM users WHERE login='$login' LIMIT 1";
+    $sql = "SELECT id, login, password, token, is_banned FROM users WHERE login='$checkedLogin' LIMIT 1";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -101,7 +102,7 @@ function logout() {
 }
 
 function checkCookie($token) {
-    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+    include 'credentials.php';
 
     $checkedToken = validate($token);
 
@@ -123,7 +124,7 @@ function checkCookie($token) {
 }
 
 function changePassword($loggedUser,$token,$oldPassword,$newPassword) {
-    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+    include 'credentials.php';
     $newToken = "User".$loggedUser."-".$newPassword;
 
     $conn = new mysqli($servername, $username, $password, $dbname);
@@ -155,7 +156,7 @@ function changePassword($loggedUser,$token,$oldPassword,$newPassword) {
 }
 
 function getUserData($userId) {
-    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+    include 'credentials.php';
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается получить данные пользователя. Код ошибки для поддержки: 106");}
@@ -181,7 +182,7 @@ function getUserData($userId) {
 }
 
 function setAvatar($token,$blob) {
-    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+    include 'credentials.php';
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается установить аватар. Код ошибки для поддержки: 107");}
@@ -198,7 +199,7 @@ function setAvatar($token,$blob) {
 }
 
 function setName($token,$newFirstName,$newLastName) {
-    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+    include 'credentials.php';
 
     $query = $newFirstName." ".$newLastName;
 
@@ -237,7 +238,7 @@ function setName($token,$newFirstName,$newLastName) {
 }
 
 function setCity($token,$newCity) {
-    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+    include 'credentials.php';
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается установить город. Код ошибки для поддержки: 111");}
@@ -254,7 +255,7 @@ function setCity($token,$newCity) {
 }
 
 function setBio($token,$newBio) {
-    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+    include 'credentials.php';
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается установить информацию. Код ошибки для поддержки: 113");}
@@ -271,7 +272,7 @@ function setBio($token,$newBio) {
 }
 
 function setStatus($token,$newStatus) {
-    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+    include 'credentials.php';
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка. Код ошибки для поддержки: 115");}
@@ -288,7 +289,7 @@ function setStatus($token,$newStatus) {
 }
 
 function updateOnline($token) {
-    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+    include 'credentials.php';
     
     $timestamp = time();
 
@@ -307,7 +308,7 @@ function updateOnline($token) {
 }
 
 function addWallEntry($token, $wallText, $wallImage) {
-    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+    include 'credentials.php';
 
     $loggedUser = getIdByToken($token);
     $timestamp = time();
@@ -328,7 +329,7 @@ function addWallEntry($token, $wallText, $wallImage) {
 }
 
 function deleteWallEntry($token, $entryId) {
-    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+    include 'credentials.php';
 
     $checkedUser = getIdByToken($token);
     $checkedID = validate($entryId);
@@ -360,7 +361,7 @@ function deleteWallEntry($token, $entryId) {
 }
 
 function getWallEntries($loggedUser, $me) {
-    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+    include 'credentials.php';
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается получить стену. Код ошибки для поддержки: 123");}
@@ -395,9 +396,9 @@ function getWallEntries($loggedUser, $me) {
 
 function signUp($newLogin,$hashedPassword,$apiKey) {
     if ($apiKey == "***REMOVED***") {
-        include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+        include 'credentials.php';
 
-        $newToken = "NevkaToken2.0[".$newLogin."-".$hashedPassword."]";
+        $newToken = "NevkaToken2.1[".$newLogin."-".$hashedPassword."]";
 
         $conn = new mysqli($servername, $username, $password, $dbname);
         if ($conn->connect_error) { die("Ошибка подключения: не получается зарегистрироваться. Код ошибки для поддержки: 124");}
@@ -442,9 +443,9 @@ function signUp($newLogin,$hashedPassword,$apiKey) {
 
 function resetPassword($login,$hashedPassword,$apiKey) {
     if ($apiKey == "***REMOVED***") {
-        include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+        include 'credentials.php';
 
-        $newToken = "NevkaToken2.0[".$login."-".$hashedPassword."]";
+        $newToken = "NevkaToken2.1[".$login."-".$hashedPassword."]";
 
         $conn = new mysqli($servername, $username, $password, $dbname);
         if ($conn->connect_error) { die("Ошибка подключения: не получается зарегистрироваться. Код ошибки для поддержки: 147");}
@@ -462,7 +463,7 @@ function resetPassword($login,$hashedPassword,$apiKey) {
 }
 
 function showUsersTable($query) {
-    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+    include 'credentials.php';
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается показать таблицу пользователей. Код ошибки для поддержки: 126");}
@@ -498,7 +499,7 @@ function showUsersTable($query) {
 }
 
 function showChatsTable($token) {
-    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+    include 'credentials.php';
 
     $checkedUser = getIdByToken($token);
     $signature = "M".$checkedUser."M";
@@ -565,7 +566,7 @@ function showChatsTable($token) {
 }
 
 function currentUserHeader($userId) {
-    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+    include 'credentials.php';
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается отобразить заголовок чата. Код ошибки для поддержки: 128");}
@@ -593,7 +594,7 @@ function currentUserHeader($userId) {
 }
 
 function getMessages($token,$chatUser) {
-    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+    include 'credentials.php';
 
     $query = "";
     $loggedUser = getIdByToken($token);
@@ -673,7 +674,7 @@ function getMessages($token,$chatUser) {
 }
 
 function sendMessage($token, $currentChat, $messageText, $messageImage, $replyTo) {
-    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+    include 'credentials.php';
     include 'api/prepareText.php';
 
     $loggedUser = getIdByToken($token);
@@ -736,7 +737,7 @@ function sendMessage($token, $currentChat, $messageText, $messageImage, $replyTo
 }
 
 function lastId($loggedUser) {
-    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+    include 'credentials.php';
 
     $signature = "M".$loggedUser."M";
 
@@ -759,7 +760,7 @@ function lastId($loggedUser) {
 }
 
 function getDiscussions($query) {
-    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+    include 'credentials.php';
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается запросить обсуждения. Код ошибки для поддержки: 134");}
@@ -783,7 +784,7 @@ function getDiscussions($query) {
 }
 
 function getTopicHeader($headerId) {
-    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+    include 'credentials.php';
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается запросить обсуждение. Код ошибки для поддержки: 135");}
@@ -804,7 +805,7 @@ function getTopicHeader($headerId) {
 }
 
 function getTopicMessages($header) {
-    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+    include 'credentials.php';
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается запросить сообщения в обсуждении. Код ошибки для поддержки: 136");}
@@ -828,7 +829,7 @@ function getTopicMessages($header) {
 }
 
 function sendReply($topic, $who, $what) {
-    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+    include 'credentials.php';
 
     $loggedUser = getIdByToken($who);
     $when = time();
@@ -864,7 +865,7 @@ function sendReply($topic, $who, $what) {
 }
 
 function createTopic($token, $name, $message) {
-    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+    include 'credentials.php';
 
     $loggedUser = getIdByToken($token);
     $when = time();
@@ -885,7 +886,7 @@ function createTopic($token, $name, $message) {
 }
 
 function allowEmail($login) {
-    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+    include 'credentials.php';
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается получить имя пользователя. Код ошибки для поддержки: 143");}
@@ -903,7 +904,7 @@ function allowEmail($login) {
 }
 
 function newMessageAvailable($token) {
-    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+    include 'credentials.php';
 
     // change timestamp logic to unread logic
     $checkedUser = getIdByToken($token);
@@ -978,7 +979,7 @@ function newMessageAvailable($token) {
 }
 
 function userExists($id) {
-    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+    include 'credentials.php';
 
     $checkedId = validate(intval($id));
 
@@ -998,7 +999,7 @@ function userExists($id) {
 }
 
 function getPushTokenById($id) {
-    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+    include 'credentials.php';
 
     $checkedId = validate(intval($id));
 
@@ -1020,7 +1021,7 @@ function getPushTokenById($id) {
 }
 
 function likePost($token, $postId) {
-    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+    include 'credentials.php';
 
     $checkedId = validate(intval($postId));
     $loggedUser = getIdByToken($token);
@@ -1059,7 +1060,7 @@ function likePost($token, $postId) {
 }
 
 function getVoxCredentials($token) {
-    include 'credentials.php'; // Contains 4 credentials: $servername, $username, $password, $dbname
+    include 'credentials.php';
 
     $checkedToken = validate($token);
 
