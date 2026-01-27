@@ -1,60 +1,65 @@
-<?php if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
+<?php
+if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
+
     date_default_timezone_set("Europe/Moscow");
-    $token = $topic = $messageText = $header = $timestamp = "";
-    function validate($data)
-    {
-        $data = trim($data);
-        $data = stripslashes($data);
-        $data = htmlspecialchars($data);
-        return $data;
-    }
+
     if (isset($_POST['token']) && isset($_POST['topic']) && isset($_POST['text'])) {
-        $token = validate($_POST['token']);
-        $topic = validate($_POST['topic']);
-        $messageText = validate($_POST['text']);
-        $timestamp = time();
+
         include '../credentials.php';
         $conn = new mysqli($servername, $username, $password, $dbname);
+
         if ($conn->connect_error) {
             echo "{\"result\":\"failure\",\"error\":\"Нет доступа к базе данных\"}";
+            exit;
         }
-        $sql = "UPDATE users SET timestamp='$timestamp' WHERE token='$token'";
-        $conn->query($sql);
-        $sql = "SELECT id FROM users WHERE token='$token' LIMIT 1";
-        $result = $conn->query($sql);
-        if ($result->num_rows > 0) {
-            $row = $result->fetch_row();
-            $loggedUser = $row[0];
-        } else {
-            $loggedUser = "";
+
+        $token = $conn->real_escape_string($_POST['token']);
+        $topic = $conn->real_escape_string($_POST['topic']);
+        $messageText = $conn->real_escape_string($_POST['text']);
+        $timestamp = time();
+
+        // update activity timestamp
+        $conn->query("UPDATE users SET timestamp='$timestamp' WHERE token='$token'");
+
+        // get logged user
+        $result = $conn->query("SELECT id FROM users WHERE token='$token' LIMIT 1");
+        if ($result->num_rows === 0) {
             echo "{\"result\":\"failure\",\"error\":\"wrong_token\"}";
+            exit;
         }
-        if ($loggedUser != "") {
-            $sql = "SELECT topic, header FROM discussions WHERE id='$topic' LIMIT 1";
-            $result = $conn->query($sql);
-            if ($result->num_rows > 0) {
-                $row = $result->fetch_row();
-                if ($row[1]) {
-                    $header = $row[0];
-                } else {
-                    echo "{\"result\":\"failure\",\"error\":\"Такой темы не существует\"}";
-                }
-            } else {
-                echo "{\"result\":\"failure\",\"error\":\"Такой темы не существует\"}";
-            }
-            $sql = "INSERT INTO discussions (topic, author, message, time, header, activity) VALUES ('$header', '$loggedUser', '$messageText', '$timestamp', '0', $timestamp)";
-            if ($conn->query($sql) === TRUE) {
-                $sqlUpdateHeader = "UPDATE discussions SET activity='$timestamp' WHERE id='$topic'";
-                if ($conn->query($sqlUpdateHeader) === TRUE) {
-                    echo "{\"result\":\"success\"}";
-                } else {
-                    echo "{\"result\":\"failure\",\"error\":\"Невозможно обновить активность обсуждения\"}";
-                }
-            } else {
-                echo "{\"result\":\"failure\",\"error\":\"Ошибка записи в БД\"}";
-            }
+        $row = $result->fetch_row();
+        $loggedUser = $row[0];
+
+        // get discussion header
+        $result = $conn->query("SELECT topic, header FROM discussions WHERE id='$topic' LIMIT 1");
+        if ($result->num_rows === 0) {
+            echo "{\"result\":\"failure\",\"error\":\"Такой темы не существует\"}";
+            exit;
         }
+
+        $row = $result->fetch_row();
+        if (!$row[1]) {
+            echo "{\"result\":\"failure\",\"error\":\"Такой темы не существует\"}";
+            exit;
+        }
+
+        $header = $conn->real_escape_string($row[0]);
+
+        // insert message
+        $sql = "INSERT INTO discussions (topic, author, message, time, header, activity)
+                VALUES ('$header', '$loggedUser', '$messageText', '$timestamp', '0', '$timestamp')";
+
+        if ($conn->query($sql) === TRUE) {
+
+            $conn->query("UPDATE discussions SET activity='$timestamp' WHERE id='$topic'");
+            echo "{\"result\":\"success\"}";
+
+        } else {
+            echo "{\"result\":\"failure\",\"error\":\"Ошибка записи в БД\"}";
+        }
+
         $conn->close();
+
     } else {
         echo "{\"result\":\"failure\",\"error\":\"Параметры token, topic, text обязательны\"}";
     }

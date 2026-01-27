@@ -1,4 +1,5 @@
-<?php require '../lib/PHPMailer.php';
+<?php
+require '../lib/PHPMailer.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
@@ -7,6 +8,7 @@ use PHPMailer\PHPMailer\Exception;
 if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
     date_default_timezone_set("Europe/Moscow");
     $email = $code = "";
+
     function validate($data)
     {
         $data = trim($data);
@@ -14,6 +16,7 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
         $data = htmlspecialchars($data);
         return $data;
     }
+
     function sendMail($address, $code)
     {
         $mail = new PHPMailer(true);
@@ -37,17 +40,28 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
             return false;
         }
     }
+
     if (isset($_POST['email'])) {
+
         $email = validate($_POST['email']);
-        $code = mt_rand(10000, 99999);
+        $code  = mt_rand(10000, 99999);
+
         if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+
             include '../credentials.php';
             $conn = new mysqli($servername, $username, $password, $dbname);
+
             if ($conn->connect_error) {
                 echo "{\"result\":\"failure\",\"error\":\"Нет доступа к базе данных\"}";
+                exit;
             }
-            $sql = "SELECT login FROM users WHERE login='$email' LIMIT 1";
+
+            // Экранируем email для SQL
+            $emailEsc = $conn->real_escape_string($email);
+
+            $sql = "SELECT login FROM users WHERE login='$emailEsc' LIMIT 1";
             $result = $conn->query($sql);
+
             if ($result->num_rows > 0) {
                 echo "{\"result\":\"failure\",\"error\":\"Пользователь с такой почтой уже существует\"}";
             } else {
@@ -58,10 +72,13 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
                     echo "{\"result\":\"failure\",\"error\":\"Ошибка почтового сервиса.\"}";
                 }
             }
+
             $conn->close();
+
         } else {
             echo "{\"result\":\"failure\",\"error\":\"Не похоже на электронную почту\"}";
         }
+
     } else {
         echo "{\"result\":\"failure\",\"error\":\"Параметр email обязателен\"}";
     }
