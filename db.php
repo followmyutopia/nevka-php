@@ -37,7 +37,8 @@ function getNameById($id) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается получить имя пользователя. Код ошибки для поддержки: 133");}
 
-    $sql = "SELECT firstname, lastname FROM users WHERE id='$id' LIMIT 1";
+    $checkedId = $conn->real_escape_string($id);
+    $sql = "SELECT firstname, lastname FROM users WHERE id='$checkedId' LIMIT 1";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -58,6 +59,7 @@ function getIdByToken($token) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается получить ID. Код ошибки для поддержки: 101");}
     
+    $checkedToken = $conn->real_escape_string($checkedToken);
     $sql = "SELECT id FROM users WHERE token='$checkedToken' LIMIT 1";
     $result = $conn->query($sql);
 
@@ -78,6 +80,7 @@ function login($login,$hashedPassword) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается залогиниться. Код ошибки для поддержки: 102");}
 
+    $checkedLogin = $conn->real_escape_string($checkedLogin);
     $sql = "SELECT id, login, password, token, is_banned FROM users WHERE login='$checkedLogin' LIMIT 1";
     $result = $conn->query($sql);
 
@@ -109,6 +112,7 @@ function checkCookie($token) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается проверить куки. Код ошибки для поддержки: 103");}
 
+    $checkedToken = $conn->real_escape_string($checkedToken);
     $sql = "SELECT id, is_banned FROM users WHERE token='$checkedToken' LIMIT 1";
     $result = $conn->query($sql);
 
@@ -130,14 +134,17 @@ function changePassword($loggedUser,$token,$oldPassword,$newPassword) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается сменить пароль. Код ошибки для поддержки: 104");}
     
-    $sql = "SELECT password FROM users WHERE token='$token' LIMIT 1";
+    $checkedToken = $conn->real_escape_string($token);
+    $sql = "SELECT password FROM users WHERE token='$checkedToken' LIMIT 1";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
         $row = $result->fetch_row();
         if ($oldPassword == $row[0]) {
             // approved sorting by id, user checked
-            $security = "UPDATE users SET password='$newPassword', token='$newToken' WHERE id='$loggedUser'";
+            $checkedPassword = $conn->real_escape_string($newPassword);
+            $checkedNewToken = $conn->real_escape_string($newToken);
+            $security = "UPDATE users SET password='$checkedPassword', token='$checkedNewToken' WHERE id='$loggedUser'";
 
             if ($conn->query($security) === TRUE) {
                 setcookie("user_token", $newToken, time() + (86400 * 30), "/");
@@ -161,7 +168,8 @@ function getUserData($userId) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается получить данные пользователя. Код ошибки для поддержки: 106");}
 
-    $sql = "SELECT avatar, firstname, lastname, status, city, bio, timestamp, login FROM users WHERE id='$userId' LIMIT 1";
+    $checkedUserId = $conn->real_escape_string($userId);
+    $sql = "SELECT avatar, firstname, lastname, status, city, bio, timestamp, login FROM users WHERE id='$checkedUserId' LIMIT 1";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -187,7 +195,9 @@ function setAvatar($token,$blob) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается установить аватар. Код ошибки для поддержки: 107");}
 
-    $sql = "UPDATE users SET avatar='$blob' WHERE token='$token'";
+    $checkedToken = $conn->real_escape_string($token);
+    $checkedBlob = $conn->real_escape_string($blob);
+    $sql = "UPDATE users SET avatar='$checkedBlob' WHERE token='$checkedToken'";
 
     if ($conn->query($sql) === TRUE) {
         header("Refresh:0");
@@ -206,10 +216,14 @@ function setName($token,$newFirstName,$newLastName) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается установить имя. Код ошибки для поддержки: 109");}
 
-    $sql = "UPDATE users SET firstname='$newFirstName', lastname='$newLastName', search='$query' WHERE token='$token'";
+    $checkedToken = $conn->real_escape_string($token);
+    $checkedFirstName = $conn->real_escape_string($newFirstName);
+    $checkedLastName = $conn->real_escape_string($newLastName);
+    $checkedQuery = $conn->real_escape_string($query);
+    $sql = "UPDATE users SET firstname='$checkedFirstName', lastname='$checkedLastName', search='$checkedQuery' WHERE token='$checkedToken'";
 
     if ($conn->query($sql) === TRUE) {
-        $getNameSql = "SELECT login FROM users WHERE token='$token'";
+        $getNameSql = "SELECT login FROM users WHERE token='$checkedToken'";
         $getNameResult = $conn->query($getNameSql);
         $getNameRow = $getNameResult->fetch_row();
         $voxUsername = str_replace("@", "-", $getNameRow[0]);
@@ -243,7 +257,9 @@ function setCity($token,$newCity) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается установить город. Код ошибки для поддержки: 111");}
 
-    $sql = "UPDATE users SET city='$newCity' WHERE token='$token'";
+    $checkedToken = $conn->real_escape_string($token);
+    $checkedCity = $conn->real_escape_string($newCity);
+    $sql = "UPDATE users SET city='$checkedCity' WHERE token='$checkedToken'";
 
     if ($conn->query($sql) === TRUE) {
         return "Город успешно установлен";
@@ -260,7 +276,9 @@ function setBio($token,$newBio) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается установить информацию. Код ошибки для поддержки: 113");}
 
-    $sql = "UPDATE users SET bio='$newBio' WHERE token='$token'";
+    $checkedToken = $conn->real_escape_string($token);
+    $checkedBio = $conn->real_escape_string($newBio);
+    $sql = "UPDATE users SET bio='$checkedBio' WHERE token='$checkedToken'";
 
     if ($conn->query($sql) === TRUE) {
         return "Описание успешно установлено";
@@ -277,7 +295,9 @@ function setStatus($token,$newStatus) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка. Код ошибки для поддержки: 115");}
 
-    $sql = "UPDATE users SET status='$newStatus' WHERE token='$token'";
+    $checkedToken = $conn->real_escape_string($token);
+    $checkedStatus = $conn->real_escape_string($newStatus);
+    $sql = "UPDATE users SET status='$checkedStatus' WHERE token='$checkedToken'";
 
     if ($conn->query($sql) === TRUE) {
         return $newStatus;
@@ -296,7 +316,8 @@ function updateOnline($token) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается обновить онлайн. Код ошибки для поддержки: 117");}
 
-    $sql = "UPDATE users SET timestamp='$timestamp' WHERE token='$token'";
+    $checkedToken = $conn->real_escape_string($token);
+    $sql = "UPDATE users SET timestamp='$timestamp' WHERE token='$checkedToken'";
 
     if ($conn->query($sql) === TRUE) {
         return;
@@ -316,8 +337,10 @@ function addWallEntry($token, $wallText, $wallImage) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается опубликовать стену. Код ошибки для поддержки: 119");}
 
+    $checkedText = $conn->real_escape_string($wallText);
+    $checkedImage = $conn->real_escape_string($wallImage);
     $sql = "INSERT INTO walls (user, text, image, timestamp, likes)
-        VALUES ('$loggedUser', '$wallText', '$wallImage', '$timestamp', '[]')";
+        VALUES ('$loggedUser', '$checkedText', '$checkedImage', '$timestamp', '[]')";
 
     if ($conn->query($sql) === TRUE) {
         header("Refresh:0");
@@ -332,7 +355,7 @@ function deleteWallEntry($token, $entryId) {
     include 'credentials.php';
 
     $checkedUser = getIdByToken($token);
-    $checkedID = validate($entryId);
+    $checkedID = $conn->real_escape_string(validate($entryId));
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается удалить со стены. Код ошибки для поддержки: 121");}
@@ -344,7 +367,7 @@ function deleteWallEntry($token, $entryId) {
         $row = $result->fetch_row();
         if ($checkedUser == $row[0]) {
             // approved sorting by id, user checked
-            $del = "DELETE FROM walls WHERE id='$entryId'";
+            $del = "DELETE FROM walls WHERE id='$checkedID'";
             if ($conn->query($del) === TRUE) {
                 header("Refresh:0");
             } else {
@@ -366,7 +389,8 @@ function getWallEntries($loggedUser, $me) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается получить стену. Код ошибки для поддержки: 123");}
 
-    $sql = "SELECT id, user, text, image, timestamp, likes FROM walls WHERE user='$loggedUser' ORDER BY id DESC LIMIT 100";
+    $checkedLoggedUser = $conn->real_escape_string($loggedUser);
+    $sql = "SELECT id, user, text, image, timestamp, likes FROM walls WHERE user='$checkedLoggedUser' ORDER BY id DESC LIMIT 100";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -377,7 +401,6 @@ function getWallEntries($loggedUser, $me) {
             if (in_array($me, $likesArray)) $redMarker = "style=\"color: crimson\" ";
             $numberOfLikes = count($likesArray);
             if ($numberOfLikes == 0) $numberOfLikes = "";
-            // else $numberOfLikes = "<span style=\"padding-left: 10px\" id=\"likeCount-".$row["id"]."\">".$numberOfLikes."</span>";
 
             // compatibility with the v1.4 database format
             $formattedTime = date("d.m.Y в h:i a", $row["timestamp"]);
@@ -403,15 +426,19 @@ function signUp($newLogin,$hashedPassword,$apiKey) {
         $conn = new mysqli($servername, $username, $password, $dbname);
         if ($conn->connect_error) { die("Ошибка подключения: не получается зарегистрироваться. Код ошибки для поддержки: 124");}
 
-        $sql = "SELECT id FROM users WHERE login='$newLogin' LIMIT 1";
+        $checkedLogin = $conn->real_escape_string($newLogin);
+        $sql = "SELECT id FROM users WHERE login='$checkedLogin' LIMIT 1";
         $result = $conn->query($sql);
 
         if ($result->num_rows > 0) {
             return "Логин занят";
         } else {
             include 'defaultImage.php';
+            $checkedPassword = $conn->real_escape_string($hashedPassword);
+            $checkedToken = $conn->real_escape_string($newToken);
+            $checkedDefaultImage = $conn->real_escape_string($defaultImage);
             $sql = "INSERT INTO users (login, password, token, avatar)
-            VALUES ('$newLogin', '$hashedPassword', '$newToken', '$defaultImage')";
+            VALUES ('$checkedLogin', '$checkedPassword', '$checkedToken', '$checkedDefaultImage')";
 
             if ($conn->query($sql) === TRUE) {
                 $voxUsername = str_replace("@", "-", $newLogin);
@@ -450,7 +477,10 @@ function resetPassword($login,$hashedPassword,$apiKey) {
         $conn = new mysqli($servername, $username, $password, $dbname);
         if ($conn->connect_error) { die("Ошибка подключения: не получается зарегистрироваться. Код ошибки для поддержки: 147");}
 
-        $sql = "UPDATE users SET password='$hashedPassword', token='$newToken' WHERE login='$login'";
+        $checkedLogin = $conn->real_escape_string($login);
+        $checkedPassword = $conn->real_escape_string($hashedPassword);
+        $checkedToken = $conn->real_escape_string($newToken);
+        $sql = "UPDATE users SET password='$checkedPassword', token='$checkedToken' WHERE login='$checkedLogin'";
 
         if ($conn->query($sql) === TRUE) {
             return "Пароль успешно сброшен!";
@@ -468,8 +498,9 @@ function showUsersTable($query) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается показать таблицу пользователей. Код ошибки для поддержки: 126");}
 
+    $checkedQuery = $conn->real_escape_string($query);
     $sql = "SELECT id, avatar, firstname, lastname, timestamp, search FROM users
-    WHERE (firstname LIKE '%$query%' OR lastname LIKE '%$query%' OR search LIKE '%$query%') AND (NOT is_banned OR is_banned IS NULL)
+    WHERE (firstname LIKE '%$checkedQuery%' OR lastname LIKE '%$checkedQuery%' OR search LIKE '%$checkedQuery%') AND (NOT is_banned OR is_banned IS NULL)
     ORDER BY timestamp DESC LIMIT 500";
     $result = $conn->query($sql);
 
@@ -507,7 +538,8 @@ function showChatsTable($token) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается показать таблицу чатов. Код ошибки для поддержки: 127");}
 
-    $sql = "SELECT query, MAX(id) FROM messages WHERE query LIKE '%$signature%' GROUP BY query ORDER BY MAX(id) DESC LIMIT 75";
+    $checkedSignature = $conn->real_escape_string($signature);
+    $sql = "SELECT query, MAX(id) FROM messages WHERE query LIKE '%$checkedSignature%' GROUP BY query ORDER BY MAX(id) DESC LIMIT 75";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -572,7 +604,8 @@ function currentUserHeader($userId) {
     if ($conn->connect_error) { die("Ошибка подключения: не получается отобразить заголовок чата. Код ошибки для поддержки: 128");}
 
     // approved sorting by id, public data
-    $sql = "SELECT firstname, lastname, timestamp FROM users WHERE id='$userId' LIMIT 1";
+    $checkedUserId = $conn->real_escape_string($userId);
+    $sql = "SELECT firstname, lastname, timestamp FROM users WHERE id='$checkedUserId' LIMIT 1";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -607,7 +640,8 @@ function getMessages($token,$chatUser) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается отобразить сообщения. Код ошибки для поддержки: 129");}
 
-    $sql = "SELECT * FROM (SELECT id, query, author, text, image, timestamp, unread, reply FROM messages WHERE query='$query' ORDER BY id DESC LIMIT 100) X ORDER BY id ASC;";
+    $checkedQuery = $conn->real_escape_string($query);
+    $sql = "SELECT * FROM (SELECT id, query, author, text, image, timestamp, unread, reply FROM messages WHERE query='$checkedQuery' ORDER BY id DESC LIMIT 100) X ORDER BY id ASC;";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -619,7 +653,8 @@ function getMessages($token,$chatUser) {
 
             if ($row['reply']) {
                 $replyId = $row['reply'];
-                $getReplyText = "SELECT author, text FROM messages WHERE id ='$replyId' LIMIT 1";
+                $checkedReplyId = $conn->real_escape_string($replyId);
+                $getReplyText = "SELECT author, text FROM messages WHERE id ='$checkedReplyId' LIMIT 1";
                 $textResult = $conn->query($getReplyText);
                 $textRow = $textResult->fetch_row();
                 if (preg_match('/^NE[1-9]\[.*\]$/', $textRow[1])) $preview = "<i>[Зашифрованное сообщение]</i>";
@@ -664,7 +699,8 @@ function getMessages($token,$chatUser) {
             } else { return; }
         }
 
-        $readRequest = "UPDATE messages SET unread='0' WHERE query='$query' AND author='$interlocutor'";
+        $checkedInterlocutor = $conn->real_escape_string($interlocutor);
+        $readRequest = "UPDATE messages SET unread='0' WHERE query='$checkedQuery' AND author='$checkedInterlocutor'";
         $conn->query($readRequest);
     } else {
         echo "<p class=\"console\">Нет сообщений<p>";
@@ -695,12 +731,17 @@ function sendMessage($token, $currentChat, $messageText, $messageImage, $replyTo
         $conn = new mysqli($servername, $username, $password, $dbname);
         if ($conn->connect_error) { die("Ошибка подключения: не получается отправить сообщение. Код ошибки для поддержки: 130");}
     
+        $checkedQuery = $conn->real_escape_string($query);
+        $checkedText = $conn->real_escape_string($messageText);
+        $checkedImage = $conn->real_escape_string($messageImage);
+        $checkedReplyTo = $conn->real_escape_string($replyTo);
+        
         if ($replyTo == "") {
             $sql = "INSERT INTO messages (query, author, text, image, timestamp, unread)
-            VALUES ('$query', '$loggedUser', '$messageText', '$messageImage', '$timestamp', '1')";
+            VALUES ('$checkedQuery', '$loggedUser', '$checkedText', '$checkedImage', '$timestamp', '1')";
         } else {
             $sql = "INSERT INTO messages (query, author, text, image, timestamp, unread, reply)
-            VALUES ('$query', '$loggedUser', '$messageText', '$messageImage', '$timestamp', '1', '$replyTo')";
+            VALUES ('$checkedQuery', '$loggedUser', '$checkedText', '$checkedImage', '$timestamp', '1', '$checkedReplyTo')";
         }
     
         if ($conn->query($sql) === TRUE) {
@@ -744,7 +785,8 @@ function lastId($loggedUser) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается получить ID сообщения. Код ошибки для поддержки: 132");}
 
-    $sql = "SELECT query, MAX(id) FROM messages WHERE query LIKE '%$signature%' GROUP BY query ORDER BY MAX(id) DESC LIMIT 1";
+    $checkedSignature = $conn->real_escape_string($signature);
+    $sql = "SELECT query, MAX(id) FROM messages WHERE query LIKE '%$checkedSignature%' GROUP BY query ORDER BY MAX(id) DESC LIMIT 1";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -765,8 +807,9 @@ function getDiscussions($query) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается запросить обсуждения. Код ошибки для поддержки: 134");}
 
+    $checkedQuery = $conn->real_escape_string($query);
     $sql = "SELECT id, topic, author, message, time FROM discussions
-    WHERE header='1' AND topic LIKE '%$query%'
+    WHERE header='1' AND topic LIKE '%$checkedQuery%'
     ORDER BY activity DESC LIMIT 500";
     $result = $conn->query($sql);
 
@@ -789,7 +832,8 @@ function getTopicHeader($headerId) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается запросить обсуждение. Код ошибки для поддержки: 135");}
 
-    $sql = "SELECT topic, author, message, time, header FROM discussions WHERE id='$headerId' LIMIT 1";
+    $checkedHeaderId = $conn->real_escape_string($headerId);
+    $sql = "SELECT topic, author, message, time, header FROM discussions WHERE id='$checkedHeaderId' LIMIT 1";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -810,7 +854,8 @@ function getTopicMessages($header) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается запросить сообщения в обсуждении. Код ошибки для поддержки: 136");}
 
-    $sql = "SELECT author, message, time, header FROM discussions WHERE topic='$header' ORDER BY id DESC LIMIT 500";
+    $checkedHeader = $conn->real_escape_string($header);
+    $sql = "SELECT author, message, time, header FROM discussions WHERE topic='$checkedHeader' ORDER BY id DESC LIMIT 500";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -837,11 +882,13 @@ function sendReply($topic, $who, $what) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается отправить ответ на обсуждение. Код ошибки для поддержки: 137");}
 
+    $checkedTopic = $conn->real_escape_string($topic);
+    $checkedWhat = $conn->real_escape_string($what);
     $sql = "INSERT INTO discussions (topic, author, message, time, header, activity)
-        VALUES ('$topic', '$loggedUser', '$what', '$when', '0', $when)";
+        VALUES ('$checkedTopic', '$loggedUser', '$checkedWhat', '$when', '0', $when)";
 
     if ($conn->query($sql) === TRUE) {
-        $sqlGetHeader = "SELECT id FROM discussions WHERE topic='$topic' ORDER BY id ASC LIMIT 1";
+        $sqlGetHeader = "SELECT id FROM discussions WHERE topic='$checkedTopic' ORDER BY id ASC LIMIT 1";
         $resultHeader = $conn->query($sqlGetHeader);
         if ($resultHeader->num_rows > 0) {
             $headerRow = $resultHeader->fetch_row();
@@ -873,8 +920,10 @@ function createTopic($token, $name, $message) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается создать обсуждение. Код ошибки для поддержки: 139");}
 
+    $checkedName = $conn->real_escape_string($name);
+    $checkedMessage = $conn->real_escape_string($message);
     $sql = "INSERT INTO discussions (topic, author, message, time, header, activity)
-        VALUES ('$name', '$loggedUser', '$message', '$when', '1', $when)";
+        VALUES ('$checkedName', '$loggedUser', '$checkedMessage', '$when', '1', $when)";
 
     if ($conn->query($sql) === TRUE) {
         return;
@@ -891,7 +940,8 @@ function allowEmail($login) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается получить имя пользователя. Код ошибки для поддержки: 143");}
 
-    $sql = "SELECT login FROM users WHERE login='$login' LIMIT 1";
+    $checkedLogin = $conn->real_escape_string($login);
+    $sql = "SELECT login FROM users WHERE login='$checkedLogin' LIMIT 1";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -913,7 +963,8 @@ function newMessageAvailable($token) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается показать таблицу чатов. Код ошибки для поддержки: 149");}
 
-    $sql = "SELECT query, MAX(id) FROM messages WHERE query LIKE '%$signature%' GROUP BY query ORDER BY MAX(id) DESC LIMIT 75";
+    $checkedSignature = $conn->real_escape_string($signature);
+    $sql = "SELECT query, MAX(id) FROM messages WHERE query LIKE '%$checkedSignature%' GROUP BY query ORDER BY MAX(id) DESC LIMIT 75";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -949,39 +1000,13 @@ function newMessageAvailable($token) {
         echo "{\"counter\": \"0\"}";
     }
 
-    // old logic
-
-    // $lastonline = 0;
-    // $lastmessage = 0;
-    // $signature = "M".$id."M";
-
-    // $conn = new mysqli($servername, $username, $password, $dbname);
-    // if ($conn->connect_error) { die("Ошибка подключения: не получается проверить новые сообщения. Код ошибки для поддержки: 144");}
-
-    // $sql = "SELECT timestamp FROM users WHERE id='$id' LIMIT 1";
-    // $result = $conn->query($sql);
-
-    // if ($result->num_rows > 0) {
-    //     $row = $result->fetch_row();
-    //     $lastonline = $row["0"];
-
-    //     $newSql = "SELECT count(timestamp) AS countNewMsg FROM messages
-    //         WHERE query LIKE '%$signature%' AND timestamp > '$lastonline'
-    //         ORDER BY id DESC";
-    //     $newResult = $conn->query($newSql);
-    //     $newRow = mysqli_fetch_assoc($newResult);
-    //     echo $newRow["countNewMsg"];
-    // } else {
-    //     echo "0";
-    // }
-
     $conn->close();
 }
 
 function userExists($id) {
     include 'credentials.php';
 
-    $checkedId = validate(intval($id));
+    $checkedId = $conn->real_escape_string(validate(intval($id)));
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается проверить наличие пользователя. Код ошибки для поддержки: 145");}
@@ -1001,11 +1026,10 @@ function userExists($id) {
 function getPushTokenById($id) {
     include 'credentials.php';
 
-    $checkedId = validate(intval($id));
-
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается проверить наличие пользователя. Код ошибки для поддержки: 146");}
 
+    $checkedId = $conn->real_escape_string(validate(intval($id)));
     $sql = "SELECT expo_push_token FROM users WHERE id='$checkedId' LIMIT 1";
     $result = $conn->query($sql);
 
@@ -1023,7 +1047,7 @@ function getPushTokenById($id) {
 function likePost($token, $postId) {
     include 'credentials.php';
 
-    $checkedId = validate(intval($postId));
+    $checkedId = $conn->real_escape_string(validate(intval($postId)));
     $loggedUser = getIdByToken($token);
     $status = "not_processed";
 
@@ -1067,6 +1091,7 @@ function getVoxCredentials($token) {
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) { die("Ошибка подключения: не получается получить данные. Код ошибки для поддержки: 151");}
 
+    $checkedToken = $conn->real_escape_string($checkedToken);
     $sql = "SELECT login FROM users WHERE token='$checkedToken' LIMIT 1";
     $result = $conn->query($sql);
 
