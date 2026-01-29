@@ -150,7 +150,7 @@ $(function(){
         <p class="console"><?php echo $status ?></p>
         <p style="text-align: center; margin-top: -15px; color: lightslategray; text-decoration: underline" id="resetPasswordButton">Забыли пароль?</p>
     </div>
-    <div id="agreement" class="<?php echo $signupClass ?>">
+    <div id="agreement" class="<?php echo $signupClass ?><?php echo $emailSuccess ?>">
         <h2 style="text-align: center;">Соглашение об использовании персональных данных</h2>
         <p>Невка — некоммерческий продукт, созданный физическим лицом, с целью попрактиковаться в навыках PHP, MySQL и React Native.</p>
         <p>Тем не менее, Невка может собирать персональные данные, такие, как:</p>
