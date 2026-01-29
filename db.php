@@ -355,9 +355,9 @@ function deleteWallEntry($token, $entryId) {
     include 'credentials.php';
 
     $checkedUser = getIdByToken($token);
-    $checkedID = $conn->real_escape_string(validate($entryId));
 
     $conn = new mysqli($servername, $username, $password, $dbname);
+	$checkedID = $conn->real_escape_string(validate($entryId));
     if ($conn->connect_error) { die("Ошибка подключения: не получается удалить со стены. Код ошибки для поддержки: 121");}
 
     $sql = "SELECT user FROM walls WHERE id='$checkedID' LIMIT 1";
@@ -1006,9 +1006,8 @@ function newMessageAvailable($token) {
 function userExists($id) {
     include 'credentials.php';
 
-    $checkedId = $conn->real_escape_string(validate(intval($id)));
-
     $conn = new mysqli($servername, $username, $password, $dbname);
+	$checkedId = $conn->real_escape_string(validate(intval($id)));
     if ($conn->connect_error) { die("Ошибка подключения: не получается проверить наличие пользователя. Код ошибки для поддержки: 145");}
 
     $sql = "SELECT id FROM users WHERE id='$checkedId' LIMIT 1";
@@ -1047,11 +1046,11 @@ function getPushTokenById($id) {
 function likePost($token, $postId) {
     include 'credentials.php';
 
-    $checkedId = $conn->real_escape_string(validate(intval($postId)));
     $loggedUser = getIdByToken($token);
     $status = "not_processed";
 
     $conn = new mysqli($servername, $username, $password, $dbname);
+	$checkedId = $conn->real_escape_string(validate(intval($postId)));
     if ($conn->connect_error) { die("Ошибка подключения: не получается лайкнуть пост. Код ошибки для поддержки: 150");}
 
     $sql = "SELECT likes FROM walls WHERE id='$checkedId' LIMIT 1";
