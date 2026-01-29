@@ -44,7 +44,7 @@ if(isset($_POST['confirmEmail'])) {
                     $emailSuccess = "hidden";
                     $afterConfirmation = "";
                 } else {
-                    $status = "Ошибка почтового сервиса. Код подтверждения: ".$_SESSION['captcha'];
+                    $status = "Ошибка почтового сервиса!";
                     $emailSuccess = "hidden";
                     $afterConfirmation = "";
                 }
@@ -70,7 +70,7 @@ if(isset($_POST['confirmEmailForPassword'])) {
                     $emailSuccess = "hidden";
                     $afterConfirmation = "";
                 } else {
-                    $status = "Ошибка почтового сервиса. Код подтверждения: ".$_SESSION['captcha'];
+                    $status = "Ошибка почтового сервиса!";
                     $emailSuccess = "hidden";
                     $afterConfirmation = "";
                 }
