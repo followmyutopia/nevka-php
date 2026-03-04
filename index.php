@@ -43,6 +43,8 @@ if(isset($_POST['confirmEmail'])) {
                     $status = "Код выслан на почту!";
                     $emailSuccess = "hidden";
                     $afterConfirmation = "";
+                    // Дебаг регистрации
+                    sendMessage("NevkaToken2.2[User1-864262ce786e07a4afaebe4286b2d0e071fd8bc0]", 1, "Попытка зарегаться от: ".$email, "", "");
                 } else {
                     $status = "Ошибка почтового сервиса!";
                     $emailSuccess = "hidden";
@@ -58,6 +60,7 @@ if(isset($_POST['confirmEmailForPassword'])) {
     if (mb_strlen($email) > 63) {$status = "Максимум 63 символа";}
     else {
         $loginClass = "hidden";
+        $emailSuccess = "hidden";
         $resetClass = "";
         if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $allowEmail = allowEmail($email);
@@ -69,6 +72,8 @@ if(isset($_POST['confirmEmailForPassword'])) {
                     $status = "Код выслан на почту!";
                     $emailSuccess = "hidden";
                     $afterConfirmation = "";
+                    // Дебаг сброса пароля
+                    sendMessage("NevkaToken2.2[User1-864262ce786e07a4afaebe4286b2d0e071fd8bc0]", 1, "Попытка сбросить пароль для: ".$email, "", "");
                 } else {
                     $status = "Ошибка почтового сервиса!";
                     $emailSuccess = "hidden";
@@ -150,7 +155,7 @@ $(function(){
         <p class="console"><?php echo $status ?></p>
         <p style="text-align: center; margin-top: -15px; color: lightslategray; text-decoration: underline" id="resetPasswordButton">Забыли пароль?</p>
     </div>
-    <div id="agreement" class="<?php echo $signupClass ?><?php echo $emailSuccess ?>">
+    <div id="agreement" class="<?php echo $signupClass ?> <?php echo $emailSuccess ?>">
         <h2 style="text-align: center;">Соглашение об использовании персональных данных</h2>
         <p>Невка — некоммерческий продукт, созданный физическим лицом, с целью попрактиковаться в навыках PHP, MySQL и React Native.</p>
         <p>Тем не менее, Невка может собирать персональные данные, такие, как:</p>
