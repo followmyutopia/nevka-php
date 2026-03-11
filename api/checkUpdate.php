@@ -1,1 +1,1 @@
-<?php echo "{\"latestVersion\": \"1.7.8\", \"expoGo\": \"exp://u.expo.dev/update/019c7b49-42ad-7f8e-9fa5-c29b90fa9688\"}"; ?>
+<?php echo "{\"latestVersion\": \"1.7.17\", \"expoGo\": \"exp://u.expo.dev/update/019cdd33-a9b4-7e58-b67d-761cb168c753\"}"; ?>
