@@ -344,7 +344,7 @@ td a {
     border-radius: 25px;
     padding: 9px 12px 26px;
     max-width: 80%;
-    min-width: 155px;
+    min-width: 165px;
     height: fit-content;
     width: fit-content;
     position: relative;
@@ -372,6 +372,11 @@ td a {
     position: absolute;
     bottom: 7px;
     left: 10px
+}
+
+.encrypted {
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
 .me {

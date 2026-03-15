@@ -1,6 +1,6 @@
 <?php
 /**
- * Nevka Project v1.13 Database inquires
+ * Nevka Project v1.14 Database inquires
  * 2025 Avicus Delacroix
  * 
  * Databases and types (MySQL):
@@ -10,6 +10,7 @@
  * Discussions: id (int), topic (varchar-255), author (int), message (varchar-1023), time (int), header (tinyint-1), activity (int)
  */
 
+include_once 'lib/ExpoCrypto.php';
 include 'lib/ImageResize.php';
 use \Gumlet\ImageResize;
 date_default_timezone_set("Europe/Moscow");
@@ -531,6 +532,8 @@ function showUsersTable($query) {
 
 function showChatsTable($token) {
     include 'credentials.php';
+    $crypto = new ExpoCrypto();
+    $key = pack("H*", $keyhash);
 
     $checkedUser = getIdByToken($token);
     $signature = "M".$checkedUser."M";
@@ -551,9 +554,25 @@ function showChatsTable($token) {
             $getLastText = "SELECT text, author, unread FROM messages WHERE id='$lastTextId' LIMIT 1";
             $lastTextResult = $conn->query($getLastText);
             $lastTextRow = $lastTextResult->fetch_row();
+
+            // approved sorting by id, user checked
+            $getName = "SELECT id, avatar, firstname, lastname, timestamp FROM users WHERE id='$interlocutor' LIMIT 500";
+            $entryResult = $conn->query($getName);
+            $row = $entryResult->fetch_row();
+
+            if ($checkedUser < $row[0]) {
+                $chat = $checkedUser."-".$row[0];
+            } else {
+                $chat = $row[0]."-".$checkedUser;
+            }
             
             $lastText = $lastTextRow[0];
-            if (preg_match('/^NE[1-9]\[.*\]$/', $lastText)) $lastText = "<i>[Зашифрованное сообщение]</i>";
+            // if (preg_match('/^NE[1-9]\[.*\]$/', $lastText)) $lastText = "<i>[Зашифрованное сообщение]</i>";
+            if (strpos($lastText, 'NE5[') === 0) {
+                $clean_content = mb_substr($lastText, 4, -1);
+                $decrypted = $crypto->decode($clean_content, $key.$chat);
+                $lastText = $decrypted;
+            }
             else if ($lastText == "") {$lastText = "(изображение)";}
             $lastTextAuthor = $lastTextRow[1];
             $isUnread = $lastTextRow[2];
@@ -568,11 +587,6 @@ function showChatsTable($token) {
             } else {
                 $preview = "<p class=\"preview\">".$lastText."</p>";
             }
-
-            // approved sorting by id, user checked
-            $getName = "SELECT id, avatar, firstname, lastname, timestamp FROM users WHERE id='$interlocutor' LIMIT 500";
-            $entryResult = $conn->query($getName);
-            $row = $entryResult->fetch_row();
             // compatibility with the v1.4 database format
             $formattedTime = date("d.m.Y в h:i a", $row["4"]);
             $online = "";
@@ -628,13 +642,17 @@ function currentUserHeader($userId) {
 
 function getMessages($token,$chatUser) {
     include 'credentials.php';
+    $crypto = new ExpoCrypto();
+    $key = pack("H*", $keyhash);
 
     $query = "";
     $loggedUser = getIdByToken($token);
     if ($loggedUser < $chatUser) {
         $query = "M".$loggedUser."M".$chatUser."M";
+        $chat = $loggedUser."-".$chatUser;
     } else {
         $query = "M".$chatUser."M".$loggedUser."M";
+        $chat = $chatUser."-".$loggedUser;
     }
     
     $conn = new mysqli($servername, $username, $password, $dbname);
@@ -657,7 +675,12 @@ function getMessages($token,$chatUser) {
                 $getReplyText = "SELECT author, text FROM messages WHERE id ='$checkedReplyId' LIMIT 1";
                 $textResult = $conn->query($getReplyText);
                 $textRow = $textResult->fetch_row();
-                if (preg_match('/^NE[1-9]\[.*\]$/', $textRow[1])) $preview = "<i>[Зашифрованное сообщение]</i>";
+                // if (preg_match('/^NE[1-9]\[.*\]$/', $textRow[1])) $preview = "<i>[Зашифрованное сообщение]</i>";
+                if (strpos($textRow[1], 'NE5[') === 0) {
+                    $clean_content = mb_substr($textRow[1], 4, -1);
+                    $decrypted = $crypto->decode($clean_content, $key.$chat);
+                    $preview = mb_strimwidth($decrypted, 0, 115, '...');
+                }
                 else if ($textRow[1] == "") $preview = "(изображение)"; 
                 else $preview = mb_strimwidth($textRow[1], 0, 115, '...');
                 if ($checkedUser == $textRow[0]) $reply = "Вы: ".$preview;
@@ -668,31 +691,36 @@ function getMessages($token,$chatUser) {
             if ($reply != "") $replyDOM = "<span class=\"reply\"><span class=\"fa fa-reply\" style=\"margin-right: 8px\"></span>".$reply."</span><hr>";
             else $replyDOM = "";
             
-            if (preg_match('/^NE[1-9]\[.*\]$/', $row["text"])) $row["text"] = "<i>[Зашифрованное сообщение. Для прочтения, используйте мобильное приложение Невки]</i>";
+            // if (preg_match('/^NE[1-9]\[.*\]$/', $row["text"])) $row["text"] = "<i>[Зашифрованное сообщение. Для прочтения, используйте мобильное приложение Невки]</i>";
+            if (strpos($row["text"], 'NE5[') === 0) {
+                $clean_content = mb_substr($row["text"], 4, -1);
+                $decrypted = $crypto->decode($clean_content, $key.$chat);
+                $row["text"] = $decrypted;
+            }
 
             if ($chatUser == $interlocutor) {
                 if ($row["author"] == $loggedUser) {
                     // my messages
                     if ($row["unread"]) {
                         // unread messages
-                        if ($row["image"] == "") echo "<div class=\"message me\">".$replyDOM.$row["text"]."<span class=\"isUnread fa fa-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
-                        else echo "<div class=\"message me\">".$replyDOM.$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
+                        if ($row["image"] == "") echo "<div class=\"message me\">".$replyDOM.$row["text"]."<span class=\"isUnread fa fa-circle\"><span class=\"encrypted fa fa-lock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
+                        else echo "<div class=\"message me\">".$replyDOM.$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-circle\"><span class=\"encrypted fa fa-lock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
                     } else {
                         // read messages
-                        if ($row["image"] == "") echo "<div class=\"message me\">".$replyDOM.$row["text"]."<span class=\"isUnread fa fa-check-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
-                        else echo "<div class=\"message me\">".$replyDOM.$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-check-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
+                        if ($row["image"] == "") echo "<div class=\"message me\">".$replyDOM.$row["text"]."<span class=\"isUnread fa fa-check-circle\"><span class=\"encrypted fa fa-lock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
+                        else echo "<div class=\"message me\">".$replyDOM.$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-check-circle\"><span class=\"encrypted fa fa-lock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
                         
                     }
                 } else if ($row["author"] == $chatUser) {
                     // interlocutor messages
                     if ($row["unread"]) {
                         // unread messages
-                        if ($row["image"] == "") echo "<div class=\"message\">".$replyDOM.$row["text"]."<span class=\"isUnread fa fa-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
-                        else echo "<div class=\"message\">".$replyDOM.$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
+                        if ($row["image"] == "") echo "<div class=\"message\">".$replyDOM.$row["text"]."<span class=\"isUnread fa fa-circle\"><span class=\"encrypted fa fa-lock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
+                        else echo "<div class=\"message\">".$replyDOM.$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-circle\"><span class=\"encrypted fa fa-lock\"></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
                     } else {
                         // read messages
-                        if ($row["image"] == "") echo "<div class=\"message\">".$replyDOM.$row["text"]."<span class=\"isUnread fa fa-check-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
-                        else echo "<div class=\"message\">".$replyDOM.$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-check-circle\"></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
+                        if ($row["image"] == "") echo "<div class=\"message\">".$replyDOM.$row["text"]."<span class=\"isUnread fa fa-check-circle\"><span class=\"encrypted fa fa-lock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
+                        else echo "<div class=\"message\">".$replyDOM.$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-check-circle\"><span class=\"encrypted fa fa-lock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
                         
                     }
                 } else { return; }
@@ -712,6 +740,8 @@ function getMessages($token,$chatUser) {
 function sendMessage($token, $currentChat, $messageText, $messageImage, $replyTo) {
     include 'credentials.php';
     include 'api/prepareText.php';
+    $crypto = new ExpoCrypto();
+    $key = pack("H*", $keyhash);
 
     $loggedUser = getIdByToken($token);
     $query = "";
@@ -724,8 +754,10 @@ function sendMessage($token, $currentChat, $messageText, $messageImage, $replyTo
 
         if ($loggedUser < $currentChat) {
             $query = "M".$loggedUser."M".$currentChat."M";
+            $chat = $loggedUser."-".$currentChat;
         } else {
             $query = "M".$currentChat."M".$loggedUser."M";
+            $chat = $currentChat."-".$loggedUser;
         }
     
         $conn = new mysqli($servername, $username, $password, $dbname);
@@ -735,6 +767,9 @@ function sendMessage($token, $currentChat, $messageText, $messageImage, $replyTo
         $checkedText = $conn->real_escape_string($messageText);
         $checkedImage = $conn->real_escape_string($messageImage);
         $checkedReplyTo = $conn->real_escape_string($replyTo);
+
+        $encodedText = $crypto->encode($checkedText, $key.$chat);
+        $checkedText = "NE5[".$encodedText."]";
         
         if ($replyTo == "") {
             $sql = "INSERT INTO messages (query, author, text, image, timestamp, unread)
