@@ -64,17 +64,14 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
                 } else {
                     echo "{\"result\":\"failure\",\"error\":\"Ошибка записи в БД\"}";
                 }
-
             } else {
                 echo "{\"result\":\"failure\",\"error\":\"Пост не существует\"}";
             }
-
         } else {
             echo "{\"result\":\"failure\",\"error\":\"wrong_token\"}";
         }
 
         $conn->close();
-
     } else {
         echo "{\"result\":\"failure\",\"error\":\"Параметры token, postId обязательны\"}";
     }

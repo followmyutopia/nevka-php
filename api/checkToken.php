@@ -37,7 +37,6 @@
         }
 
         $conn->close();
-
     } else {
         echo "{\"result\":\"0\"}";
     }

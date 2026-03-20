@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Nevka Project v1.14
  * 2025 Avicus Delacroix
@@ -8,12 +9,14 @@ include 'db.php';
 include 'header.php';
 include 'mailer.php';
 
-if(isset($_COOKIE["user_token"])) { header("Refresh:0; url=profile.php"); }
+if (isset($_COOKIE["user_token"])) {
+    header("Refresh:0; url=profile.php");
+}
 
 $login = $password = $newLogin = $newPassword = $confirmPassword = $status = $email = $captcha = $emailSuccess = $loginClass = "";
 $afterConfirmation = $signupClass = $resetClass = "hidden";
 
-if(isset($_POST['authorize'])) {
+if (isset($_POST['authorize'])) {
     $login = validate($_POST["login"]);
     $password = validate($_POST["password"]);
     if (empty($login) && empty($password)) {
@@ -23,14 +26,15 @@ if(isset($_POST['authorize'])) {
     } else if (empty($password)) {
         $status = "Пароль обязателен";
     } else {
-        $status = login($login,sha1($password));
+        $status = login($login, sha1($password));
     }
 }
 
-if(isset($_POST['confirmEmail'])) {
+if (isset($_POST['confirmEmail'])) {
     $email = validate($_POST["newLogin"]);
-    if (mb_strlen($email) > 63) {$status = "Максимум 63 символа";}
-    else {
+    if (mb_strlen($email) > 63) {
+        $status = "Максимум 63 символа";
+    } else {
         $loginClass = "hidden";
         $signupClass = "";
         if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -44,21 +48,26 @@ if(isset($_POST['confirmEmail'])) {
                     $emailSuccess = "hidden";
                     $afterConfirmation = "";
                     // Дебаг регистрации
-                    sendMessage("NevkaToken2.2[User1-864262ce786e07a4afaebe4286b2d0e071fd8bc0]", 1, "Попытка зарегаться от: ".$email, "", "");
+                    sendMessage("NevkaToken2.2[User1-864262ce786e07a4afaebe4286b2d0e071fd8bc0]", 1, "Попытка зарегаться от: " . $email, "", "");
                 } else {
                     $status = "Ошибка почтового сервиса!";
                     $emailSuccess = "hidden";
                     $afterConfirmation = "";
                 }
-            } else { $status = "Пользователь с такой почтой уже существует!"; }
-        } else { $status = "Не похоже на электронную почту"; }
+            } else {
+                $status = "Пользователь с такой почтой уже существует!";
+            }
+        } else {
+            $status = "Не похоже на электронную почту";
+        }
     }
 }
 
-if(isset($_POST['confirmEmailForPassword'])) {
+if (isset($_POST['confirmEmailForPassword'])) {
     $email = validate($_POST["newLogin"]);
-    if (mb_strlen($email) > 63) {$status = "Максимум 63 символа";}
-    else {
+    if (mb_strlen($email) > 63) {
+        $status = "Максимум 63 символа";
+    } else {
         $loginClass = "hidden";
         $emailSuccess = "hidden";
         $resetClass = "";
@@ -73,18 +82,22 @@ if(isset($_POST['confirmEmailForPassword'])) {
                     $emailSuccess = "hidden";
                     $afterConfirmation = "";
                     // Дебаг сброса пароля
-                    sendMessage("NevkaToken2.2[User1-864262ce786e07a4afaebe4286b2d0e071fd8bc0]", 1, "Попытка сбросить пароль для: ".$email, "", "");
+                    sendMessage("NevkaToken2.2[User1-864262ce786e07a4afaebe4286b2d0e071fd8bc0]", 1, "Попытка сбросить пароль для: " . $email, "", "");
                 } else {
                     $status = "Ошибка почтового сервиса!";
                     $emailSuccess = "hidden";
                     $afterConfirmation = "";
                 }
-            } else { $status = "Пользователь с такой почтой не существует!"; }
-        } else { $status = "Не похоже на электронную почту"; }
+            } else {
+                $status = "Пользователь с такой почтой не существует!";
+            }
+        } else {
+            $status = "Не похоже на электронную почту";
+        }
     }
 }
 
-if(isset($_POST['signup'])) {
+if (isset($_POST['signup'])) {
     $newPassword = validate($_POST["newPassword"]);
     $confirmPassword = validate($_POST["confirmPassword"]);
     $captcha = validate($_POST['captcha']);
@@ -98,11 +111,11 @@ if(isset($_POST['signup'])) {
         $status = "Пароли не совпадают";
     } else {
         $status = "Создание пользователя...";
-        $status = signup($_SESSION['email'],sha1($newPassword),"***REMOVED***");
+        $status = signup($_SESSION['email'], sha1($newPassword), "***REMOVED***");
     }
 }
 
-if(isset($_POST['reset'])) {
+if (isset($_POST['reset'])) {
     $newPassword = validate($_POST["newPassword"]);
     $confirmPassword = validate($_POST["confirmPassword"]);
     $captcha = validate($_POST['captcha']);
@@ -116,15 +129,15 @@ if(isset($_POST['reset'])) {
         $status = "Пароли не совпадают";
     } else {
         $status = "Сброс пароля...";
-        $status = resetPassword($_SESSION['email'],sha1($newPassword),"***REMOVED***");
+        $status = resetPassword($_SESSION['email'], sha1($newPassword), "***REMOVED***");
     }
 }
 ?>
 <script>
-$(function(){
-    $("#mainmenu").hide();
-    $("#togglemenu").hide();
-});
+    $(function() {
+        $("#mainmenu").hide();
+        $("#togglemenu").hide();
+    });
 </script>
 
 <div class="right mobile-expand" id="main">
@@ -143,7 +156,7 @@ $(function(){
 <div class="left mobile-expand" id="dialogs">
     <div id="login" class="<?php echo $loginClass ?>">
         <h2>Войти:</h2>
-        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post">
+        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
             <label for="login">Электронная почта:</label><br>
             <input type="email" name="login"><br>
             <label for="password">Пароль:</label><br>
@@ -174,12 +187,12 @@ $(function(){
     </div>
     <div id="signup" class="<?php echo $signupClass ?>">
         <h2>Зарегистрироваться:</h2>
-        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post" class="<?php echo $emailSuccess ?>">
+        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" class="<?php echo $emailSuccess ?>">
             Электронная почта: <input type="text" name="newLogin"><br>
             <br>
             <button class="button wide" type="submit" name="confirmEmail">Выслать код подтверждения</button>
         </form>
-        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post" class="<?php echo $afterConfirmation ?>">
+        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" class="<?php echo $afterConfirmation ?>">
             Электронная почта: <input type="email" name="newLogin" value="<?php echo $_SESSION['email'] ?>" disabled><br>
             Код подтверждения: <input type="text" name="captcha"><br>
             Новый пароль: <input type="password" name="newPassword"><br>
@@ -192,12 +205,12 @@ $(function(){
     </div>
     <div id="resetPassword" class="<?php echo $resetClass ?>">
         <h2>Сбросить пароль:</h2>
-        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post" class="<?php echo $emailSuccess ?>">
+        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" class="<?php echo $emailSuccess ?>">
             Электронная почта: <input type="text" name="newLogin"><br>
             <br>
             <button class="button wide" type="submit" name="confirmEmailForPassword">Выслать код подтверждения</button>
         </form>
-        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post" class="<?php echo $afterConfirmation ?>">
+        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" class="<?php echo $afterConfirmation ?>">
             Электронная почта: <input type="email" name="newLogin" value="<?php echo $_SESSION['email'] ?>" disabled><br>
             Код подтверждения: <input type="text" name="captcha"><br>
             Новый пароль: <input type="password" name="newPassword"><br>
@@ -210,13 +223,39 @@ $(function(){
     </div>
 </div>
 
-<script>$(function(){
-    $("#signUpButton").click(() => { $("#login").toggleClass("hidden"); $("#agreement").toggleClass("hidden"); $("#main").toggleClass("hidden"); $("#dialogs").toggleClass("left agreement"); });
-    $("#resetPasswordButton").click(() => { $("#login").toggleClass("hidden"); $("#resetPassword").toggleClass("hidden"); });
-    $("#backToLoginButton").click(() => { $("#login").toggleClass("hidden"); $("#signup").toggleClass("hidden"); });
-    $("#agreeButton").click(() => { $("#agreement").toggleClass("hidden"); $("#signup").toggleClass("hidden"); $("#main").toggleClass("hidden"); $("#dialogs").toggleClass("left agreement"); });
-    $("#disagreeButton").click(() => { $("#login").toggleClass("hidden"); $("#agreement").toggleClass("hidden"); $("#main").toggleClass("hidden"); $("#dialogs").toggleClass("left agreement"); });
-    $("#backToLoginFromReset").click(() => { $("#login").toggleClass("hidden"); $("#resetPassword").toggleClass("hidden"); });
-});</script>
+<script>
+    $(function() {
+        $("#signUpButton").click(() => {
+            $("#login").toggleClass("hidden");
+            $("#agreement").toggleClass("hidden");
+            $("#main").toggleClass("hidden");
+            $("#dialogs").toggleClass("left agreement");
+        });
+        $("#resetPasswordButton").click(() => {
+            $("#login").toggleClass("hidden");
+            $("#resetPassword").toggleClass("hidden");
+        });
+        $("#backToLoginButton").click(() => {
+            $("#login").toggleClass("hidden");
+            $("#signup").toggleClass("hidden");
+        });
+        $("#agreeButton").click(() => {
+            $("#agreement").toggleClass("hidden");
+            $("#signup").toggleClass("hidden");
+            $("#main").toggleClass("hidden");
+            $("#dialogs").toggleClass("left agreement");
+        });
+        $("#disagreeButton").click(() => {
+            $("#login").toggleClass("hidden");
+            $("#agreement").toggleClass("hidden");
+            $("#main").toggleClass("hidden");
+            $("#dialogs").toggleClass("left agreement");
+        });
+        $("#backToLoginFromReset").click(() => {
+            $("#login").toggleClass("hidden");
+            $("#resetPassword").toggleClass("hidden");
+        });
+    });
+</script>
 
 <?php include 'footer.php'; ?>

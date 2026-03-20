@@ -53,13 +53,11 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
 
             $conn->query("UPDATE discussions SET activity='$timestamp' WHERE id='$topic'");
             echo "{\"result\":\"success\"}";
-
         } else {
             echo "{\"result\":\"failure\",\"error\":\"Ошибка записи в БД\"}";
         }
 
         $conn->close();
-
     } else {
         echo "{\"result\":\"failure\",\"error\":\"Параметры token, topic, text обязательны\"}";
     }

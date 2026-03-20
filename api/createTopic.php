@@ -65,7 +65,6 @@
         }
 
         $conn->close();
-
     } else {
         echo "{\"result\":\"failure\",\"error\":\"Параметры token, title, message обязательны\"}";
     }

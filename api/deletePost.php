@@ -59,17 +59,14 @@
                 } else {
                     echo "{\"result\":\"failure\",\"error\":\"Ошибка записи в БД\"}";
                 }
-
             } else {
                 echo "{\"result\":\"failure\",\"error\":\"Недостаточно прав\"}";
             }
-
         } else {
             echo "{\"result\":\"failure\",\"error\":\"Запись удалена или не существует\"}";
         }
 
         $conn->close();
-
     } else {
         echo "{\"result\":\"failure\",\"error\":\"Параметры token, postId обязательны\"}";
     }

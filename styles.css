@@ -1,820 +1,836 @@
 * {
-    box-sizing: border-box
+  box-sizing: border-box;
 }
 
 .clearfix::after {
-    content: "";
-    clear: both;
-    display: table
+  content: "";
+  clear: both;
+  display: table;
 }
 
 body {
-    background-color: rgb(3, 27, 39);
-    color: rgba(255, 255, 255, .85);
-    font-family: "Montserrat", sans-serif;
-    font-weight: lighter;
-    margin: 0;
-    padding: 0;
-    height: 100vh
+  background-color: rgb(3, 27, 39);
+  color: rgba(255, 255, 255, 0.85);
+  font-family: "Montserrat", sans-serif;
+  font-weight: lighter;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
 }
 
 a {
-    color: rgba(255, 255, 255, .9)
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .top {
-    position: fixed;
-    top: 0;
-    left: 4%;
-    right: 4%;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    z-index: 2;
+  position: fixed;
+  top: 0;
+  left: 4%;
+  right: 4%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  z-index: 2;
 }
 
 .logogroup {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: rgba(255, 255, 255, 0);
-    backdrop-filter: blur(7px);
-    border-radius: 25px;
-    padding: 5px;
-    margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0);
+  backdrop-filter: blur(7px);
+  border-radius: 25px;
+  padding: 5px;
+  margin-top: 16px;
 }
 
 header {
-    background-color: rgba(255, 255, 255, .07);
-    backdrop-filter: blur(7px);
-    border-radius: 25px;
+  background-color: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(7px);
+  border-radius: 25px;
 
-    width: auto;
-    margin-top: 20px;
-    margin-bottom: 20px;
+  width: auto;
+  margin-top: 20px;
+  margin-bottom: 20px;
 
-    border: 1px solid rgba(255, 255, 255, .07);
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2), 0 6px 20px 0 rgba(0, 0, 0, .19);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow:
+    0 4px 8px 0 rgba(0, 0, 0, 0.2),
+    0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 header a,
 header span {
-    float: left;
-    display: block;
-    text-align: center;
-    padding: 13px 14px;
-    text-decoration: none
+  float: left;
+  display: block;
+  text-align: center;
+  padding: 13px 14px;
+  text-decoration: none;
 }
 
 header a:hover:not(.active) {
-    background-color: rgba(255, 255, 255, .07);
-    border-radius: 25px
+  background-color: rgba(255, 255, 255, 0.07);
+  border-radius: 25px;
 }
 
 header .active {
-    background-color: rgba(255, 255, 255, .2);
-    border-radius: 25px
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 25px;
 }
 
 #logoutbutton {
-    float: right
+  float: right;
 }
 
 #togglemenu {
-    display: none;
-    border: none;
-    box-shadow: none
+  display: none;
+  border: none;
+  box-shadow: none;
 }
 
 .content {
-    height: 100vh;
-    width: 90%;
-    padding-top: 70px;
-    margin-left: 5%;
-    margin-right: 5%
+  height: 100vh;
+  width: 90%;
+  padding-top: 70px;
+  margin-left: 5%;
+  margin-right: 5%;
 }
 
 .button {
-    background-color: rgba(255, 255, 255, .07);
-    backdrop-filter: blur(7px);
-    padding: 13px 14px;
-    border-radius: 25px;
-    color: rgba(255, 255, 255, .9);
-    font-size: medium;
-    border: 1px solid rgba(255, 255, 255, .07);
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2), 0 6px 20px 0 rgba(0, 0, 0, .19);
-    margin: 1px;
-    text-decoration: none
+  background-color: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(7px);
+  padding: 13px 14px;
+  border-radius: 25px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: medium;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow:
+    0 4px 8px 0 rgba(0, 0, 0, 0.2),
+    0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  margin: 1px;
+  text-decoration: none;
 }
 
 .button:hover {
-    background-color: rgba(255, 255, 255, .2);
-    border-radius: 25px
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 25px;
 }
 
 .rounded {
-    border-radius: 25px
+  border-radius: 25px;
 }
 
 input {
-    background-color: rgba(255, 255, 255, .07);
-    backdrop-filter: blur(7px);
-    padding: 11px 14px;
-    border-radius: 25px;
-    color: rgba(255, 255, 255, .9);
-    font-size: medium;
-    border: 1px solid rgba(255, 255, 255, .07);
-    margin: 7px 0;
-    width: 100%
+  background-color: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(7px);
+  padding: 11px 14px;
+  border-radius: 25px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: medium;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  margin: 7px 0;
+  width: 100%;
 }
 
 .fileInput {
-    background-color: rgba(255, 255, 255, .07);
-    backdrop-filter: blur(7px);
-    padding: 12px 16px 11px;
-    border-radius: 25px;
-    border: 1px solid rgba(255, 255, 255, .07);
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2), 0 6px 20px 0 rgba(0, 0, 0, .19);
-    margin: 1px
+  background-color: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(7px);
+  padding: 12px 16px 11px;
+  border-radius: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow:
+    0 4px 8px 0 rgba(0, 0, 0, 0.2),
+    0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  margin: 1px;
 }
 
 .attachment {
-    width: 34%
+  width: 34%;
 }
 
 img {
-    width: 100%;
-    border: 1px solid rgba(255, 255, 255, .07);
-    border-radius: 25px;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2), 0 6px 20px 0 rgba(0, 0, 0, .19)
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 25px;
+  box-shadow:
+    0 4px 8px 0 rgba(0, 0, 0, 0.2),
+    0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 .nevkaLogo {
-    border: none;
-    border-radius: none;
-    box-shadow: none;
-    width: 45px;
-    height: 45px;
-    align-self:center;
+  border: none;
+  border-radius: none;
+  box-shadow: none;
+  width: 45px;
+  height: 45px;
+  align-self: center;
 }
 
 .avatar {
-    border-radius: 25%;
+  border-radius: 25%;
 }
 
 .postImage {
-    box-shadow: none;
-    margin-bottom: 10px
+  box-shadow: none;
+  margin-bottom: 10px;
 }
 
 .messageImage {
-    box-shadow: none;
-    margin-top: 10px;
-    z-index: -1
+  box-shadow: none;
+  margin-top: 10px;
+  z-index: -1;
 }
 
 .left {
-    width: 34%;
-    float: left;
-    padding: 1% 1% 0;
-    margin-right: 1%;
-    margin-bottom: 0;
+  width: 34%;
+  float: left;
+  padding: 1% 1% 0;
+  margin-right: 1%;
+  margin-bottom: 0;
 }
 
 .right {
-    width: 64%;
-    float: left;
-    padding: 1% 1% 0;
-    margin-left: 1%;
-    margin-bottom: 0
+  width: 64%;
+  float: left;
+  padding: 1% 1% 0;
+  margin-left: 1%;
+  margin-bottom: 0;
 }
 
 .wall {
-    width: 65%;
-    float: right;
-    padding: 0 2%
+  width: 65%;
+  float: right;
+  padding: 0 2%;
 }
 
 #wallStatus {
-    padding-left: 2%;
-    color: #778899
+  padding-left: 2%;
+  color: #778899;
 }
 
 .delPostButton {
-    float: right;
-    color: #778899
+  float: right;
+  color: #778899;
 }
 
 .equal {
-    width: 50%;
-    float: left;
-    padding: 2%
+  width: 50%;
+  float: left;
+  padding: 2%;
 }
 
 .hidden {
-    display: none
+  display: none;
 }
 
 .console {
-    padding: 13px 14px;
-    text-align: center;
-    color: #778899
+  padding: 13px 14px;
+  text-align: center;
+  color: #778899;
 }
 
 .console a {
-    color: #778899
+  color: #778899;
 }
 
 .signature {
-    margin-top: -10px;
-    text-align: center;
-    color: #778899
+  margin-top: -10px;
+  text-align: center;
+  color: #778899;
 }
 
 .signature a {
-    color: #778899
+  color: #778899;
 }
 
 .nomargin-right {
-    margin-right: 0;
-    padding-right: 0
+  margin-right: 0;
+  padding-right: 0;
 }
 
 textarea {
-    background-color: rgba(255, 255, 255, .04);
-    backdrop-filter: blur(7px);
-    border: 1px solid rgba(255, 255, 255, .07);
-    height: 10vh;
-    width: 100%;
-    border-radius: 25px;
-    color: rgba(255, 255, 255, .9);
-    font-size: medium;
-    padding: 2% 3%;
-    margin-top: 0;
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif
+  background-color: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(7px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  height: 10vh;
+  width: 100%;
+  border-radius: 25px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: medium;
+  padding: 2% 3%;
+  margin-top: 0;
+  font-family:
+    "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
 }
 
 .send {
-    margin-top: 0;
-    float: right
+  margin-top: 0;
+  float: right;
 }
 
 table {
-    width: 100%;
-    border-collapse: collapse;
-    line-height: 150%
+  width: 100%;
+  border-collapse: collapse;
+  line-height: 150%;
 }
 
 th {
-    background-color: rgba(255, 255, 255, .2)
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 td,
 th {
-    text-align: center;
-    border: none;
-    padding: 8px
+  text-align: center;
+  border: none;
+  padding: 8px;
 }
 
 tr {
-    border-radius: 25px
+  border-radius: 25px;
 }
 
 tr:hover {
-    background-color: rgba(255, 255, 255, .07);
-    backdrop-filter: blur(7px);
-    border-radius: 25px
+  background-color: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(7px);
+  border-radius: 25px;
 }
 
 td a {
-    text-decoration: none;
-    color: rgba(255, 255, 255, .9)
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .b {
-    width: 25%;
-    white-space: nowrap
+  width: 25%;
+  white-space: nowrap;
 }
 
 .c {
-    width: 10%;
-    white-space: nowrap;
-    padding: 6px
+  width: 10%;
+  white-space: nowrap;
+  padding: 6px;
 }
 
 .d {
-    width: 90%;
-    text-align: left;
-    white-space: pre;
-    padding-left: 10px
+  width: 90%;
+  text-align: left;
+  white-space: pre;
+  padding-left: 10px;
 }
 
 .e {
-    color: #778899;
-    white-space: nowrap;
-    width: 1%;
-    vertical-align: top;
-    max-width: 30%
+  color: #778899;
+  white-space: nowrap;
+  width: 1%;
+  vertical-align: top;
+  max-width: 30%;
 }
 
 #chatWindow {
-    height: 65vh;
-    width: 100%;
-    overflow-y: auto;
-    margin-bottom: 0;
-    padding: 1% 0 0;
-    border-radius: 25px;
-    scrollbar-width: none
+  height: 65vh;
+  width: 100%;
+  overflow-y: auto;
+  margin-bottom: 0;
+  padding: 1% 0 0;
+  border-radius: 25px;
+  scrollbar-width: none;
 }
 
 .peopleWindow {
-    height: 90vh;
-    width: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 0;
-    margin: 0;
-    scrollbar-width: none
+  height: 90vh;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0;
+  margin: 0;
+  scrollbar-width: none;
 }
 
 .message {
-    background-color: rgba(255, 255, 255, .07);
-    backdrop-filter: blur(7px);
-    border: 1px solid rgba(255, 255, 255, .07);
-    border-radius: 25px;
-    padding: 9px 12px 26px;
-    max-width: 80%;
-    min-width: 165px;
-    height: fit-content;
-    width: fit-content;
-    position: relative;
-    overflow-y: scroll;
-    scrollbar-width: none;
-    margin: 1px 1px 5px;
-    float: left
+  background-color: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(7px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 25px;
+  padding: 9px 12px 26px;
+  max-width: 80%;
+  min-width: 165px;
+  height: fit-content;
+  width: fit-content;
+  position: relative;
+  overflow-y: scroll;
+  scrollbar-width: none;
+  margin: 1px 1px 5px;
+  float: left;
 }
 
 .time {
-    color: #778899;
-    vertical-align: middle;
-    white-space: nowrap;
-    font-size: small;
-    position: absolute;
-    bottom: 7px;
-    right: 10px
+  color: #778899;
+  vertical-align: middle;
+  white-space: nowrap;
+  font-size: small;
+  position: absolute;
+  bottom: 7px;
+  right: 10px;
 }
 
 .isUnread {
-    color: #778899;
-    vertical-align: middle;
-    white-space: nowrap;
-    font-size: small;
-    position: absolute;
-    bottom: 7px;
-    left: 10px
+  color: #778899;
+  vertical-align: middle;
+  white-space: nowrap;
+  font-size: small;
+  position: absolute;
+  bottom: 7px;
+  left: 10px;
 }
 
 .encrypted {
-    margin-left: 5px;
-    margin-right: 5px;
+  margin-left: 5px;
+  margin-right: 5px;
 }
 
 .me {
-    float: right
+  float: right;
 }
 
 #peopleList {
-    width: 80%;
-    margin: auto
+  width: 80%;
+  margin: auto;
 }
 
 .thumbnail {
-    object-fit: cover;
-    width: 70px;
-    height: 70px;
-    margin: auto;
-    border-radius: 25px
+  object-fit: cover;
+  width: 70px;
+  height: 70px;
+  margin: auto;
+  border-radius: 25px;
 }
 
 #mainlogo {
-    font-weight: lighter;
-    font-size: large;
-    color: rgba(255, 255, 255,0.85);
-    text-shadow: 0px 0px 9px rgba(255, 255, 255, 0.8);
-    margin-left: 5px
+  font-weight: lighter;
+  font-size: large;
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0px 0px 9px rgba(255, 255, 255, 0.8);
+  margin-left: 5px;
 }
 
 hr {
-    width: 100%;
-    color: rgba(255, 255, 255, .3);
-    float: center
+  width: 100%;
+  color: rgba(255, 255, 255, 0.3);
+  float: center;
 }
 
 .status {
-    margin-left: 10px
+  margin-left: 10px;
 }
 
 #statusBar {
-    margin-top: -5%
+  margin-top: -5%;
 }
 
 .info {
-    padding: 1% 2% 3%;
-    margin-top: -4%
+  padding: 1% 2% 3%;
+  margin-top: -4%;
 }
 
 .wallPost {
-    background-color: rgba(255, 255, 255, .04);
-    backdrop-filter: blur(7px);
-    padding: 1% 3%;
-    margin-top: 10px;
-    border-radius: 25px;
-    border: 1px solid rgba(255, 255, 255, .2)
+  background-color: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(7px);
+  padding: 1% 3%;
+  margin-top: 10px;
+  border-radius: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .messagesHeader {
-    background-color: rgba(255, 255, 255, .04);
-    backdrop-filter: blur(7px);
-    border: 1px solid rgba(255, 255, 255, .07);
-    border-radius: 25px;
-    padding: 5px 10px;
-    text-align: center;
-    margin-top: 0;
-    margin-bottom: 0;
-    margin-left: auto;
-    margin-right: auto;
+  background-color: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(7px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 25px;
+  padding: 5px 10px;
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .messagesHeader a {
-    text-decoration: none
+  text-decoration: none;
 }
 
 .userStatus {
-    padding: .5% 5%;
-    margin-top: 0;
-    float: right;
-    font-size: medium;
-    font-weight: lighter;
-    text-align: right
+  padding: 0.5% 5%;
+  margin-top: 0;
+  float: right;
+  font-size: medium;
+  font-weight: lighter;
+  text-align: right;
 }
 
 .userSearch {
-    width: 80%;
-    margin: 1% 10%;
-    background-color: rgba(255, 255, 255, 0)
+  width: 80%;
+  margin: 1% 10%;
+  background-color: rgba(255, 255, 255, 0);
 }
 
 .wide {
-    width: 100%
+  width: 100%;
 }
 
 .notWide {
-    width: 70%;
-    margin-left: 15%;
-    margin-right: 15%;
+  width: 70%;
+  margin-left: 15%;
+  margin-right: 15%;
 }
 
 #msgBack {
-    float: left;
-    margin-top: 8px;
-    margin-left: 8px;
-    color: #778899;
-    display: none
+  float: left;
+  margin-top: 8px;
+  margin-left: 8px;
+  color: #778899;
+  display: none;
 }
 
 .discInfo {
-    color: #778899;
-    min-width: 48%;
-    float: left;
-    margin-right: 2%
+  color: #778899;
+  min-width: 48%;
+  float: left;
+  margin-right: 2%;
 }
 
 .buttonpad {
-    width: 80%;
-    margin: 1% 10%
+  width: 80%;
+  margin: 1% 10%;
 }
 
 .discussion {
-    width: 80%;
-    margin: auto
+  width: 80%;
+  margin: auto;
 }
 
 .discImage {
-    width: 50%;
-    float: right
+  width: 50%;
+  float: right;
 }
 
 .answers {
-    width: 100%;
-    margin: auto
+  width: 100%;
+  margin: auto;
 }
 
 .setTheme {
-    width: 10%;
-    aspect-ratio: 1/1;
-    border: 1px solid rgba(255, 255, 255, .07);
-    border-radius: 25px;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2), 0 6px 20px 0 rgba(0, 0, 0, .19);
-    float: left;
-    margin-left: 1%
+  width: 10%;
+  aspect-ratio: 1/1;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 25px;
+  box-shadow:
+    0 4px 8px 0 rgba(0, 0, 0, 0.2),
+    0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  float: left;
+  margin-left: 1%;
 }
 
 #newMessageDot {
-    padding: 0;
-    float: right;
-    margin-left: 5px;
-    background-color: orange;
-    border-radius: 50%;
-    width: 18px;
-    height: 18px;
-    font-size: small;
-    line-height: 18px;
-    display: none
+  padding: 0;
+  float: right;
+  margin-left: 5px;
+  background-color: orange;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: small;
+  line-height: 18px;
+  display: none;
 }
 
 .mobile-app-download {
-    margin: 15%;
-    text-align: center;
-    color: rgba(255, 255, 255, .75)
+  margin: 15%;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.75);
 }
 
 .preview {
-    color: #778899;
-    font-size: 14px;
-    margin-top: -3px;
-    margin-bottom: -3px;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    width: 220px;
-    white-space: nowrap
+  color: #778899;
+  font-size: 14px;
+  margin-top: -3px;
+  margin-bottom: -3px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: 220px;
+  white-space: nowrap;
 }
 
 input:focus,
 textarea:focus {
-    outline: 0
+  outline: 0;
 }
 
 .activechat {
-    background: linear-gradient(to right, rgba(255, 255, 255, .10), rgba(255, 255, 255, 0))
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0)
+  );
 }
 
 .reply {
-    color: #778899
+  color: #778899;
 }
 
 .replyButton {
-    color: rgba(255, 255, 255, 0);
-    padding: 22px 15px
+  color: rgba(255, 255, 255, 0);
+  padding: 22px 15px;
 }
 
 .replyButton:hover {
-    color: rgba(255, 255, 255, .35)
+  color: rgba(255, 255, 255, 0.35);
 }
 
 #android {
-    padding: 1px;
-    float: right;
-    margin-top: 15.5px;
-    margin-bottom: .5px;
-    padding: 10px 15px;
-    border-radius: 25px;
-    font-size: 28px;
-    color: rgba(255, 255, 255,0.85);
-    text-shadow: 0px 0px 9px rgba(255, 255, 255, 0.7);
+  padding: 1px;
+  float: right;
+  margin-top: 15.5px;
+  margin-bottom: 0.5px;
+  padding: 10px 15px;
+  border-radius: 25px;
+  font-size: 28px;
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0px 0px 9px rgba(255, 255, 255, 0.7);
 }
 
 #ios {
-    padding: 1px;
-    float: right;
-    margin-top: 17px;
-    margin-bottom: -1px;
-    padding: 10px 15px;
-    border-radius: 25px;
-    font-size: 28px;
-    color: rgba(255, 255, 255,0.85);
-    text-shadow: 0px 0px 9px rgba(255, 255, 255, 0.6);
+  padding: 1px;
+  float: right;
+  margin-top: 17px;
+  margin-bottom: -1px;
+  padding: 10px 15px;
+  border-radius: 25px;
+  font-size: 28px;
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0px 0px 9px rgba(255, 255, 255, 0.6);
 }
 
 #android:hover,
 #ios:hover {
-    background-color: rgba(255, 255, 255, .07)
+  background-color: rgba(255, 255, 255, 0.07);
 }
 
 .likeButton {
-    border: 1px solid rgba(255, 255, 255, .07);
-    border-radius: 25px;
-    padding: 10px 4px 10px 14px;
-    margin-bottom: 14px;
-    width: max-content
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 25px;
+  padding: 10px 4px 10px 14px;
+  margin-bottom: 14px;
+  width: max-content;
 }
 
 .agreement {
-    width: 90%;
-    margin: auto;
+  width: 90%;
+  margin: auto;
 }
 
 .agree {
-    background-color: #2d8659;
+  background-color: #2d8659;
 }
 
 .disagree {
-    background-color: #990000;
+  background-color: #990000;
 }
 
 .agree:hover {
-    background-color: #206040;
+  background-color: #206040;
 }
 
 .disagree:hover {
-    background-color: #660000;
+  background-color: #660000;
 }
 
 .call {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(7px);
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(7px);
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
 
 #answer {
-    height: 100px;
-    width: 100px;
-    background-color: rgb(0, 150, 0);
-    border-radius: 50px;
-    border: 2px solid rgba(255, 255, 255, .5);
-    margin: 30px;
-    font-size: 50px;
-    color: white;
+  height: 100px;
+  width: 100px;
+  background-color: rgb(0, 150, 0);
+  border-radius: 50px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  margin: 30px;
+  font-size: 50px;
+  color: white;
 }
 
-#decline, #hangup {
-    height: 100px;
-    width: 100px;
-    background-color: rgb(150, 0, 0);
-    border-radius: 50px;
-    border: 2px solid rgba(255, 255, 255, .5);
-    margin: 30px;
-    font-size: 50px;
-    color: white;
+#decline,
+#hangup {
+  height: 100px;
+  width: 100px;
+  background-color: rgb(150, 0, 0);
+  border-radius: 50px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  margin: 30px;
+  font-size: 50px;
+  color: white;
 }
 
 #answer:hover {
-    background-color: rgb(0, 110, 0)
+  background-color: rgb(0, 110, 0);
 }
 
-#decline:hover, #hangup:hover {
-    background-color: rgb(110, 0, 0)
+#decline:hover,
+#hangup:hover {
+  background-color: rgb(110, 0, 0);
 }
 
-@media only screen and (max-width:1000px) {
-
-    header a,
-    header span {
-        padding: 14px 12px
-    }
+@media only screen and (max-width: 1000px) {
+  header a,
+  header span {
+    padding: 14px 12px;
+  }
 }
 
-@media only screen and (max-width:1000px) {
-
-    /* #android,
+@media only screen and (max-width: 1000px) {
+  /* #android,
     #ios {
         margin-left: 0;
         width: 10%
     } */
 
-    .mobile-expand {
-        width: 100%
-    }
+  .mobile-expand {
+    width: 100%;
+  }
 
-    .preview {
-        width: 40%
-    }
+  .preview {
+    width: 40%;
+  }
 
-    .b {
-        white-space: normal
-    }
+  .b {
+    white-space: normal;
+  }
 
-    .right {
-        padding: 1% 0
-    }
+  .right {
+    padding: 1% 0;
+  }
 
-    header {
-        box-shadow: none
-    }
+  header {
+    box-shadow: none;
+  }
 
-    #logoutbutton,
-    header a,
-    header span {
-        float: none
-    }
+  #logoutbutton,
+  header a,
+  header span {
+    float: none;
+  }
 
-    .solid {
-        background-color: rgba(35, 35, 35, .9);
-        /* position: fixed; */
-        z-index: 1
-    }
+  .solid {
+    background-color: rgba(35, 35, 35, 0.9);
+    /* position: fixed; */
+    z-index: 1;
+  }
 
-    #mainmenu {
-        display: none;
-        border-radius: 25px;
-        width: 150px;
-        margin: auto;
-    }
+  #mainmenu {
+    display: none;
+    border-radius: 25px;
+    width: 150px;
+    margin: auto;
+  }
 
-    #togglemenu {
-        display: block;
-        align-self: center;
-        margin: auto;
-        /* width: 150px; */
-    }
+  #togglemenu {
+    display: block;
+    align-self: center;
+    margin: auto;
+    /* width: 150px; */
+  }
 
-    #mainlogo {
-        float: left;
-        /* font-weight: 700 */
-    }
+  #mainlogo {
+    float: left;
+    /* font-weight: 700 */
+  }
 
-    header .active {
-        background-color: rgba(255, 255, 255, .7)
-    }
+  header .active {
+    background-color: rgba(255, 255, 255, 0.7);
+  }
 
-    header a:hover:not(.active) {
-        background-color: rgba(255, 255, 255, .5)
-    }
+  header a:hover:not(.active) {
+    background-color: rgba(255, 255, 255, 0.5);
+  }
 
-    .solid a {
-        color: rgba(255, 255, 255, .8)
-    }
+  .solid a {
+    color: rgba(255, 255, 255, 0.8);
+  }
 
-    #peopleList,
-    .attachment,
-    .wall {
-        width: 100%
-    }
+  #peopleList,
+  .attachment,
+  .wall {
+    width: 100%;
+  }
 
-    .userSearch {
-        width: 98%;
-        margin: 2% 1%;
-        background-color: rgba(255, 255, 255, 0)
-    }
+  .userSearch {
+    width: 98%;
+    margin: 2% 1%;
+    background-color: rgba(255, 255, 255, 0);
+  }
 
-    .mobile-hidden {
-        display: none
-    }
+  .mobile-hidden {
+    display: none;
+  }
 
-    #msgBack {
-        display: block
-    }
+  #msgBack {
+    display: block;
+  }
 
-    .discInfo {
-        width: 100%
-    }
+  .discInfo {
+    width: 100%;
+  }
 
-    .discussion {
-        width: 96%;
-        margin: 2%
-    }
+  .discussion {
+    width: 96%;
+    margin: 2%;
+  }
 
-    .buttonpad {
-        width: 98%;
-        margin: 2% 1%
-    }
+  .buttonpad {
+    width: 98%;
+    margin: 2% 1%;
+  }
 
-    .e {
-        white-space: normal
-    }
+  .e {
+    white-space: normal;
+  }
 
-    .mobile-app-download {
-        margin: 15% 5% 5%
-    }
+  .mobile-app-download {
+    margin: 15% 5% 5%;
+  }
 
-    .messagesHeader {
-        width: 98%;
-        top: 55px;
-        left: 1%;
-        z-index: 1
-    }
+  .messagesHeader {
+    width: 98%;
+    top: 55px;
+    left: 1%;
+    z-index: 1;
+  }
 
-    .activechat {
-        background: 0 0
-    }
+  .activechat {
+    background: 0 0;
+  }
 
-    #chatWindow {
-        height: 55vh
-    }
+  #chatWindow {
+    height: 55vh;
+  }
 }
 
-@media only screen and (min-width:1280px) {
-    .content {
-        width: 1200px;
-        margin: auto
-    }
+@media only screen and (min-width: 1280px) {
+  .content {
+    width: 1200px;
+    margin: auto;
+  }
 }

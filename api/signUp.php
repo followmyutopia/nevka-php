@@ -51,13 +51,11 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
             curl_close($ch);
 
             echo '{"result":"success"}';
-
         } else {
             echo '{"result":"failure","error":"Ошибка записи в БД"}';
         }
 
         $conn->close();
-
     } else {
         echo '{"result":"failure","error":"Параметры email, password обязательны"}';
     }

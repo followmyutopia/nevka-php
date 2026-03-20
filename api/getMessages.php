@@ -140,13 +140,11 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
             $conn->query($readRequest);
 
             echo "{\"id\": \"\", \"me\": \"\", \"text\": \"\", \"image\": \"\", \"timestamp\": \"\", \"formattedTime\": \"\", \"isUnread\": \"\", \"reply\": \"\"}]}";
-
         } else {
             echo "{\"result\":\"empty\",\"error\":\"Нет сообщений\"}";
         }
 
         $conn->close();
-
     } else {
         echo "{\"result\":\"failure\",\"error\":\"Token и chat обязательны\"}";
     }

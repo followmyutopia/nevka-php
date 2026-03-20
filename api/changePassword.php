@@ -67,17 +67,14 @@
                 } else {
                     echo "{\"result\":\"failure\",\"error\":\"Ошибка записи в БД\"}";
                 }
-
             } else {
                 echo "{\"result\":\"failure\",\"error\":\"Неправильный пароль\"}";
             }
-
         } else {
             echo "{\"result\":\"failure\",\"error\":\"wrong_token\"}";
         }
 
         $conn->close();
-
     } else {
         echo "{\"result\":\"failure\",\"error\":\"Параметры token, id, old_password, new_password обязательны\"}";
     }

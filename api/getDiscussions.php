@@ -66,13 +66,11 @@
             }
 
             echo "{\"id\": \"\", \"topic\": \"\", \"name\": \"\", \"message\": \"\", \"timestamp\": \"\", \"formattedTime\": \"\"}]}";
-
         } else {
             echo "{\"result\":\"empty\",\"error\":\"Нет обсуждений\"}";
         }
 
         $conn->close();
-
     } else {
         echo "{\"result\":\"failure\",\"error\":\"Query обязателен\"}";
     }

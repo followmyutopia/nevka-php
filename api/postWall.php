@@ -1,5 +1,6 @@
 <?php
 include '../lib/ImageResize.php';
+
 use \Gumlet\ImageResize;
 
 if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
@@ -70,7 +71,6 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
         }
 
         $conn->close();
-
     } else {
         echo "{\"result\":\"failure\",\"error\":\"Параметры token, text, image обязательны\"}";
     }

@@ -11,10 +11,17 @@
 </div>
 <script>
     $(function() {
-        var isLogged = <?php error_reporting(0); if (isset($_COOKIE["user_token"])) {echo "true";} else {echo "false";}; ?>;
+        var isLogged = <?php error_reporting(0);
+                        if (isset($_COOKIE["user_token"])) {
+                            echo "true";
+                        } else {
+                            echo "false";
+                        }; ?>;
 
         if (isLogged) {
-            $.post("updateAsync.php", { type: 5 }, async (response) => {
+            $.post("updateAsync.php", {
+                type: 5
+            }, async (response) => {
                 const data = JSON.parse(response);
                 const sdk = VoxImplant.getInstance();
                 let callActive = false;
@@ -30,7 +37,9 @@
                 }, 1000);
 
                 try {
-                    await sdk.init({ showWarnings: false });
+                    await sdk.init({
+                        showWarnings: false
+                    });
                     await sdk.connect();
                     await sdk.login(data[0], data[1]);
                     console.log("Calls: Voximplant logged in");
@@ -94,8 +103,10 @@
                         document.getElementById("callbuttons").style.display = "block";
                         document.getElementById("callwindow").style.display = "flex";
                         document.body.style.overflow = "hidden";
-                        
-                        const call = sdk.call({ number: document.getElementById("callUser").dataset.vox });
+
+                        const call = sdk.call({
+                            number: document.getElementById("callUser").dataset.vox
+                        });
 
                         document.getElementById("hangup").onclick = () => {
                             call.hangup();

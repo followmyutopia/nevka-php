@@ -74,11 +74,9 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
             }
 
             $conn->close();
-
         } else {
             echo "{\"result\":\"failure\",\"error\":\"Не похоже на электронную почту\"}";
         }
-
     } else {
         echo "{\"result\":\"failure\",\"error\":\"Параметр email обязателен\"}";
     }

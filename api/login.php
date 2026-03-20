@@ -46,13 +46,11 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
             } else {
                 echo "{\"result\":\"failure\",\"error\":\"Неправильный пароль\"}";
             }
-
         } else {
             echo "{\"result\":\"failure\",\"error\":\"Пользователь " . $login . " не найден\"}";
         }
 
         $conn->close();
-
     } else {
         echo "{\"result\":\"failure\",\"error\":\"Логин и пароль обязательны\"}";
     }

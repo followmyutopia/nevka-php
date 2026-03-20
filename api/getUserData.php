@@ -50,8 +50,8 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
                 $now = new DateTime();
 
                 $difference = ($lastOnline->diff($now)->days * 1440)
-                            + ($lastOnline->diff($now)->h * 60)
-                            + $lastOnline->diff($now)->i;
+                    + ($lastOnline->diff($now)->h * 60)
+                    + $lastOnline->diff($now)->i;
 
                 if ($difference <= 5) {
                     $online = "online";
@@ -64,17 +64,14 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
                 $voxUsername = str_replace("@", "-", $row[9]);
 
                 echo "{\"result\": \"success\", \"id\": \"" . $row[7] . "\", \"firstname\": \"" . $row[0] . "\", \"lastname\": \"" . $row[1] . "\", \"status\": \"" . $row[2] . "\", \"city\": \"" . $row[3] . "\", \"bio\": \"" . $row[4] . "\", \"timestamp\": \"" . $row[5] . "\", \"avatar\": \"" . $row[6] . "\", \"online\": \"" . $online . "\", \"push_token\": \"" . $row[8] . "\", \"vox_username\": \"" . $voxUsername . "\"}";
-
             } else {
                 echo "{\"result\":\"failure\",\"error\":\"Пользователь не найден\"}";
             }
-
         } else {
             echo "{\"result\":\"failure\",\"error\":\"wrong_token\"}";
         }
 
         $conn->close();
-
     } else {
         echo "{\"result\":\"failure\",\"error\":\"ID обязателен\"}";
     }

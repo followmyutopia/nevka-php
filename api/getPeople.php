@@ -1,5 +1,6 @@
 <?php
 include '../lib/ImageResize.php';
+
 use \Gumlet\ImageResize;
 
 if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
@@ -114,13 +115,11 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
             }
 
             echo "{\"id\": \"\", \"firstname\": \"\", \"lastname\": \"\", \"timestamp\": \"\", \"online\": \"\", \"avatar\": \"\"}]}";
-
         } else {
             echo "{\"result\":\"empty\",\"error\":\"Никого не найдено\"}";
         }
 
         $conn->close();
-
     } else {
         echo "{\"result\":\"failure\",\"error\":\"Query обязателен\"}";
     }

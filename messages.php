@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Nevka Project v1.14
  * 2025 Avicus Delacroix
@@ -8,25 +9,40 @@ $loggedUser = "";
 include 'db.php';
 include 'header.php';
 
-if(!isset($_COOKIE["user_token"])) { header("Refresh:0; url=index.php"); exit; }
-else { $loggedUser = checkCookie($_COOKIE["user_token"]); updateOnline($_COOKIE["user_token"]); }
-if(isset($_GET['logout'])) { logout(); }
+if (!isset($_COOKIE["user_token"])) {
+    header("Refresh:0; url=index.php");
+    exit;
+} else {
+    $loggedUser = checkCookie($_COOKIE["user_token"]);
+    updateOnline($_COOKIE["user_token"]);
+}
+if (isset($_GET['logout'])) {
+    logout();
+}
 $loggedUserData = getUserData($loggedUser);
-if (!isset($loggedUserData[1]) || !isset($loggedUserData[2])) {header("Refresh:0; url=settings.php");}
+if (!isset($loggedUserData[1]) || !isset($loggedUserData[2])) {
+    header("Refresh:0; url=settings.php");
+}
 
 $currentChat = $messageStatus = $textarea = $leftSection = $rightSection = "";
 
-if(isset($_GET['id'])) {
+if (isset($_GET['id'])) {
     if (userExists(intval($_GET['id']))) {
         $currentChat = validate(intval($_GET['id']));
         $leftSection = "mobile-hidden";
     } else {
-        $currentChat = lastId($loggedUser); $rightSection = "mobile-hidden";
+        $currentChat = lastId($loggedUser);
+        $rightSection = "mobile-hidden";
     }
+} else {
+    $currentChat = lastId($loggedUser);
+    $rightSection = "mobile-hidden";
 }
-else { $currentChat = lastId($loggedUser); $rightSection = "mobile-hidden"; }
 
-if ($currentChat == 0) { $rightSection = "hidden"; $leftSection = "wide"; }
+if ($currentChat == 0) {
+    $rightSection = "hidden";
+    $leftSection = "wide";
+}
 ?>
 
 <div class="left nomargin-right mobile-expand <?php echo $leftSection ?>">
@@ -50,86 +66,117 @@ if ($currentChat == 0) { $rightSection = "hidden"; $leftSection = "wide"; }
 </div>
 
 <script>
-$(function(){
-    const urlParams = new URLSearchParams(window.location.search);
-    const currentChatSelector = "#" + urlParams.get('id');
+    $(function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentChatSelector = "#" + urlParams.get('id');
 
-    $("#chatsTable").on('click', '.a', function(){ window.location = $(this).data("href"); });
-    $("#chatWindow").on('click', '.replyButton', function(){
-        $("#sendStatus").html('Ответ на сообщение <span class="fa fa-times"></span>');
-        $("#reply").val($(this).data("id"));
-    });
-    $("#sendStatus").click(() => {
-        $("#sendStatus").html("");
-        $("#reply").val("");
-    })
-    document.addEventListener('dragover', (e) => { e.preventDefault() });
-    document.addEventListener('drop', (e) => { document.getElementById('fileToUpload').files = e.dataTransfer.files; e.preventDefault() });
-
-    var sending = false;
-    $('form').submit(function(e) {
-        e.preventDefault();
-        var form = new FormData($(this)[0]);
-        var uploadfile = $("#fileToUpload").val();
-        var text_msg = $("#msg").val();
-        if (!sending) {
-            sending = true;
-            $.ajax({
-                url: $(this).attr('action'),
-                method: "POST",
-                data: form,
-                processData: false,
-                contentType: false,
-                success: function(data) {
-                    if(data != "OK" && data != "") {
-                        $("#sendStatus").html(data);
-                    }
-                    else {
-                        if($("#sendStatus").html() != "") $("#sendStatus").html("");
-                        $("#msg").val("");
-                        $("#fileToUpload").val("");
-                        $("#reply").val("");
-                    }
-                    $.post("updateAsync.php", { currentChat: <?php echo $currentChat ?>, type: 0 }, (messages) => {
-                        $("#chatWindow").html(messages).scrollTop($('#chatWindow')[0].scrollHeight);
-                    });
-                    sending = false;
-                }
-            }); 
-        }
-    });
-
-    $("#messagesmenu").addClass("active");
-    $('#chatWindow').scrollTop($('#chatWindow')[0].scrollHeight);
-    $(".a").click(function() { window.location = $(this).data("href"); });
-    $.post("updateAsync.php", { type: 3 }, function(data){
-        if (data != $("#chatsTable").html()) {
-            $("#chatsTable").html(data);
-            const headerId = "#" + $(".messagesHeader").attr('id');
-            $("#chatsTable").find(headerId).addClass("activechat");
-        }
-    });
-    $.post("updateAsync.php", { currentChat: <?php echo $currentChat ?>, type: 0 }, function(data){
-        if (data != $("#chatWindow").html()) { $("#chatWindow").html(data).scrollTop($('#chatWindow')[0].scrollHeight); }
-    });
-    var buffer;
-    window.setInterval(function(){
-        $.post("updateAsync.php", { currentChat: <?php echo $currentChat ?>, type: 0 }, (messages) => {
-            if (messages != buffer) $("#chatWindow").html(messages).scrollTop($('#chatWindow')[0].scrollHeight);
-            buffer = messages;
+        $("#chatsTable").on('click', '.a', function() {
+            window.location = $(this).data("href");
         });
-    },500);
-    window.setInterval(function(){
-        $.post("updateAsync.php", { type: 3 }, function(data){
+        $("#chatWindow").on('click', '.replyButton', function() {
+            $("#sendStatus").html('Ответ на сообщение <span class="fa fa-times"></span>');
+            $("#reply").val($(this).data("id"));
+        });
+        $("#sendStatus").click(() => {
+            $("#sendStatus").html("");
+            $("#reply").val("");
+        })
+        document.addEventListener('dragover', (e) => {
+            e.preventDefault()
+        });
+        document.addEventListener('drop', (e) => {
+            document.getElementById('fileToUpload').files = e.dataTransfer.files;
+            e.preventDefault()
+        });
+
+        var sending = false;
+        $('form').submit(function(e) {
+            e.preventDefault();
+            var form = new FormData($(this)[0]);
+            var uploadfile = $("#fileToUpload").val();
+            var text_msg = $("#msg").val();
+            if (!sending) {
+                sending = true;
+                $.ajax({
+                    url: $(this).attr('action'),
+                    method: "POST",
+                    data: form,
+                    processData: false,
+                    contentType: false,
+                    success: function(data) {
+                        if (data != "OK" && data != "") {
+                            $("#sendStatus").html(data);
+                        } else {
+                            if ($("#sendStatus").html() != "") $("#sendStatus").html("");
+                            $("#msg").val("");
+                            $("#fileToUpload").val("");
+                            $("#reply").val("");
+                        }
+                        $.post("updateAsync.php", {
+                            currentChat: <?php echo $currentChat ?>,
+                            type: 0
+                        }, (messages) => {
+                            $("#chatWindow").html(messages).scrollTop($('#chatWindow')[0].scrollHeight);
+                        });
+                        sending = false;
+                    }
+                });
+            }
+        });
+
+        $("#messagesmenu").addClass("active");
+        $('#chatWindow').scrollTop($('#chatWindow')[0].scrollHeight);
+        $(".a").click(function() {
+            window.location = $(this).data("href");
+        });
+        $.post("updateAsync.php", {
+            type: 3
+        }, function(data) {
             if (data != $("#chatsTable").html()) {
                 $("#chatsTable").html(data);
                 const headerId = "#" + $(".messagesHeader").attr('id');
                 $("#chatsTable").find(headerId).addClass("activechat");
             }
         });
-    },2500);
-    $('textarea').keypress(function (e) { if(e.which == 13) { $('#send').click(); e.preventDefault(); } });
-    if (<?php echo $currentChat ?> != 0) { $("#pplNotice").hide(); }
-});</script>
+        $.post("updateAsync.php", {
+            currentChat: <?php echo $currentChat ?>,
+            type: 0
+        }, function(data) {
+            if (data != $("#chatWindow").html()) {
+                $("#chatWindow").html(data).scrollTop($('#chatWindow')[0].scrollHeight);
+            }
+        });
+        var buffer;
+        window.setInterval(function() {
+            $.post("updateAsync.php", {
+                currentChat: <?php echo $currentChat ?>,
+                type: 0
+            }, (messages) => {
+                if (messages != buffer) $("#chatWindow").html(messages).scrollTop($('#chatWindow')[0].scrollHeight);
+                buffer = messages;
+            });
+        }, 500);
+        window.setInterval(function() {
+            $.post("updateAsync.php", {
+                type: 3
+            }, function(data) {
+                if (data != $("#chatsTable").html()) {
+                    $("#chatsTable").html(data);
+                    const headerId = "#" + $(".messagesHeader").attr('id');
+                    $("#chatsTable").find(headerId).addClass("activechat");
+                }
+            });
+        }, 2500);
+        $('textarea').keypress(function(e) {
+            if (e.which == 13) {
+                $('#send').click();
+                e.preventDefault();
+            }
+        });
+        if (<?php echo $currentChat ?> != 0) {
+            $("#pplNotice").hide();
+        }
+    });
+</script>
 
 <?php include 'footer.php'; ?>

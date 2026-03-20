@@ -2,7 +2,8 @@
 
 // Подготавливает текст после validate() на сайте к отображению на мобильном устройстве
 
-function prepareText($verifiedText) {
+function prepareText($verifiedText)
+{
     // Костыль для буквы х, почему-то регулярное выражение
     // воспринимает именно эту букву, как перенос строки
     $processedText = str_replace("х", "&KOSTYL;", $verifiedText);
@@ -21,5 +22,3 @@ function prepareText($verifiedText) {
     $processedText = str_replace("	", "    ", $processedText);
     return $processedText;
 }
-
-?>

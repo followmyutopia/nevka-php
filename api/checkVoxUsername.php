@@ -40,7 +40,6 @@
         }
 
         $conn->close();
-
     } else {
         echo "{\"result\":\"failure\",\"error\":\"ID обязателен\"}";
     }

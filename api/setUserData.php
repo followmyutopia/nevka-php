@@ -60,13 +60,11 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
             curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json'));
             curl_exec($ch);
             curl_close($ch);
-
         } else {
             echo '{"result":"failure","error":"Ошибка обновления данных"}';
         }
 
         $conn->close();
-
     } else {
         echo '{"result":"failure","error":"Параметры token, firstname, lastname, city, bio обязательны"}';
     }

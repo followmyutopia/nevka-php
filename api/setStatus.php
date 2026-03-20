@@ -26,9 +26,7 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
         }
 
         $conn->close();
-
     } else {
         echo "{\"result\":\"failure\",\"error\":\"Параметры token, status обязательны\"}";
     }
-
 }

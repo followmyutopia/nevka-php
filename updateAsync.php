@@ -1,10 +1,11 @@
 <?php
+
 /**
  * Nevka Project v1.14
  * 2025 Avicus Delacroix
  */
 
-if(isset($_COOKIE["user_token"])) {
+if (isset($_COOKIE["user_token"])) {
     include 'db.php';
     $user = $type = "";
     $type = validate($_POST['type']);
@@ -12,26 +13,20 @@ if(isset($_COOKIE["user_token"])) {
 
     if ($type == 0) {
         $user = validate($_POST['currentChat']);
-        getMessages($_COOKIE["user_token"],$user);
-    }
-    else if ($type == 1) {
+        getMessages($_COOKIE["user_token"], $user);
+    } else if ($type == 1) {
         $user = validate($_POST['currentChat']);
         getTopicMessages($user);
-    }
-    else if ($type == 2) {
+    } else if ($type == 2) {
         newMessageAvailable($_COOKIE["user_token"]);
-    }
-    else if ($type == 3) {
+    } else if ($type == 3) {
         showChatsTable($_COOKIE["user_token"]);
-    }
-    else if ($type == 4) {
+    } else if ($type == 4) {
         $user = validate($_POST['currentChat']);
-        likePost($_COOKIE["user_token"],$user);
-    }
-    else if ($type == 5) {
+        likePost($_COOKIE["user_token"], $user);
+    } else if ($type == 5) {
         getVoxCredentials($_COOKIE["user_token"]);
+    } else {
+        logout();
     }
-    else { logout(); }
 }
-?>
-

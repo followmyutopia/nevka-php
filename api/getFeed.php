@@ -1,5 +1,6 @@
 <?php
 include '../lib/ImageResize.php';
+
 use \Gumlet\ImageResize;
 
 if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
@@ -86,13 +87,11 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
             }
 
             echo "{\"id\": \"\", \"text\": \"\", \"image\": \"\", \"timestamp\": \"\", \"formattedTime\": \"\", \"likes\": \"\", \"author\": \"\", \"authorName\": \"\", \"authorAvatar\": \"\"}]}";
-
         } else {
             echo "{\"result\":\"empty\",\"error\":\"Лента пуста\"}";
         }
 
         $conn->close();
-
     } else {
         echo "{\"result\":\"failure\",\"error\":\"ID обязателен\"}";
     }

@@ -50,13 +50,11 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
             }
 
             echo "{\"id\": \"\", \"text\": \"\", \"image\": \"\", \"timestamp\": \"\", \"formattedTime\": \"\", \"likes\": \"\", \"author\": \"\"}]}";
-
         } else {
             echo "{\"result\":\"empty\",\"error\":\"Записей на стене нет\"}";
         }
 
         $conn->close();
-
     } else {
         echo "{\"result\":\"failure\",\"error\":\"ID обязателен\"}";
     }

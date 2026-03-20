@@ -85,13 +85,11 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
             }
 
             echo "{\"name\": \"\", \"text\": \"\", \"timestamp\": \"\", \"formattedTime\": \"\"}]}";
-
         } else {
             echo "{\"result\":\"empty\", \"header\": \"" . $header[0] . "\", \"author\": \"" . $authorName . "\", \"timestamp\": \"" . $header[3] . "\", \"formattedTime\": \"" . $formattedTime . "\", \"topicMessage\": \"" . $header[2] . "\", \"error\":\"Нет ответов\"}";
         }
 
         $conn->close();
-
     } else {
         echo "{\"result\":\"failure\",\"error\":\"ID обязателен\"}";
     }

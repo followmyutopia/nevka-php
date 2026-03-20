@@ -2,10 +2,12 @@
 error_reporting(0);
 
 include '../lib/ImageResize.php';
+
 use \Gumlet\ImageResize;
 
 if (!function_exists('str_contains')) {
-    function str_contains(string $haystack, string $needle): bool {
+    function str_contains(string $haystack, string $needle): bool
+    {
         return $needle !== '' && strpos($haystack, $needle) !== false;
     }
 }
@@ -145,14 +147,12 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
             }
 
             echo "{\"id\": \"\", \"firstname\": \"\", \"lastname\": \"\", \"lastText\": \"\", \"isUnread\": \"\", \"avatar\": \"\", \"online\": \"\", \"lastTextAuthor\": \"\"}]}";
-
         } else {
             echo "{\"result\":\"empty\",\"error\":\"Нет чатов\"}";
         }
 
         $conn->close();
-
     } else {
         echo "{\"result\":\"failure\",\"error\":\"Token обязателен\"}";
     }
-} ?>
+}
