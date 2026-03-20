@@ -691,39 +691,68 @@ function getMessages($token,$chatUser) {
             if ($reply != "") $replyDOM = "<span class=\"reply\"><span class=\"fa fa-reply\" style=\"margin-right: 8px\"></span>".$reply."</span><hr>";
             else $replyDOM = "";
             
-            // if (preg_match('/^NE[1-9]\[.*\]$/', $row["text"])) $row["text"] = "<i>[Зашифрованное сообщение. Для прочтения, используйте мобильное приложение Невки]</i>";
+            $isEncrypted = false;
             if (strpos($row["text"], 'NE5[') === 0) {
                 $clean_content = mb_substr($row["text"], 4, -1);
                 $decrypted = $crypto->decode($clean_content, $key.$chat);
                 $row["text"] = $decrypted;
+                $isEncrypted = true;
             }
 
             if ($chatUser == $interlocutor) {
-                if ($row["author"] == $loggedUser) {
-                    // my messages
-                    if ($row["unread"]) {
-                        // unread messages
-                        if ($row["image"] == "") echo "<div class=\"message me\">".$replyDOM.$row["text"]."<span class=\"isUnread fa fa-circle\"><span class=\"encrypted fa fa-lock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
-                        else echo "<div class=\"message me\">".$replyDOM.$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-circle\"><span class=\"encrypted fa fa-lock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
-                    } else {
-                        // read messages
-                        if ($row["image"] == "") echo "<div class=\"message me\">".$replyDOM.$row["text"]."<span class=\"isUnread fa fa-check-circle\"><span class=\"encrypted fa fa-lock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
-                        else echo "<div class=\"message me\">".$replyDOM.$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-check-circle\"><span class=\"encrypted fa fa-lock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
-                        
-                    }
-                } else if ($row["author"] == $chatUser) {
-                    // interlocutor messages
-                    if ($row["unread"]) {
-                        // unread messages
-                        if ($row["image"] == "") echo "<div class=\"message\">".$replyDOM.$row["text"]."<span class=\"isUnread fa fa-circle\"><span class=\"encrypted fa fa-lock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
-                        else echo "<div class=\"message\">".$replyDOM.$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-circle\"><span class=\"encrypted fa fa-lock\"></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
-                    } else {
-                        // read messages
-                        if ($row["image"] == "") echo "<div class=\"message\">".$replyDOM.$row["text"]."<span class=\"isUnread fa fa-check-circle\"><span class=\"encrypted fa fa-lock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
-                        else echo "<div class=\"message\">".$replyDOM.$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-check-circle\"><span class=\"encrypted fa fa-lock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
-                        
-                    }
-                } else { return; }
+                if ($isEncrypted) {
+                    if ($row["author"] == $loggedUser) {
+                        // my messages
+                        if ($row["unread"]) {
+                            // unread messages
+                            if ($row["image"] == "") echo "<div class=\"message me\">".$replyDOM.$row["text"]."<span class=\"isUnread fa fa-circle\"><span class=\"encrypted fa fa-lock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
+                            else echo "<div class=\"message me\">".$replyDOM.$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-circle\"><span class=\"encrypted fa fa-lock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
+                        } else {
+                            // read messages
+                            if ($row["image"] == "") echo "<div class=\"message me\">".$replyDOM.$row["text"]."<span class=\"isUnread fa fa-check-circle\"><span class=\"encrypted fa fa-lock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
+                            else echo "<div class=\"message me\">".$replyDOM.$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-check-circle\"><span class=\"encrypted fa fa-lock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
+                            
+                        }
+                    } else if ($row["author"] == $chatUser) {
+                        // interlocutor messages
+                        if ($row["unread"]) {
+                            // unread messages
+                            if ($row["image"] == "") echo "<div class=\"message\">".$replyDOM.$row["text"]."<span class=\"isUnread fa fa-circle\"><span class=\"encrypted fa fa-lock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
+                            else echo "<div class=\"message\">".$replyDOM.$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-circle\"><span class=\"encrypted fa fa-lock\"></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
+                        } else {
+                            // read messages
+                            if ($row["image"] == "") echo "<div class=\"message\">".$replyDOM.$row["text"]."<span class=\"isUnread fa fa-check-circle\"><span class=\"encrypted fa fa-lock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
+                            else echo "<div class=\"message\">".$replyDOM.$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-check-circle\"><span class=\"encrypted fa fa-lock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
+                            
+                        }
+                    } else { return; }
+                } else {
+                    if ($row["author"] == $loggedUser) {
+                        // my messages
+                        if ($row["unread"]) {
+                            // unread messages
+                            if ($row["image"] == "") echo "<div class=\"message me\">".$replyDOM.$row["text"]."<span class=\"isUnread fa fa-circle\"><span class=\"encrypted fa fa-unlock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
+                            else echo "<div class=\"message me\">".$replyDOM.$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-circle\"><span class=\"encrypted fa fa-unlock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
+                        } else {
+                            // read messages
+                            if ($row["image"] == "") echo "<div class=\"message me\">".$replyDOM.$row["text"]."<span class=\"isUnread fa fa-check-circle\"><span class=\"encrypted fa fa-unlock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
+                            else echo "<div class=\"message me\">".$replyDOM.$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-check-circle\"><span class=\"encrypted fa fa-unlock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
+                            
+                        }
+                    } else if ($row["author"] == $chatUser) {
+                        // interlocutor messages
+                        if ($row["unread"]) {
+                            // unread messages
+                            if ($row["image"] == "") echo "<div class=\"message\">".$replyDOM.$row["text"]."<span class=\"isUnread fa fa-circle\"><span class=\"encrypted fa fa-unlock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
+                            else echo "<div class=\"message\">".$replyDOM.$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-circle\"><span class=\"encrypted fa fa-unlock\"></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
+                        } else {
+                            // read messages
+                            if ($row["image"] == "") echo "<div class=\"message\">".$replyDOM.$row["text"]."<span class=\"isUnread fa fa-check-circle\"><span class=\"encrypted fa fa-unlock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
+                            else echo "<div class=\"message\">".$replyDOM.$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-check-circle\"><span class=\"encrypted fa fa-unlock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
+                            
+                        }
+                    } else { return; }
+                }
             } else { return; }
         }
 
