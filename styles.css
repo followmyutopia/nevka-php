@@ -203,6 +203,12 @@ img {
   padding: 0 2%;
 }
 
+.feed {
+  width: 65%;
+  margin: auto;
+  padding: 0 2%;
+}
+
 #wallStatus {
   padding-left: 2%;
   color: #778899;
@@ -755,7 +761,6 @@ textarea:focus {
 
   #mainlogo {
     float: left;
-    /* font-weight: 700 */
   }
 
   header .active {

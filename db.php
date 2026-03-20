@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Nevka Project v1.14 Database inquires
+ * Nevka Project v1.15 Database inquires
  * 2025 Avicus Delacroix
  * 
  * Databases and types (MySQL):
@@ -53,7 +53,7 @@ function getNameById($id)
 
     if ($result->num_rows > 0) {
         $row = $result->fetch_row();
-        return $row[0] . " " . $row[1];
+        return $row[0]." ".$row[1];
     } else {
         return "Неизвестный пользователь";
     }
@@ -155,7 +155,7 @@ function checkCookie($token)
 function changePassword($loggedUser, $token, $oldPassword, $newPassword)
 {
     include 'credentials.php';
-    $newToken = "User" . $loggedUser . "-" . $newPassword;
+    $newToken = "User".$loggedUser."-".$newPassword;
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) {
@@ -209,7 +209,7 @@ function getUserData($userId)
         // this is done for removing support for storing string dates in the database
         $formattedTime = date("d.m.Y в h:i a", $row[6]);
         $row[6] = $formattedTime;
-        $voxUsername = str_replace("@", "-", $row[7]) . "@nevka.avicus.n4.voximplant.com";
+        $voxUsername = str_replace("@", "-", $row[7])."@nevka.avicus.n4.voximplant.com";
         $row[7] = $voxUsername;
 
         return $row;
@@ -246,7 +246,7 @@ function setName($token, $newFirstName, $newLastName)
 {
     include 'credentials.php';
 
-    $query = $newFirstName . " " . $newLastName;
+    $query = $newFirstName." ".$newLastName;
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) {
@@ -269,11 +269,11 @@ function setName($token, $newFirstName, $newLastName)
             'api_key' => 'PASTE_VOX_API_KEY_HERE',
             'user_name' => $voxUsername,
             'application_id' => '11329284',
-            'user_display_name' => $newFirstName . ' ' . $newLastName,
+            'user_display_name' => $newFirstName.' '.$newLastName,
             'account_id' => '3831061'
         );
 
-        $url = "https://api.voximplant.com/platform_api/SetUserInfo/?" . http_build_query($params, '', '&', PHP_QUERY_RFC3986);
+        $url = "https://api.voximplant.com/platform_api/SetUserInfo/?".http_build_query($params, '', '&', PHP_QUERY_RFC3986);
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json'));
@@ -448,7 +448,12 @@ function getWallEntries($loggedUser, $me)
     }
 
     $checkedLoggedUser = $conn->real_escape_string($loggedUser);
-    $sql = "SELECT id, user, text, image, timestamp, likes FROM walls WHERE user='$checkedLoggedUser' ORDER BY id DESC LIMIT 100";
+    if ($loggedUser == "all") {
+        $sql = "SELECT id, user, text, image, timestamp, likes FROM walls ORDER BY id DESC LIMIT 200";
+    } else {
+        $sql = "SELECT id, user, text, image, timestamp, likes FROM walls WHERE user='$checkedLoggedUser' ORDER BY id DESC LIMIT 100";
+    }
+    
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -462,10 +467,29 @@ function getWallEntries($loggedUser, $me)
 
             // compatibility with the v1.4 database format
             $formattedTime = date("d.m.Y в h:i a", $row["timestamp"]);
-            if ($row["image"] != "") {
-                echo "<div class=\"wallPost\"><p>" . $formattedTime . " <a href=\"profile.php?id=" . $loggedUser . '">' . $authorName . '</a> написал(а):<span id="' . $row["id"] . '" class="delPostButton fa fa-times"></span></p><p>' . $row["text"] . '</p><img class="postImage" src="' . $row["image"] . "\"><div data-id=\"" . $row["id"] . "\" class=\"likeButton\"><span " . $redMarker . "class=\"fa fa-heart\" id=\"like-" . $row["id"] . "\"></span><span style=\"padding-right: 10px\" id=\"likeCount-" . $row["id"] . "\"> " . $numberOfLikes . "</span></div></div>";
+
+            if ($loggedUser == "all") {
+                $authorId = $row["user"];
+                $getAvatar = "SELECT avatar FROM users WHERE id='$authorId' LIMIT 1";
+                $avatarResult = $conn->query($getAvatar);
+                $avatarRow = $avatarResult->fetch_row();
+
+                $image = new ImageResize($avatarRow[0]);
+                $image->quality_jpg = 90;
+                $image->crop(100, 100);
+                $blob = 'data:image/jpeg;base64,'.base64_encode($image);
+                
+                if ($row["image"] != "") {
+                    echo "<div class=\"wallPost\"><img class=\"thumbnail\" style=\"float:left;margin:12px;\" src=\"".$blob."\"><p style=\"padding: 12px\"><a href=\"profile.php?id=".$row["user"].'">'.$authorName.'</a><br>'.$formattedTime.'</p><span class="clearfix"></span><p>'.$row["text"].'</p><img class="postImage" src="'.$row["image"]."\"><div data-id=\"".$row["id"]."\" class=\"likeButton\"><span ".$redMarker."class=\"fa fa-heart\" id=\"like-".$row["id"]."\"></span><span style=\"padding-right: 10px\" id=\"likeCount-".$row["id"]."\"> ".$numberOfLikes."</span></div></div>";
+                } else {
+                    echo "<div class=\"wallPost\"><img class=\"thumbnail\" style=\"float:left;margin:12px;\" src=\"".$blob."\"><p style=\"padding: 12px\"><a href=\"profile.php?id=".$row["user"].'">'.$authorName.'</a><br>'.$formattedTime.'</p><span class="clearfix"></span><p>'.$row["text"]."</p><div data-id=\"".$row["id"]."\" class=\"likeButton\"><span ".$redMarker."class=\"fa fa-heart\" id=\"like-".$row["id"]."\"></span><span style=\"padding-right: 10px\" id=\"likeCount-".$row["id"]."\"> ".$numberOfLikes."</span></div></div>";
+                }
             } else {
-                echo "<div class=\"wallPost\"><p>" . $formattedTime . " <a href=\"profile.php?id=" . $loggedUser . '">' . $authorName . '</a> написал(а):<span id="' . $row["id"] . '" class="delPostButton fa fa-times"></span></p><p>' . $row["text"] . "</p><div data-id=\"" . $row["id"] . "\" class=\"likeButton\"><span " . $redMarker . "class=\"fa fa-heart\" id=\"like-" . $row["id"] . "\"></span><span style=\"padding-right: 10px\" id=\"likeCount-" . $row["id"] . "\"> " . $numberOfLikes . "</span></div></div>";
+                if ($row["image"] != "") {
+                    echo "<div class=\"wallPost\"><p>".$formattedTime." <a href=\"profile.php?id=".$loggedUser.'">'.$authorName.'</a> написал(а):<span id="'.$row["id"].'" class="delPostButton fa fa-times"></span></p><p>'.$row["text"].'</p><img class="postImage" src="'.$row["image"]."\"><div data-id=\"".$row["id"]."\" class=\"likeButton\"><span ".$redMarker."class=\"fa fa-heart\" id=\"like-".$row["id"]."\"></span><span style=\"padding-right: 10px\" id=\"likeCount-".$row["id"]."\"> ".$numberOfLikes."</span></div></div>";
+                } else {
+                    echo "<div class=\"wallPost\"><p>".$formattedTime." <a href=\"profile.php?id=".$loggedUser.'">'.$authorName.'</a> написал(а):<span id="'.$row["id"].'" class="delPostButton fa fa-times"></span></p><p>'.$row["text"]."</p><div data-id=\"".$row["id"]."\" class=\"likeButton\"><span ".$redMarker."class=\"fa fa-heart\" id=\"like-".$row["id"]."\"></span><span style=\"padding-right: 10px\" id=\"likeCount-".$row["id"]."\"> ".$numberOfLikes."</span></div></div>";
+                }
             }
         }
     } else {
@@ -480,7 +504,7 @@ function signUp($newLogin, $hashedPassword, $apiKey)
     if ($apiKey == "***REMOVED***") {
         include 'credentials.php';
 
-        $newToken = "NevkaToken2.1[" . $newLogin . "-" . $hashedPassword . "]";
+        $newToken = "NevkaToken2.1[".$newLogin."-".$hashedPassword."]";
 
         $conn = new mysqli($servername, $username, $password, $dbname);
         if ($conn->connect_error) {
@@ -512,7 +536,7 @@ function signUp($newLogin, $hashedPassword, $apiKey)
                     'account_id' => '3831061'
                 );
 
-                $url = "https://api.voximplant.com/platform_api/AddUser/?" . http_build_query($params, '', '&', PHP_QUERY_RFC3986);
+                $url = "https://api.voximplant.com/platform_api/AddUser/?".http_build_query($params, '', '&', PHP_QUERY_RFC3986);
                 $ch = curl_init($url);
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json'));
@@ -534,7 +558,7 @@ function resetPassword($login, $hashedPassword, $apiKey)
     if ($apiKey == "***REMOVED***") {
         include 'credentials.php';
 
-        $newToken = "NevkaToken2.1[" . $login . "-" . $hashedPassword . "]";
+        $newToken = "NevkaToken2.1[".$login."-".$hashedPassword."]";
 
         $conn = new mysqli($servername, $username, $password, $dbname);
         if ($conn->connect_error) {
@@ -582,17 +606,17 @@ function showUsersTable($query)
             if ($difference <= 5) {
                 $online = "<span style=\"color:greenyellow; font-size: 14px\">Онлайн</span>";
             } else if ($difference < 60) {
-                $online = "<span style=\"color:lightslategray; font-size: 14px\">Был(а) в сети: " . $lastOnline->diff($now)->i . " минут назад</span>";
+                $online = "<span style=\"color:lightslategray; font-size: 14px\">Был(а) в сети: ".$lastOnline->diff($now)->i." минут назад</span>";
             } else {
-                $online = "<span style=\"color:lightslategray; font-size: 14px\">Был(а) в сети: " . $formattedTime . "</span>";
+                $online = "<span style=\"color:lightslategray; font-size: 14px\">Был(а) в сети: ".$formattedTime."</span>";
             }
 
             $image = new ImageResize($row["avatar"]);
             $image->quality_jpg = 90;
             $image->crop(100, 100);
-            $blob = 'data:image/jpeg;base64,' . base64_encode($image);
+            $blob = 'data:image/jpeg;base64,'.base64_encode($image);
 
-            echo "<tr><td class=\"a b\" data-href=\"profile.php?id=" . $row["id"] . "\"><img class=\"thumbnail\" src=\"" . $blob . "\"></td><td class=\"a\" data-href=\"profile.php?id=" . $row["id"] . "\">" . $row["firstname"] . " " . $row["lastname"] . "<br>" . $online . "</td><td class=\"a b\" data-href=\"messages.php?id=" . $row["id"] . "\"><button class=\"button\">Написать сообщение</button></td></tr>";
+            echo "<tr><td class=\"a b\" data-href=\"profile.php?id=".$row["id"]."\"><img class=\"thumbnail\" src=\"".$blob."\"></td><td class=\"a\" data-href=\"profile.php?id=".$row["id"]."\">".$row["firstname"]." ".$row["lastname"]."<br>".$online."</td><td class=\"a b\" data-href=\"messages.php?id=".$row["id"]."\"><button class=\"button\">Написать сообщение</button></td></tr>";
         }
     } else {
         echo "<tr><td>Никого не найдено</td></tr>";
@@ -608,7 +632,7 @@ function showChatsTable($token)
     $key = pack("H*", $keyhash);
 
     $checkedUser = getIdByToken($token);
-    $signature = "M" . $checkedUser . "M";
+    $signature = "M".$checkedUser."M";
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) {
@@ -635,16 +659,16 @@ function showChatsTable($token)
             $row = $entryResult->fetch_row();
 
             if ($checkedUser < $row[0]) {
-                $chat = $checkedUser . "-" . $row[0];
+                $chat = $checkedUser."-".$row[0];
             } else {
-                $chat = $row[0] . "-" . $checkedUser;
+                $chat = $row[0]."-".$checkedUser;
             }
 
             $lastText = $lastTextRow[0];
             // if (preg_match('/^NE[1-9]\[.*\]$/', $lastText)) $lastText = "<i>[Зашифрованное сообщение]</i>";
             if (strpos($lastText, 'NE5[') === 0) {
                 $clean_content = mb_substr($lastText, 4, -1);
-                $decrypted = $crypto->decode($clean_content, $key . $chat);
+                $decrypted = $crypto->decode($clean_content, $key.$chat);
                 $lastText = $decrypted;
             } else if ($lastText == "") {
                 $lastText = "(изображение)";
@@ -658,9 +682,9 @@ function showChatsTable($token)
                 $unreadMarker = "";
             }
             if ($lastTextAuthor == $checkedUser) {
-                $preview = "<p class=\"preview\">Вы: " . $lastText . "</p>";
+                $preview = "<p class=\"preview\">Вы: ".$lastText."</p>";
             } else {
-                $preview = "<p class=\"preview\">" . $lastText . "</p>";
+                $preview = "<p class=\"preview\">".$lastText."</p>";
             }
             // compatibility with the v1.4 database format
             $formattedTime = date("d.m.Y в h:i a", $row["4"]);
@@ -668,21 +692,21 @@ function showChatsTable($token)
             $lastOnline = date_create_from_format("d.m.Y в h:i a", $formattedTime);
             $now = new DateTime();
             $difference = ($lastOnline->diff($now)->days * 1440) + ($lastOnline->diff($now)->h * 60) + $lastOnline->diff($now)->i;
-            $shortDate = str_replace("." . $lastOnline->format("Y"), "", $formattedTime);
+            $shortDate = str_replace(".".$lastOnline->format("Y"), "", $formattedTime);
             if ($difference <= 5) {
                 $online = "<span style=\"color:greenyellow; font-size: 14px\">Онлайн</span>";
             } else if ($difference < 60) {
-                $online = "<span style=\"color:lightslategray; font-size: 14px\">Был(а): " . $lastOnline->diff($now)->i . " минут назад</span>";
+                $online = "<span style=\"color:lightslategray; font-size: 14px\">Был(а): ".$lastOnline->diff($now)->i." минут назад</span>";
             } else {
-                $online = "<span style=\"color:lightslategray; font-size: 14px\">Был(а): " . $shortDate . "</span>";
+                $online = "<span style=\"color:lightslategray; font-size: 14px\">Был(а): ".$shortDate."</span>";
             }
 
             $image = new ImageResize($row["1"]);
             $image->quality_jpg = 90;
             $image->crop(100, 100);
-            $blob = 'data:image/jpeg;base64,' . base64_encode($image);
+            $blob = 'data:image/jpeg;base64,'.base64_encode($image);
 
-            echo "<tr id=\"" . $row["0"] . "\"><td class=\"a c\" data-href=\"messages.php?id=" . $row["0"] . "\"><img class=\"thumbnail\" style=\"margin-top: 7px; margin-left: 7px\" src=\"" . $blob . "\"></td><td class=\"a d\" data-href=\"messages.php?id=" . $row["0"] . "\">" . $row["2"] . " " . $row["3"] . $unreadMarker . "<br>" . $online . $preview . "</td></tr>";
+            echo "<tr id=\"".$row["0"]."\"><td class=\"a c\" data-href=\"messages.php?id=".$row["0"]."\"><img class=\"thumbnail\" style=\"margin-top: 7px; margin-left: 7px\" src=\"".$blob."\"></td><td class=\"a d\" data-href=\"messages.php?id=".$row["0"]."\">".$row["2"]." ".$row["3"].$unreadMarker."<br>".$online.$preview."</td></tr>";
         }
     } else {
         echo "<p class=\"console\">Нет чатов.</p><p id=\"pplNotice\" class=\"console\">Перейдите в раздел <a href=\"people.php\">Люди</a> для выбора собеседника.</p>";
@@ -716,11 +740,11 @@ function currentUserHeader($userId)
         if ($difference <= 5) {
             $online = "<span style=\"color:greenyellow\">Онлайн</span>";
         } else if ($difference < 60) {
-            $online = "<span style=\"color:lightslategray\">Был(а): " . $lastOnline->diff($now)->i . " минут назад</span>";
+            $online = "<span style=\"color:lightslategray\">Был(а): ".$lastOnline->diff($now)->i." минут назад</span>";
         } else {
-            $online = "<span style=\"color:lightslategray\">Был(а): " . $formattedTime . "</span>";
+            $online = "<span style=\"color:lightslategray\">Был(а): ".$formattedTime."</span>";
         }
-        echo "<p class=\"messagesHeader\" id=\"" . $userId . "\"><a id=\"msgBack\" href=\"messages.php\">← Назад</a><b><a href=\"profile.php?id=" . $userId . "\">" . $row["0"] . " " . $row["1"] . "</a></b><br>" . $online . "</p>";
+        echo "<p class=\"messagesHeader\" id=\"".$userId."\"><a id=\"msgBack\" href=\"messages.php\">← Назад</a><b><a href=\"profile.php?id=".$userId."\">".$row["0"]." ".$row["1"]."</a></b><br>".$online."</p>";
     } else {
         return;
     }
@@ -737,11 +761,11 @@ function getMessages($token, $chatUser)
     $query = "";
     $loggedUser = getIdByToken($token);
     if ($loggedUser < $chatUser) {
-        $query = "M" . $loggedUser . "M" . $chatUser . "M";
-        $chat = $loggedUser . "-" . $chatUser;
+        $query = "M".$loggedUser."M".$chatUser."M";
+        $chat = $loggedUser."-".$chatUser;
     } else {
-        $query = "M" . $chatUser . "M" . $loggedUser . "M";
-        $chat = $chatUser . "-" . $loggedUser;
+        $query = "M".$chatUser."M".$loggedUser."M";
+        $chat = $chatUser."-".$loggedUser;
     }
 
     $conn = new mysqli($servername, $username, $password, $dbname);
@@ -755,7 +779,7 @@ function getMessages($token, $chatUser)
 
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
-            $interlocutor = str_replace("M" . $loggedUser . "M", "", $row["query"]);
+            $interlocutor = str_replace("M".$loggedUser."M", "", $row["query"]);
             $interlocutor = str_replace("M", "", $interlocutor);
             // compatibility with the v1.4 database format
             $formattedTime = date("d.m в h:i a", $row["timestamp"]);
@@ -769,22 +793,22 @@ function getMessages($token, $chatUser)
                 // if (preg_match('/^NE[1-9]\[.*\]$/', $textRow[1])) $preview = "<i>[Зашифрованное сообщение]</i>";
                 if (strpos($textRow[1], 'NE5[') === 0) {
                     $clean_content = mb_substr($textRow[1], 4, -1);
-                    $decrypted = $crypto->decode($clean_content, $key . $chat);
+                    $decrypted = $crypto->decode($clean_content, $key.$chat);
                     $preview = mb_strimwidth($decrypted, 0, 115, '...');
                 } else if ($textRow[1] == "") $preview = "(изображение)";
                 else $preview = mb_strimwidth($textRow[1], 0, 115, '...');
-                if ($checkedUser == $textRow[0]) $reply = "Вы: " . $preview;
+                if ($checkedUser == $textRow[0]) $reply = "Вы: ".$preview;
                 else $reply = $preview;
             } else $reply = "";
 
 
-            if ($reply != "") $replyDOM = "<span class=\"reply\"><span class=\"fa fa-reply\" style=\"margin-right: 8px\"></span>" . $reply . "</span><hr>";
+            if ($reply != "") $replyDOM = "<span class=\"reply\"><span class=\"fa fa-reply\" style=\"margin-right: 8px\"></span>".$reply."</span><hr>";
             else $replyDOM = "";
 
             $isEncrypted = false;
             if (strpos($row["text"], 'NE5[') === 0) {
                 $clean_content = mb_substr($row["text"], 4, -1);
-                $decrypted = $crypto->decode($clean_content, $key . $chat);
+                $decrypted = $crypto->decode($clean_content, $key.$chat);
                 $row["text"] = $decrypted;
                 $isEncrypted = true;
             }
@@ -795,23 +819,23 @@ function getMessages($token, $chatUser)
                         // my messages
                         if ($row["unread"]) {
                             // unread messages
-                            if ($row["image"] == "") echo "<div class=\"message me\">" . $replyDOM . $row["text"] . "<span class=\"isUnread fa fa-circle\"><span class=\"encrypted fa fa-lock\"></span></span><span class=\"time\">" . $formattedTime . "</span></div><span data-id=\"" . $row["id"] . "\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
-                            else echo "<div class=\"message me\">" . $replyDOM . $row["text"] . "<img class=\"messageImage\" src=\"" . $row["image"] . "\"><span class=\"isUnread fa fa-circle\"><span class=\"encrypted fa fa-lock\"></span></span><span class=\"time\">" . $formattedTime . "</span></div><span data-id=\"" . $row["id"] . "\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
+                            if ($row["image"] == "") echo "<div class=\"message me\">".$replyDOM.$row["text"]."<span class=\"isUnread fa fa-circle\"><span class=\"encrypted fa fa-lock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
+                            else echo "<div class=\"message me\">".$replyDOM.$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-circle\"><span class=\"encrypted fa fa-lock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
                         } else {
                             // read messages
-                            if ($row["image"] == "") echo "<div class=\"message me\">" . $replyDOM . $row["text"] . "<span class=\"isUnread fa fa-check-circle\"><span class=\"encrypted fa fa-lock\"></span></span><span class=\"time\">" . $formattedTime . "</span></div><span data-id=\"" . $row["id"] . "\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
-                            else echo "<div class=\"message me\">" . $replyDOM . $row["text"] . "<img class=\"messageImage\" src=\"" . $row["image"] . "\"><span class=\"isUnread fa fa-check-circle\"><span class=\"encrypted fa fa-lock\"></span></span><span class=\"time\">" . $formattedTime . "</span></div><span data-id=\"" . $row["id"] . "\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
+                            if ($row["image"] == "") echo "<div class=\"message me\">".$replyDOM.$row["text"]."<span class=\"isUnread fa fa-check-circle\"><span class=\"encrypted fa fa-lock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
+                            else echo "<div class=\"message me\">".$replyDOM.$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-check-circle\"><span class=\"encrypted fa fa-lock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
                         }
                     } else if ($row["author"] == $chatUser) {
                         // interlocutor messages
                         if ($row["unread"]) {
                             // unread messages
-                            if ($row["image"] == "") echo "<div class=\"message\">" . $replyDOM . $row["text"] . "<span class=\"isUnread fa fa-circle\"><span class=\"encrypted fa fa-lock\"></span></span><span class=\"time\">" . $formattedTime . "</span></div><span data-id=\"" . $row["id"] . "\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
-                            else echo "<div class=\"message\">" . $replyDOM . $row["text"] . "<img class=\"messageImage\" src=\"" . $row["image"] . "\"><span class=\"isUnread fa fa-circle\"><span class=\"encrypted fa fa-lock\"></span><span class=\"time\">" . $formattedTime . "</span></div><span data-id=\"" . $row["id"] . "\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
+                            if ($row["image"] == "") echo "<div class=\"message\">".$replyDOM.$row["text"]."<span class=\"isUnread fa fa-circle\"><span class=\"encrypted fa fa-lock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
+                            else echo "<div class=\"message\">".$replyDOM.$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-circle\"><span class=\"encrypted fa fa-lock\"></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
                         } else {
                             // read messages
-                            if ($row["image"] == "") echo "<div class=\"message\">" . $replyDOM . $row["text"] . "<span class=\"isUnread fa fa-check-circle\"><span class=\"encrypted fa fa-lock\"></span></span><span class=\"time\">" . $formattedTime . "</span></div><span data-id=\"" . $row["id"] . "\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
-                            else echo "<div class=\"message\">" . $replyDOM . $row["text"] . "<img class=\"messageImage\" src=\"" . $row["image"] . "\"><span class=\"isUnread fa fa-check-circle\"><span class=\"encrypted fa fa-lock\"></span></span><span class=\"time\">" . $formattedTime . "</span></div><span data-id=\"" . $row["id"] . "\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
+                            if ($row["image"] == "") echo "<div class=\"message\">".$replyDOM.$row["text"]."<span class=\"isUnread fa fa-check-circle\"><span class=\"encrypted fa fa-lock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
+                            else echo "<div class=\"message\">".$replyDOM.$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-check-circle\"><span class=\"encrypted fa fa-lock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
                         }
                     } else {
                         return;
@@ -821,23 +845,23 @@ function getMessages($token, $chatUser)
                         // my messages
                         if ($row["unread"]) {
                             // unread messages
-                            if ($row["image"] == "") echo "<div class=\"message me\">" . $replyDOM . $row["text"] . "<span class=\"isUnread fa fa-circle\"><span class=\"encrypted fa fa-unlock\"></span></span><span class=\"time\">" . $formattedTime . "</span></div><span data-id=\"" . $row["id"] . "\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
-                            else echo "<div class=\"message me\">" . $replyDOM . $row["text"] . "<img class=\"messageImage\" src=\"" . $row["image"] . "\"><span class=\"isUnread fa fa-circle\"><span class=\"encrypted fa fa-unlock\"></span></span><span class=\"time\">" . $formattedTime . "</span></div><span data-id=\"" . $row["id"] . "\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
+                            if ($row["image"] == "") echo "<div class=\"message me\">".$replyDOM.$row["text"]."<span class=\"isUnread fa fa-circle\"><span class=\"encrypted fa fa-unlock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
+                            else echo "<div class=\"message me\">".$replyDOM.$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-circle\"><span class=\"encrypted fa fa-unlock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
                         } else {
                             // read messages
-                            if ($row["image"] == "") echo "<div class=\"message me\">" . $replyDOM . $row["text"] . "<span class=\"isUnread fa fa-check-circle\"><span class=\"encrypted fa fa-unlock\"></span></span><span class=\"time\">" . $formattedTime . "</span></div><span data-id=\"" . $row["id"] . "\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
-                            else echo "<div class=\"message me\">" . $replyDOM . $row["text"] . "<img class=\"messageImage\" src=\"" . $row["image"] . "\"><span class=\"isUnread fa fa-check-circle\"><span class=\"encrypted fa fa-unlock\"></span></span><span class=\"time\">" . $formattedTime . "</span></div><span data-id=\"" . $row["id"] . "\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
+                            if ($row["image"] == "") echo "<div class=\"message me\">".$replyDOM.$row["text"]."<span class=\"isUnread fa fa-check-circle\"><span class=\"encrypted fa fa-unlock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
+                            else echo "<div class=\"message me\">".$replyDOM.$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-check-circle\"><span class=\"encrypted fa fa-unlock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: right\"></span><span class=\"clearfix\"></span>";
                         }
                     } else if ($row["author"] == $chatUser) {
                         // interlocutor messages
                         if ($row["unread"]) {
                             // unread messages
-                            if ($row["image"] == "") echo "<div class=\"message\">" . $replyDOM . $row["text"] . "<span class=\"isUnread fa fa-circle\"><span class=\"encrypted fa fa-unlock\"></span></span><span class=\"time\">" . $formattedTime . "</span></div><span data-id=\"" . $row["id"] . "\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
-                            else echo "<div class=\"message\">" . $replyDOM . $row["text"] . "<img class=\"messageImage\" src=\"" . $row["image"] . "\"><span class=\"isUnread fa fa-circle\"><span class=\"encrypted fa fa-unlock\"></span><span class=\"time\">" . $formattedTime . "</span></div><span data-id=\"" . $row["id"] . "\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
+                            if ($row["image"] == "") echo "<div class=\"message\">".$replyDOM.$row["text"]."<span class=\"isUnread fa fa-circle\"><span class=\"encrypted fa fa-unlock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
+                            else echo "<div class=\"message\">".$replyDOM.$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-circle\"><span class=\"encrypted fa fa-unlock\"></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
                         } else {
                             // read messages
-                            if ($row["image"] == "") echo "<div class=\"message\">" . $replyDOM . $row["text"] . "<span class=\"isUnread fa fa-check-circle\"><span class=\"encrypted fa fa-unlock\"></span></span><span class=\"time\">" . $formattedTime . "</span></div><span data-id=\"" . $row["id"] . "\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
-                            else echo "<div class=\"message\">" . $replyDOM . $row["text"] . "<img class=\"messageImage\" src=\"" . $row["image"] . "\"><span class=\"isUnread fa fa-check-circle\"><span class=\"encrypted fa fa-unlock\"></span></span><span class=\"time\">" . $formattedTime . "</span></div><span data-id=\"" . $row["id"] . "\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
+                            if ($row["image"] == "") echo "<div class=\"message\">".$replyDOM.$row["text"]."<span class=\"isUnread fa fa-check-circle\"><span class=\"encrypted fa fa-unlock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
+                            else echo "<div class=\"message\">".$replyDOM.$row["text"]."<img class=\"messageImage\" src=\"".$row["image"]."\"><span class=\"isUnread fa fa-check-circle\"><span class=\"encrypted fa fa-unlock\"></span></span><span class=\"time\">".$formattedTime."</span></div><span data-id=\"".$row["id"]."\" class=\"replyButton fa fa-reply\" style=\"float: left\"></span><span class=\"clearfix\"></span>";
                         }
                     } else {
                         return;
@@ -875,11 +899,11 @@ function sendMessage($token, $currentChat, $messageText, $messageImage, $replyTo
         $targetToken = getPushTokenById($currentChat);
 
         if ($loggedUser < $currentChat) {
-            $query = "M" . $loggedUser . "M" . $currentChat . "M";
-            $chat = $loggedUser . "-" . $currentChat;
+            $query = "M".$loggedUser."M".$currentChat."M";
+            $chat = $loggedUser."-".$currentChat;
         } else {
-            $query = "M" . $currentChat . "M" . $loggedUser . "M";
-            $chat = $currentChat . "-" . $loggedUser;
+            $query = "M".$currentChat."M".$loggedUser."M";
+            $chat = $currentChat."-".$loggedUser;
         }
 
         $conn = new mysqli($servername, $username, $password, $dbname);
@@ -892,8 +916,8 @@ function sendMessage($token, $currentChat, $messageText, $messageImage, $replyTo
         $checkedImage = $conn->real_escape_string($messageImage);
         $checkedReplyTo = $conn->real_escape_string($replyTo);
 
-        $encodedText = $crypto->encode($checkedText, $key . $chat);
-        $checkedText = "NE5[" . $encodedText . "]";
+        $encodedText = $crypto->encode($checkedText, $key.$chat);
+        $checkedText = "NE5[".$encodedText."]";
 
         if ($replyTo == "") {
             $sql = "INSERT INTO messages (query, author, text, image, timestamp, unread)
@@ -913,7 +937,7 @@ function sendMessage($token, $currentChat, $messageText, $messageImage, $replyTo
             } else {
                 $pushBody = "(изображение)";
             }
-            $pushData = "{\"url\": \"/(tabs)/messages/chat?id=" . $loggedUser . "&name=" . $senderName . "\"}";
+            $pushData = "{\"url\": \"/(tabs)/messages/chat?id=".$loggedUser."&name=".$senderName."\"}";
 
             if ($targetToken != "" && $targetToken != NULL) {
                 $ch = curl_init("https://exp.host/--/api/v2/push/send");
@@ -940,7 +964,7 @@ function lastId($loggedUser)
 {
     include 'credentials.php';
 
-    $signature = "M" . $loggedUser . "M";
+    $signature = "M".$loggedUser."M";
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) {
@@ -982,7 +1006,7 @@ function getDiscussions($query)
         while ($row = $result->fetch_assoc()) {
             $formattedTime = date("d.m.Y в h:i a", $row["time"]);
             $user = getNameById($row["author"]);
-            echo "<tr style=\"padding-bottom: 100px\"> <td style=\"text-align: left; width: 100%\"><span style=\"color: lightslategray\">Тема: </span>" . $row["topic"] . "<br><span class=\"discInfo\">Автор: " . $user . "</span><span class=\"discInfo mobile-hidden\">Создано: " . $formattedTime . "</span></td><td><button class=\"button a\" data-href=\"topic.php?id=" . $row["id"] . "\" style=\"float: right;white-space: nowrap;\">Открыть обсуждение</button></td></tr>";
+            echo "<tr style=\"padding-bottom: 100px\"> <td style=\"text-align: left; width: 100%\"><span style=\"color: lightslategray\">Тема: </span>".$row["topic"]."<br><span class=\"discInfo\">Автор: ".$user."</span><span class=\"discInfo mobile-hidden\">Создано: ".$formattedTime."</span></td><td><button class=\"button a\" data-href=\"topic.php?id=".$row["id"]."\" style=\"float: right;white-space: nowrap;\">Открыть обсуждение</button></td></tr>";
         }
     } else {
         echo "<p class=\"console\">Обсуждений нет<p>";
@@ -1034,7 +1058,7 @@ function getTopicMessages($header)
             if ($row["header"] == false) {
                 $formattedName = getNameById($row["author"]);
                 $formattedTime = date("d.m.Y в h:i a", $row["time"]);
-                echo "<tr><td class=\"e\"><span>" . $formattedTime . "</span></td><td style=\"text-align:left\"><a href=\"#\"><span>" . $formattedName . "</a>: " . $row["message"] . "</span></td></tr>";
+                echo "<tr><td class=\"e\"><span>".$formattedTime."</span></td><td style=\"text-align:left\"><a href=\"#\"><span>".$formattedName."</a>: ".$row["message"]."</span></td></tr>";
             }
         }
     } else {
@@ -1138,7 +1162,7 @@ function newMessageAvailable($token)
 
     // change timestamp logic to unread logic
     $checkedUser = getIdByToken($token);
-    $signature = "M" . $checkedUser . "M";
+    $signature = "M".$checkedUser."M";
 
     $conn = new mysqli($servername, $username, $password, $dbname);
     if ($conn->connect_error) {
@@ -1172,12 +1196,12 @@ function newMessageAvailable($token)
                 $name = getNameById($author);
                 if ($text == "") $text = "изображение";
                 $unreadCounter = $unreadCounter + 1;
-                $notifArrayString = $notifArrayString . "{\"author\": \"" . $name . "\", \"message\": \"" . $text . "\", \"id\": \"" . $author . "\"}, ";
+                $notifArrayString = $notifArrayString."{\"author\": \"".$name."\", \"message\": \"".$text."\", \"id\": \"".$author."\"}, ";
             }
         }
 
-        $notifArrayString = $notifArrayString . "{}]";
-        echo "{\"counter\": " . $unreadCounter . ", \"notifications\": " . $notifArrayString . "}";
+        $notifArrayString = $notifArrayString."{}]";
+        echo "{\"counter\": ".$unreadCounter.", \"notifications\": ".$notifArrayString."}";
     } else {
         echo "{\"counter\": \"0\"}";
     }
@@ -1290,7 +1314,7 @@ function getVoxCredentials($token)
 
     if ($result->num_rows > 0) {
         $row = $result->fetch_row();
-        $voxUsername = str_replace("@", "-", $row[0]) . "@nevka.avicus.n4.voximplant.com";
+        $voxUsername = str_replace("@", "-", $row[0])."@nevka.avicus.n4.voximplant.com";
         $data = [$voxUsername, "PASTE_VOX_PASSWORD_HERE"];
         echo json_encode($data);
     } else {
