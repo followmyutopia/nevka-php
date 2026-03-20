@@ -9,6 +9,8 @@ $loggedUser = "";
 include 'db.php';
 include 'header.php';
 
+use \Gumlet\ImageResize;
+
 if (!isset($_COOKIE["user_token"])) {
     header("Refresh:0; url=index.php");
     exit;
@@ -20,7 +22,53 @@ if (isset($_GET['logout'])) {
     logout();
 }
 
-$wallStatus = "";
+$wallStatus = $wallText = "";
+
+if (isset($_POST['postWall'])) {
+    $wallText = validate($_POST["message"]);
+    if (mb_strlen($wallText) > 1023) {
+        $wallStatus = "Максимум 1023 символа";
+    } else {
+        $target_file = "tmp/" . basename($_FILES["fileToUpload"]["name"]);
+        $uploadOk = 1;
+        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+        $blob = "";
+
+        if ($_FILES["fileToUpload"]["tmp_name"] != "") {
+            if (!getimagesize($_FILES["fileToUpload"]["tmp_name"])) {
+                $status = "Файл не является изображением.";
+                $uploadOk = 0;
+            }
+            if ($_FILES["fileToUpload"]["size"] > 16777215) {
+                $status = "Изображение не может быть больше 16 MB.";
+                $uploadOk = 0;
+            }
+            if ($imageFileType != "jpg" && $imageFileType != "jpeg" && $imageFileType != "png") {
+                $status = "Разрешено использовать только JPG и PNG файлы.";
+                $uploadOk = 0;
+            }
+            if ($uploadOk == 1) {
+                $image = new ImageResize($_FILES["fileToUpload"]["tmp_name"]);
+                if ($imageFileType == "jpg" || $imageFileType == "jpeg") {
+                    $image->quality_jpg = 90;
+                    $image->resizeToLongSide(640);
+                    $blob = 'data:image/jpeg;base64,' . base64_encode($image);
+                } else if ($imageFileType == "png") {
+                    $image->quality_jpg = 90;
+                    $image->resizeToLongSide(640);
+                    $blob = 'data:image/jpeg;base64,' . base64_encode($image->getImageAsString(IMAGETYPE_JPEG));
+                }
+                $wallStatus = addWallEntry($_COOKIE["user_token"], $wallText, $blob);
+            }
+        } else {
+            if ($wallText != "") {
+                $wallStatus = addWallEntry($_COOKIE["user_token"], $wallText, $blob);
+            } else {
+                $wallStatus = "Введите текст";
+            }
+        }
+    }
+}
 ?>
 
 <div class="feed mobile-expand">
