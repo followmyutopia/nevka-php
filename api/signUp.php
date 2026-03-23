@@ -5,7 +5,7 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
     if (isset($_POST['email'], $_POST['password'])) {
 
         include '../credentials.php';
-        include '../defaultImage.php';
+        include '../assets/defaultimage.php';
         $conn = new mysqli($servername, $username, $password, $dbname);
 
         if ($conn->connect_error) {

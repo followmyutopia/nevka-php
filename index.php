@@ -143,7 +143,7 @@ if (isset($_POST['reset'])) {
 <div class="right mobile-expand" id="main">
     <h1 style="text-align:center">Добро пожаловать!</h1>
     <p style="text-align:center">Приветствую Вас в своей маленькой социальной сети "Невка"!</p>
-    <img src="1.png" style="width:33%; border: none; box-shadow: none"><img src="2.png" style="width:33%; border: none; box-shadow: none"><img src="3.png" style="width:33%; border: none; box-shadow: none">
+    <img src="assets/1.png" style="width:33%; border: none; box-shadow: none"><img src="assets/2.png" style="width:33%; border: none; box-shadow: none"><img src="assets/3.png" style="width:33%; border: none; box-shadow: none">
     <p style="text-align:center">Всё началось с того, что я начал изучать PHP и MySQL.
         А затем я подумал, что этих знаний, полученных из самоучителей в интернете, достаточно
         для создания полноценной социальной сети прямо у себя в блокноте,

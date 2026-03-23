@@ -517,7 +517,7 @@ function signUp($newLogin, $hashedPassword, $apiKey)
         if ($result->num_rows > 0) {
             return "Логин занят";
         } else {
-            include 'defaultImage.php';
+            include 'assets/defaultimage.php';
             $checkedPassword = $conn->real_escape_string($hashedPassword);
             $checkedToken = $conn->real_escape_string($newToken);
             $checkedDefaultImage = $conn->real_escape_string($defaultImage);
