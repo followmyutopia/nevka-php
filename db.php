@@ -664,7 +664,6 @@ function showChatsTable($token)
             }
 
             $lastText = $lastTextRow[0];
-            // if (preg_match('/^NE[1-9]\[.*\]$/', $lastText)) $lastText = "<i>[Зашифрованное сообщение]</i>";
             if (strpos($lastText, 'NE5[') === 0) {
                 $clean_content = mb_substr($lastText, 4, -1);
                 $decrypted = $crypto->decode($clean_content, $key.$chat);
@@ -789,7 +788,6 @@ function getMessages($token, $chatUser)
                 $getReplyText = "SELECT author, text FROM messages WHERE id ='$checkedReplyId' LIMIT 1";
                 $textResult = $conn->query($getReplyText);
                 $textRow = $textResult->fetch_row();
-                // if (preg_match('/^NE[1-9]\[.*\]$/', $textRow[1])) $preview = "<i>[Зашифрованное сообщение]</i>";
                 if (strpos($textRow[1], 'NE5[') === 0) {
                     $clean_content = mb_substr($textRow[1], 4, -1);
                     $decrypted = $crypto->decode($clean_content, $key.$chat);

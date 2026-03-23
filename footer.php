@@ -159,15 +159,9 @@
 
                         if (notificationCounter != data.counter) {
                             data.notifications.forEach((item) => {
-                                if ((item.message.startsWith("NE1[") || item.message.startsWith("NE2[") || item.message.startsWith("NE3[") || item.message.startsWith("NE4[")) && item.message.endsWith("]")) {
-                                    item.message = "Сообщение с устаревшим шифрованием.";
-                                }
-                                if (item.message.startsWith("NE5[") && item.message.endsWith("]")) {
-                                    item.message = "Зашифрованное сообщение. Прочитайте на мобильном!";
-                                }
                                 var notification = new Notification(item.author, {
                                     tag: "nevkaMessage: " + item.id,
-                                    body: item.message
+                                    body: "У Вас новое сообщение"
                                 });
                                 notification.onclick = () => window.open("messages.php?id=" + item.id, "_self");
                             });

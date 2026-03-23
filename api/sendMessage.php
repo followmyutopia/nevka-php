@@ -5,6 +5,7 @@
 */
 
 include '../lib/ImageResize.php';
+include_once '../lib/ExpoCrypto.php';
 
 use \Gumlet\ImageResize;
 
@@ -99,8 +100,10 @@ try {
 
     if ($loggedUser < (int)$currentChat) {
         $query = "M{$loggedUser}M{$currentChat}M";
+        $chatkey = $loggedUser."-".$currentChat;
     } else {
         $query = "M{$currentChat}M{$loggedUser}M";
+        $chatkey = $currentChat."-".$loggedUser;
     }
 
     // Insert message (reply may be null)
@@ -120,7 +123,12 @@ try {
         $processedText = $messageText;
         // If message appears encrypted pattern
         if (preg_match('/^NE[1-9]\[.*\]$/', $processedText)) {
-            $pushBody = "[Зашифрованное сообщение]";
+            $crypto = new ExpoCrypto();
+            $key = pack("H*", $keyhash);
+            $clean_content = mb_substr($processedText, 4, -1);
+            $decrypted = $crypto->decode($clean_content, $key.$chatkey);
+
+            $pushBody = $decrypted;
         } else {
             $pushBody = $processedText;
         }
