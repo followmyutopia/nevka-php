@@ -3,9 +3,13 @@
 
 # DB credentials
 credentials.php
+ws/.env
 
 # Android distriutions
 *.apk
 
 # Possibly danger information
 safeFilter.php
+
+# WS node modules
+ws/node_modules

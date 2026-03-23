@@ -1,5 +1,5 @@
 /*
- * Nevka WebSocket Server 2.0
+ * Nevka WebSocket Server 2.1
  * Avicus Delacroix
  */
 
@@ -7,12 +7,13 @@ import mysql from "mysql2/promise";
 import moment from "moment";
 import { WebSocketServer } from "ws";
 import { safeFilterArray, noAvatar } from "./variables.js";
+require('dotenv').config();
 
 const pool = mysql.createPool({
-  host: "localhost",
-  user: "nevka",
-  password: "DB_PASSWORD_HERE",
-  database: "nevka",
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
   waitForConnections: true,
   connectionLimit: 300,
   queueLimit: 0,
