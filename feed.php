@@ -2,7 +2,7 @@
 
 /**
  * Nevka Project v1.15
- * 2025 Avicus Delacroix
+ * 2025-2026 Avicus Delacroix
  */
 
 $loggedUser = "";

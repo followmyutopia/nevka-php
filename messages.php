@@ -1,8 +1,8 @@
 <?php
 
 /**
- * Nevka Project v1.14
- * 2025 Avicus Delacroix
+ * Nevka Project v1.15
+ * 2025-2026 Avicus Delacroix
  */
 
 $loggedUser = "";

@@ -2,7 +2,7 @@
 
 /**
  * Nevka PHP API v1.0
- * 2025 Avicus Delacroix
+ * 2025-2026 Avicus Delacroix
  */
 
 $sender = "";

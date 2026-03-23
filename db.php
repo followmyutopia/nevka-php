@@ -2,7 +2,7 @@
 
 /**
  * Nevka Project v1.15 Database inquires
- * 2025 Avicus Delacroix
+ * 2025-2026 Avicus Delacroix
  * 
  * Databases and types (MySQL):
  * Users:       id (int), login (varchar-63), password (varchar-40), token (varchar-127), avatar (mediumblob), firstname (varchar-63), lastname (varchar-63), status (varchar-127), city (varchar-63), bio (varchar-255), timestamp (int), search (varchar-127), is_banned (tinyint-1), is_admin (tinyint-1), expo-push-token (varchar-255)
