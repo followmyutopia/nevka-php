@@ -47,7 +47,7 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
 
             // Update Voximplant user info
             $params = array(
-                'api_key' => 'PASTE_VOX_API_KEY_HERE',
+                'api_key' => $voxApiKey,
                 'user_name' => $voxUsername,
                 'application_id' => '11329284',
                 'user_display_name' => $newFirstName . ' ' . $newLastName,

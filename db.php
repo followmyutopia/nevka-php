@@ -265,7 +265,7 @@ function setName($token, $newFirstName, $newLastName)
         $voxUsername = str_replace("@", "-", $getNameRow[0]);
 
         $params = array(
-            'api_key' => 'PASTE_VOX_API_KEY_HERE',
+            'api_key' => $voxApiKey,
             'user_name' => $voxUsername,
             'application_id' => '11329284',
             'user_display_name' => $newFirstName.' '.$newLastName,
@@ -527,11 +527,11 @@ function signUp($newLogin, $hashedPassword, $apiKey)
             if ($conn->query($sql) === TRUE) {
                 $voxUsername = str_replace("@", "-", $newLogin);
                 $params = array(
-                    'api_key' => 'PASTE_VOX_API_KEY_HERE',
+                    'api_key' => $voxApiKey,
                     'application_id' => '11329284',
                     'user_display_name' => 'Новый пользователь',
                     'user_name' => $voxUsername,
-                    'user_password' => 'PASTE_VOX_PASSWORD_HERE',
+                    'user_password' => $voxPass,
                     'account_id' => '3831061'
                 );
 
@@ -1312,7 +1312,7 @@ function getVoxCredentials($token)
     if ($result->num_rows > 0) {
         $row = $result->fetch_row();
         $voxUsername = str_replace("@", "-", $row[0])."@nevka.avicus.n4.voximplant.com";
-        $data = [$voxUsername, "PASTE_VOX_PASSWORD_HERE"];
+        $data = [$voxUsername, $voxPass];
         echo json_encode($data);
     } else {
         return "";

@@ -35,11 +35,11 @@ if ($_POST['api-key'] == "qonxod-Kicmad-4puvhy") {
             // Prepare Voximplant user
             $voxUsername = str_replace("@", "-", $login);
             $params = [
-                'api_key' => 'PASTE_VOX_API_KEY_HERE',
+                'api_key' => $voxApiKey,
                 'application_id' => '11329284',
                 'user_display_name' => 'Новый пользователь',
                 'user_name' => $voxUsername,
-                'user_password' => 'PASTE_VOX_PASSWORD_HERE',
+                'user_password' => $voxPass,
                 'account_id' => '3831061'
             ];
 
