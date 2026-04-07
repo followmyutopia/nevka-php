@@ -7,7 +7,7 @@ import mysql from "mysql2/promise";
 import moment from "moment";
 import { WebSocketServer } from "ws";
 import { safeFilterArray, noAvatar } from "./variables.js";
-require('dotenv').config();
+import 'dotenv/config';
 
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
