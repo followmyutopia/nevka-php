@@ -155,7 +155,7 @@ if ($currentChat == 0) {
                 if (messages != buffer) $("#chatWindow").html(messages).scrollTop($('#chatWindow')[0].scrollHeight);
                 buffer = messages;
             });
-        }, 500);
+        }, 1000);
         window.setInterval(function() {
             $.post("updateAsync.php", {
                 type: 3
@@ -166,7 +166,7 @@ if ($currentChat == 0) {
                     $("#chatsTable").find(headerId).addClass("activechat");
                 }
             });
-        }, 2500);
+        }, 3000);
         $('textarea').keypress(function(e) {
             if (e.which == 13) {
                 $('#send').click();
